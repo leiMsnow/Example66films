@@ -8,10 +8,11 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import cn.com.films66.app.BuildConfig;
-import cn.com.films66.app.utils.Constants;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import static cn.com.films66.app.BuildConfig.IS_DEBUG;
 
 /**
  * Created by zhangleilei on 8/31/16.
@@ -28,7 +29,7 @@ public class MyApplication extends CoreApplication {
         MCrashHandler.getInstance().init();
         super.onCreate();
         mApplication = this;
-        LogUtils.isDebug = Constants.IS_DEBUG;
+        LogUtils.isDebug = BuildConfig.IS_DEBUG;
     }
 
     public OkHttpClient genericClient() {
@@ -37,7 +38,7 @@ public class MyApplication extends CoreApplication {
             return mOkHttpClient;
 
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
-        HttpLoggingInterceptor.Level level = BuildConfig.IS_DEBUG ?
+        HttpLoggingInterceptor.Level level = IS_DEBUG ?
                 HttpLoggingInterceptor.Level.HEADERS :
                 HttpLoggingInterceptor.Level.NONE;
         logInterceptor.setLevel(level);

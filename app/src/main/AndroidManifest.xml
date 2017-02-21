@@ -18,6 +18,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.FilmDetailActivity" />
+
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/about" />
