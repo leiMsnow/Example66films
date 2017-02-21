@@ -16,6 +16,10 @@ android {
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
         multiDexEnabled true
+
+//        ndk {
+//            abiFilters 'armeabi'
+//        }
     }
 
     lintOptions {
@@ -99,4 +103,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':corelibrary')
     compile project(':videoview')
+    compile 'com.android.support:appcompat-v7:24.2.1'
 }

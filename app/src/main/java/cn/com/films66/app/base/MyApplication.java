@@ -1,5 +1,7 @@
 package cn.com.films66.app.base;
 
+import android.content.Intent;
+
 import com.shuyu.core.CoreApplication;
 import com.shuyu.core.api.CacheInterceptor;
 import com.shuyu.core.uils.LogUtils;
@@ -8,6 +10,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import cn.com.films66.app.BuildConfig;
+import cn.com.films66.app.service.RecognizeService;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -30,6 +33,8 @@ public class MyApplication extends CoreApplication {
         super.onCreate();
         mApplication = this;
         LogUtils.isDebug = BuildConfig.IS_DEBUG;
+
+        startService(new Intent(this, RecognizeService.class));
     }
 
     public OkHttpClient genericClient() {

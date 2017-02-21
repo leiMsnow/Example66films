@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by Azure on 2016/11/11.
  */
@@ -24,7 +22,6 @@ public abstract class BaseDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCancelable(false);
-
     }
 
     @Nullable

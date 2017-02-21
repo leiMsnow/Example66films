@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  * Created by Azure on 2016/9/11.
  */
 
-public class SettingsInfo {
+public class SettingEntity {
 
     public static final int RECOMMEND = 0;
     public static final int CLEAR = 1;
@@ -29,7 +29,7 @@ public class SettingsInfo {
     private int resId;
     private String title;
 
-    public SettingsInfo(@SettingType int setId, int resId, String title) {
+    public SettingEntity(@SettingType int setId, int resId, String title) {
         this.setId = setId;
         this.resId = resId;
         this.title = title;

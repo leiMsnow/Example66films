@@ -22,7 +22,7 @@ import cn.com.films66.app.activity.FeedbackActivity;
 import cn.com.films66.app.activity.ServiceActivity;
 import cn.com.films66.app.activity.WebViewActivity;
 import cn.com.films66.app.adapter.SettingAdapter;
-import cn.com.films66.app.model.SettingsInfo;
+import cn.com.films66.app.model.SettingEntity;
 import cn.com.films66.app.utils.Constants;
 
 public class UserCenterFragment extends BaseFragment {
@@ -54,28 +54,28 @@ public class UserCenterFragment extends BaseFragment {
             public void onItemClick(View itemView, int viewType, int position) {
                 Intent intent;
                 switch (mSettingAdapter.getItem(position).getSetId()) {
-                    case SettingsInfo.RECOMMEND:
+                    case SettingEntity.RECOMMEND:
                         break;
-                    case SettingsInfo.CLEAR:
+                    case SettingEntity.CLEAR:
                         ToastUtils.getInstance().showToast("清除完成");
                         break;
-                    case SettingsInfo.FEEDBACK:
+                    case SettingEntity.FEEDBACK:
                         intent = new Intent(mContext, FeedbackActivity.class);
                         startActivity(intent);
                         break;
-                    case SettingsInfo.UPDATE:
+                    case SettingEntity.UPDATE:
                         ToastUtils.getInstance().showToast("已经是最新版本");
                         break;
-                    case SettingsInfo.DISCLAIMER:
+                    case SettingEntity.DISCLAIMER:
                         intent = new Intent(mContext, WebViewActivity.class);
                         intent.putExtra(Constants.KEY_WEB_VIEW_TYPE, 1);
                         startActivity(intent);
                         break;
-                    case SettingsInfo.SERVICE:
+                    case SettingEntity.SERVICE:
                         intent = new Intent(mContext, ServiceActivity.class);
                         startActivity(intent);
                         break;
-                    case SettingsInfo.ABOUT:
+                    case SettingEntity.ABOUT:
                         intent = new Intent(mContext, AboutActivity.class);
                         startActivity(intent);
                         break;
@@ -85,14 +85,14 @@ public class UserCenterFragment extends BaseFragment {
     }
 
 
-    private List<SettingsInfo> initSettingData() {
-        List<SettingsInfo> settings = new ArrayList<>();
+    private List<SettingEntity> initSettingData() {
+        List<SettingEntity> settings = new ArrayList<>();
 //        settings.add(new SettingsInfo(SettingsInfo.RECOMMEND, R.mipmap.ic_protocol, getString(R.string.recommend)));
 //        settings.add(new SettingsInfo(SettingsInfo.SERVICE, R.mipmap.ic_service, getString(R.string.download)));
-        settings.add(new SettingsInfo(SettingsInfo.SERVICE, R.mipmap.ic_help, getString(R.string.help)));
-        settings.add(new SettingsInfo(SettingsInfo.FEEDBACK, R.mipmap.ic_feedback, getString(R.string.feedback)));
-        settings.add(new SettingsInfo(SettingsInfo.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)));
-        settings.add(new SettingsInfo(SettingsInfo.ABOUT, R.mipmap.ic_about, getString(R.string.about)));
+        settings.add(new SettingEntity(SettingEntity.SERVICE, R.mipmap.ic_help, getString(R.string.help)));
+        settings.add(new SettingEntity(SettingEntity.FEEDBACK, R.mipmap.ic_feedback, getString(R.string.feedback)));
+        settings.add(new SettingEntity(SettingEntity.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)));
+        settings.add(new SettingEntity(SettingEntity.ABOUT, R.mipmap.ic_about, getString(R.string.about)));
 //        settings.add(new SettingsInfo(SettingsInfo.UPDATE, R.mipmap.ic_update, getString(R.string.update)));
 //        settings.add(new SettingsInfo(SettingsInfo.DISCLAIMER, R.mipmap.ic_disclaimer, getString(R.string.disclaimer)));
 

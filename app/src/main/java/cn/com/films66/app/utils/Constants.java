@@ -11,5 +11,6 @@ public interface Constants {
     String KEY_PAY_URL = "KEY_PAY_URL";
 
     String KEY_FILM_DETAIL = "KEY_FILM_DETAIL";
+    String KEY_RECOGNIZE_RESULT = "KEY_RECOGNIZE_RESULT";
 
 }
