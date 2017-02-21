@@ -1,0 +1,23 @@
+def supportVersion = "25.0.0"
+def retrofitVersion = "2.1.0"
+ext {
+    dependencies = [
+            "support-v4"      : "com.android.support:support-v4:${supportVersion}",
+            "support-v7"      : "com.android.support:appcompat-v7:${supportVersion}",
+            "design"          : "com.android.support:design:${supportVersion}",
+            "cardview"        : "com.android.support:cardview-v7:${supportVersion}",
+            "retrofit2"       : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
+            "retrofit2-gson"  : "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
+            "retrofit2-rxjava": "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}",
+            "leakcanary"      : "com.squareup.leakcanary:leakcanary-android:1.4-beta2",
+            "leakcanary-no-op": "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
+    ]
+    android = [compileSdkVersion: 24,
+               buildToolsVersion: "24.0.1",
+               minSdkVersion    : 15,
+               targetSdkVersion : 22,
+               versionCode      : 30305,
+               versionName      : "2.0.0",
+               applicationId    : "com.shuyu.video"
+    ]
+}
