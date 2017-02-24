@@ -2,10 +2,13 @@ package cn.com.films66.app.activity;
 
 import android.widget.EditText;
 
+import com.chenenyu.router.annotation.Route;
+
 import butterknife.Bind;
 import cn.com.films66.app.R;
 import cn.com.films66.app.base.AppBaseActivity;
 
+@Route("feedback")
 public class FeedbackActivity extends AppBaseActivity {
 
     @Bind(R.id.et_feedback)

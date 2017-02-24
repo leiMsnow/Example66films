@@ -10,8 +10,8 @@ ext {
             "retrofit2-gson"  : "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
             "retrofit2-rxjava": "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     ]
-    android = [compileSdkVersion: 24,
-               buildToolsVersion: "24.0.1",
+    android = [compileSdkVersion: 25,
+               buildToolsVersion: "25.0.0",
                minSdkVersion    : 15,
                targetSdkVersion : 22,
                versionCode      : 1,

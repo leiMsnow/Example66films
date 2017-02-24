@@ -10,7 +10,7 @@
     <style name="AppTheme.Main.Dark.APP">
         <item name="app_main_color">@color/app_main_color</item>
         <item name="colorPrimary">?attr/app_main_color</item>
-        <item name="colorPrimaryDark">@color/color_toolbar_bg</item>
+        <item name="colorPrimaryDark">@color/toolbar_main_color</item>
         <item name="colorAccent">@color/white</item>
     </style>
 

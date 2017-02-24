@@ -14,8 +14,21 @@ import rx.Observable;
 
 public interface IServiceApi {
     /**
-     * 首页
+     * 获取电影列表
      */
     @GET("films")
     Observable<List<FilmEntity>> getFilms();
+
+    /**
+     * 获取单个电影
+     */
+    @GET("films/1")
+    Observable<FilmEntity> getFilmDetail();
+
+    /**
+     * 获取电影互动内容
+     */
+//    @GET("films/1/events")
+//    Observable<> getFilmEvents();
+
 }

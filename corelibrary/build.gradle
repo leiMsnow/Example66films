@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-//apply plugin: 'com.chenenyu.router'
+apply plugin: 'com.chenenyu.router'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion

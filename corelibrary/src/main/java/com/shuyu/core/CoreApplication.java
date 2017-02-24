@@ -2,6 +2,7 @@ package com.shuyu.core;
 
 import android.app.Application;
 
+import com.chenenyu.router.Router;
 import com.liulishuo.filedownloader.FileDownloader;
 
 /**
@@ -15,11 +16,10 @@ public class CoreApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mApplication = this;
+        Router.initialize(this);
         FileDownloader.init(getApplicationContext());
     }
-
     public static CoreApplication getApplication() {
         return mApplication;
     }
-
 }

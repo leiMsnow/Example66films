@@ -2,6 +2,7 @@ package cn.com.films66.app.base;
 
 import android.content.Intent;
 
+import com.chenenyu.router.Router;
 import com.shuyu.core.CoreApplication;
 import com.shuyu.core.api.CacheInterceptor;
 import com.shuyu.core.uils.LogUtils;
@@ -10,12 +11,9 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import cn.com.films66.app.BuildConfig;
-import cn.com.films66.app.service.RecognizeService;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-
-import static cn.com.films66.app.BuildConfig.IS_DEBUG;
 
 /**
  * Created by zhangleilei on 8/31/16.
@@ -32,9 +30,10 @@ public class MyApplication extends CoreApplication {
         MCrashHandler.getInstance().init();
         super.onCreate();
         mApplication = this;
-        LogUtils.isDebug = BuildConfig.IS_DEBUG;
-
-        startService(new Intent(this, RecognizeService.class));
+        if (BuildConfig.IS_DEBUG) {
+            LogUtils.isDebug = true;
+            Router.openLog();
+        }
     }
 
     public OkHttpClient genericClient() {
@@ -43,7 +42,7 @@ public class MyApplication extends CoreApplication {
             return mOkHttpClient;
 
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
-        HttpLoggingInterceptor.Level level = IS_DEBUG ?
+        HttpLoggingInterceptor.Level level = BuildConfig.IS_DEBUG ?
                 HttpLoggingInterceptor.Level.HEADERS :
                 HttpLoggingInterceptor.Level.NONE;
         logInterceptor.setLevel(level);

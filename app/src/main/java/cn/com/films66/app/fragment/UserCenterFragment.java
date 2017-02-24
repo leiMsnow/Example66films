@@ -62,6 +62,7 @@ public class UserCenterFragment extends BaseFragment {
                     case SettingEntity.FEEDBACK:
                         intent = new Intent(mContext, FeedbackActivity.class);
                         startActivity(intent);
+//                        Router.build("feedback").go(mContext);
                         break;
                     case SettingEntity.UPDATE:
                         ToastUtils.getInstance().showToast("已经是最新版本");
