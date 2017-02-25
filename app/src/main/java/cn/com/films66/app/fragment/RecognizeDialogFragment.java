@@ -1,5 +1,6 @@
 package cn.com.films66.app.fragment;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -7,6 +8,8 @@ import android.widget.TextView;
 import com.shuyu.core.BaseDialogFragment;
 
 import cn.com.films66.app.R;
+import cn.com.films66.app.activity.RecognizeResultActivity;
+import cn.com.films66.app.model.CustomFileEntity;
 import cn.com.films66.app.utils.Constants;
 
 /**
@@ -14,10 +17,10 @@ import cn.com.films66.app.utils.Constants;
  */
 public class RecognizeDialogFragment extends BaseDialogFragment {
 
-    TextView tvTitle;
-    TextView tvMessage;
-    TextView tvLeft;
-    TextView tvRight;
+    private TextView tvTitle;
+    private TextView tvMessage;
+    private TextView tvLeft;
+    private TextView tvRight;
 
     @Override
     protected int getLayoutID() {
@@ -26,27 +29,37 @@ public class RecognizeDialogFragment extends BaseDialogFragment {
 
     @Override
     protected void init() {
-        setCancelable(true);
-        String message = getArguments().getString(Constants.KEY_RECOGNIZE_RESULT);
+        setCancelable(false);
+        CustomFileEntity customFile = getArguments().getParcelable(Constants.KEY_RECOGNIZE_RESULT);
+        if (customFile == null) {
+            getActivity().finish();
+            return;
+        }
         tvTitle = (TextView) mView.findViewById(R.id.tv_title);
         tvMessage = (TextView) mView.findViewById(R.id.tv_message);
         tvLeft = (TextView) mView.findViewById(R.id.tv_left);
         tvRight = (TextView) mView.findViewById(R.id.tv_right);
 
-        if (!TextUtils.isEmpty(message))
-            tvMessage.setText(message);
+        tvTitle.setText("识别结果");
+        if (!TextUtils.isEmpty(customFile.title))
+            tvMessage.setText(customFile.title);
+        else
+            tvMessage.setText(customFile.audio_id);
 
         tvLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                getActivity().finish();
             }
         });
 
         tvRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                Intent intent = new Intent(mContext, RecognizeResultActivity.class);
+                intent.putExtras(getArguments());
+                startActivity(intent);
+                getActivity().finish();
             }
         });
     }

@@ -10,16 +10,12 @@ public class RecognizeEntity {
 
     public StatusEntity status;
     public MetadataEntity metadata;
-    public int result_type;
 
     public static class StatusEntity {
-        public String msg;
         public int code;
-        public String version;
     }
 
     public static class MetadataEntity {
-        public String timestamp_utc;
-        public List<MusicEntity> music;
+        public List<CustomFileEntity> custom_files;
     }
 }

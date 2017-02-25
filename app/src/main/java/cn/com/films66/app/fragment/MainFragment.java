@@ -63,7 +63,7 @@ public class MainFragment extends BaseFragment {
 
                 Intent intent = new Intent(mContext, FilmDetailActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.KEY_FILM_DETAIL, filmsAdapter.getItem(position));
+                bundle.putInt(Constants.KEY_FILM_DETAIL_ID, filmsAdapter.getItem(position).id);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

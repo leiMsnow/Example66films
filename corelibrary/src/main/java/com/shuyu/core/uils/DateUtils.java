@@ -150,9 +150,14 @@ public class DateUtils {
     }
 
     public static long stringToLong(String strTime) {
-        Date date = stringToDate(strTime, "yyyyMMdd");
+        return stringToLong(strTime, "yyyyMMdd");
+    }
+
+    public static long stringToLong(String strTime, String format) {
+        Date date = stringToDate(strTime, format);
         return getLongTime(date);
     }
+
 
     public static Date stringToDate(String strTime) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmssSSS");

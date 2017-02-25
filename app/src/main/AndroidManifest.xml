@@ -35,9 +35,11 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name=".activity.DialogActivity"
-            android:theme="@style/AppTheme.Main.Translucent.Full" />
+        <activity android:name=".activity.DialogActivity"
+            android:theme="@style/AppTheme.Main.Translucent"/>
+
+        <activity android:name=".activity.RecognizeResultActivity" />
+
     </application>
 
 </manifest>

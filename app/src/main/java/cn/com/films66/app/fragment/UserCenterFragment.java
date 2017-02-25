@@ -45,7 +45,7 @@ public class UserCenterFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mSettingAdapter = new SettingAdapter(mContext, initSettingData(), R.layout.item_settings);
+        mSettingAdapter = new SettingAdapter(mContext, initSettingData(), R.layout.item_setting);
         mRvContainer.setLayoutManager(new LinearLayoutManager(mContext));
         mRvContainer.setAdapter(mSettingAdapter);
 

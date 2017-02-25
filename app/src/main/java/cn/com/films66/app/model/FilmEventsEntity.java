@@ -1,0 +1,68 @@
+package cn.com.films66.app.model;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import cn.com.films66.app.utils.TimeUtils;
+
+/**
+ * Created by zhangleilei on 2017/2/25.
+ */
+
+public class FilmEventsEntity implements Parcelable{
+
+    public static final int TYPE_FILM = 1;
+    public static final int TYPE_PICTURE = 2;
+    public static final int TYPE_WEB = 3;
+
+    public int id;
+    public int film_id;
+    public int type;
+    public String start_time;
+    public String end_time;
+    public String resources_url;
+
+    protected FilmEventsEntity(Parcel in) {
+        id = in.readInt();
+        film_id = in.readInt();
+        type = in.readInt();
+        start_time = in.readString();
+        end_time = in.readString();
+        resources_url = in.readString();
+    }
+
+    public static final Creator<FilmEventsEntity> CREATOR = new Creator<FilmEventsEntity>() {
+        @Override
+        public FilmEventsEntity createFromParcel(Parcel in) {
+            return new FilmEventsEntity(in);
+        }
+
+        @Override
+        public FilmEventsEntity[] newArray(int size) {
+            return new FilmEventsEntity[size];
+        }
+    };
+
+    public int getStartTime() {
+        return TimeUtils.stringToTime(start_time);
+    }
+
+    public int getEndTime() {
+        return TimeUtils.stringToTime(end_time);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(film_id);
+        dest.writeInt(type);
+        dest.writeString(start_time);
+        dest.writeString(end_time);
+        dest.writeString(resources_url);
+    }
+}

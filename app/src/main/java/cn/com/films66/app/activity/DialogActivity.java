@@ -1,17 +1,23 @@
 package cn.com.films66.app.activity;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-
 import cn.com.films66.app.R;
+import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.fragment.RecognizeDialogFragment;
 
-public class DialogActivity extends AppCompatActivity {
+public class DialogActivity extends AppBaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dialog);
+    protected boolean includeToolbar() {
+        return false;
+    }
+
+    @Override
+    protected int getLayoutRes() {
+        return R.layout.activity_dialog;
+    }
+
+    @Override
+    protected void initData() {
         RecognizeDialogFragment myDialogFragment = new RecognizeDialogFragment();
         myDialogFragment.setArguments(getIntent().getExtras());
         myDialogFragment.show(getSupportFragmentManager(), "myDialog");

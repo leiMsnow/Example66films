@@ -7,22 +7,11 @@
     android:background="@drawable/shape_item_main_bg"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/iv_video_bg"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
-
-        <ImageView
-            android:id="@+id/iv_video_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/ic_play" />
-    </RelativeLayout>
+        android:layout_height="200dp"
+        android:scaleType="fitXY" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -48,6 +37,5 @@
             tools:text="24:09" />
 
     </RelativeLayout>
-
 
 </LinearLayout>

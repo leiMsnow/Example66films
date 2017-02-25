@@ -86,16 +86,16 @@ public class RecognizeService extends Service {
             long time = (System.currentTimeMillis() - startTime) / 1000;
             ToastUtils.getInstance().showToast("识别结束，用时：" + time + '秒');
 
-            RecognizeEntity recognizeEntity = new Gson().fromJson(s,
-                    new TypeToken<RecognizeEntity>() {
+            RecognizeEntity recognizeEntity = new Gson().fromJson(s
+                    , new TypeToken<RecognizeEntity>() {
                     }.getType());
 
             if (recognizeEntity != null && recognizeEntity.status.code == 0) {
-                if (recognizeEntity.metadata.music != null) {
+                if (recognizeEntity.metadata.custom_files != null) {
                     Intent intent = new Intent(RecognizeService.this, DialogActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString(Constants.KEY_RECOGNIZE_RESULT
-                            , recognizeEntity.metadata.music.get(0).title);
+                    bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT
+                            , recognizeEntity.metadata.custom_files.get(0));
                     intent.putExtras(bundle);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
@@ -128,14 +128,6 @@ public class RecognizeService extends Service {
             sendRecognizeState();
         }
     }
-
-//    public void stopRecognize() {
-//        if (mProcessing && mClient != null) {
-//            mClient.stopRecordToRecognize();
-//            LogUtils.d(RecognizeService.class.getName(), "stopRecognize");
-//        }
-//        mProcessing = false;
-//    }
 
     public void cancelRecognize() {
         if (mProcessing && mClient != null) {

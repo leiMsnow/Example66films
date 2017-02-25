@@ -9,8 +9,9 @@ import cn.com.films66.app.R;
  */
 
 public abstract class AppBaseActivity extends BaseActivity {
+
     @Override
-    protected boolean hasToolbar() {
+    protected boolean includeToolbar() {
         return true;
     }
 

@@ -58,7 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract void initData();
 
-    protected abstract boolean hasToolbar();
+    protected abstract boolean includeToolbar();
 
     @Override
     protected void onPause() {
@@ -67,7 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initToolbar() {
-        if (!hasToolbar()) return;
+        if (!includeToolbar()) return;
 
         View toolbarView = View.inflate(mContext, R.layout.include_toolbar, null);
         mToolbar = (Toolbar) toolbarView.findViewById(R.id.tb_toolbar);
@@ -90,7 +90,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         getRootView().setLayoutParams(rootParams);
     }
 
-    private View getRootView() {
+    protected View getRootView() {
         return ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
     }
 
