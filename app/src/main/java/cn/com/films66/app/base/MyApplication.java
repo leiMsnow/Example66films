@@ -1,7 +1,5 @@
 package cn.com.films66.app.base;
 
-import android.content.Intent;
-
 import com.chenenyu.router.Router;
 import com.shuyu.core.CoreApplication;
 import com.shuyu.core.api.CacheInterceptor;
@@ -27,7 +25,9 @@ public class MyApplication extends CoreApplication {
 
     @Override
     public void onCreate() {
-        MCrashHandler.getInstance().init();
+        if (BuildConfig.IS_DEBUG) {
+            MCrashHandler.getInstance().init();
+        }
         super.onCreate();
         mApplication = this;
         if (BuildConfig.IS_DEBUG) {

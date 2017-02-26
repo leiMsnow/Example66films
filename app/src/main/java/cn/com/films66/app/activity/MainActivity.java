@@ -1,6 +1,7 @@
 package cn.com.films66.app.activity;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import cn.com.films66.app.R;
 import cn.com.films66.app.fragment.MainFragment;
-import cn.com.films66.app.fragment.PlayerFragment;
 import cn.com.films66.app.fragment.UserCenterFragment;
 import cn.com.films66.app.model.CustomFileEntity;
 import cn.com.films66.app.service.RecognizeService;
@@ -51,13 +51,11 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void initData() {
-//        hideToolbarBack();
-//        initBottomMenu();
-//        initDefaultFragment();
-//        Intent intent = new Intent(mContext, RecognizeService.class);
-//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_container, new PlayerFragment())
-                .commitAllowingStateLoss();
+        hideToolbarBack();
+        initBottomMenu();
+        initDefaultFragment();
+        Intent intent = new Intent(mContext, RecognizeService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @OnClick(R.id.iv_recognize)

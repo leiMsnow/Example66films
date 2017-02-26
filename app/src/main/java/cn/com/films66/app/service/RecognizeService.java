@@ -61,7 +61,7 @@ public class RecognizeService extends Service {
         LogUtils.d(RecognizeService.class.getName(), "initState=" + initState);
         if (initState) {
             //start prerecord, you can call "mClient.stopPreRecord()" to stop prerecord.
-            mClient.startPreRecord(3000);
+            mClient.startPreRecord(1000);
         }
     }
 
@@ -100,8 +100,10 @@ public class RecognizeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isLoop = intent.getBooleanExtra(Constants.KEY_RECOGNIZE_LOOP, false);
-        loopRecognize();
+        if (intent != null) {
+            isLoop = intent.getBooleanExtra(Constants.KEY_RECOGNIZE_LOOP, false);
+            loopRecognize();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
