@@ -1,5 +1,8 @@
 package cn.com.films66.app.activity;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
 import butterknife.Bind;
 import cn.com.films66.app.R;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
@@ -16,6 +19,12 @@ public class PlayerEventActivity extends AbsEventActivity {
 
     @Override
     protected void initData() {
+       
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setTitle("视频");
         videoView.setUp("http://video.1udev.com/zzz07.mp4", JCVideoPlayer.SCREEN_LAYOUT_NORMAL, "");
         if (mEvents != null) {
