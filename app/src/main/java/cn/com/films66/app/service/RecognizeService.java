@@ -3,7 +3,6 @@ package cn.com.films66.app.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 
@@ -18,7 +17,7 @@ import com.shuyu.core.uils.ToastUtils;
 
 import java.io.File;
 
-import cn.com.films66.app.activity.DialogActivity;
+import cn.com.films66.app.model.CustomFileEntity;
 import cn.com.films66.app.model.RecognizeEntity;
 import cn.com.films66.app.utils.Constants;
 
@@ -29,12 +28,7 @@ public class RecognizeService extends Service {
     private boolean mProcessing = false;
     private boolean initState = false;
     private long startTime = 0;
-
-    private IRecognizeListener recognizeListener;
-
-    public void setRecognizeListener(IRecognizeListener recognizeListener) {
-        this.recognizeListener = recognizeListener;
-    }
+    private boolean isLoop = false;
 
     @Override
     public void onCreate() {
@@ -75,31 +69,17 @@ public class RecognizeService extends Service {
 
         @Override
         public void onResult(String s) {
-            if (mClient != null) {
-                mClient.cancel();
-                mProcessing = false;
-            }
+            cancelRecognize();
+            loopRecognize();
 
-            sendRecognizeState();
-
-            LogUtils.d(RecognizeService.class.getName(), s);
             long time = (System.currentTimeMillis() - startTime) / 1000;
-            ToastUtils.getInstance().showToast("识别结束，用时：" + time + '秒');
-
+            LogUtils.d(RecognizeService.class.getName(), "识别结束，用时：" + time + "s 结果：" + s);
             RecognizeEntity recognizeEntity = new Gson().fromJson(s
                     , new TypeToken<RecognizeEntity>() {
                     }.getType());
-
             if (recognizeEntity != null && recognizeEntity.status.code == 0) {
                 if (recognizeEntity.metadata.custom_files != null) {
-                    Intent intent = new Intent(RecognizeService.this, DialogActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT
-                            , recognizeEntity.metadata.custom_files.get(0));
-                    intent.putExtras(bundle);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    stopSelf();
+                    sendRecognizeState(recognizeEntity.metadata.custom_files.get(0));
                 }
             }
         }
@@ -110,6 +90,20 @@ public class RecognizeService extends Service {
         }
     };
 
+    private void loopRecognize() {
+        if (isLoop) startRecognize();
+    }
+
+    public void setLoop(boolean loop) {
+        isLoop = loop;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        isLoop = intent.getBooleanExtra(Constants.KEY_RECOGNIZE_LOOP, false);
+        loopRecognize();
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     public void startRecognize() {
         if (!initState) {
@@ -124,29 +118,33 @@ public class RecognizeService extends Service {
                 LogUtils.d(RecognizeService.class.getName(), "start error!");
             }
             startTime = System.currentTimeMillis();
-            LogUtils.d(RecognizeService.class.getName(), "startRecognize");
             sendRecognizeState();
         }
     }
+
 
     public void cancelRecognize() {
         if (mProcessing && mClient != null) {
             mProcessing = false;
             mClient.cancel();
-            LogUtils.d(RecognizeService.class.getName(), "cancelRecognize");
+            sendRecognizeState();
         }
     }
 
     // 发送识别状态
     private void sendRecognizeState() {
-        if (recognizeListener != null) {
-            recognizeListener.onRecognizeState(mProcessing);
-        }
+        Intent intent = new Intent();
+        intent.setAction(Constants.RECOGNIZE_STATE_ACTION);
+        intent.putExtra(Constants.KEY_RECOGNIZE_STATE, mProcessing);
+        sendBroadcast(intent);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+    // 发送识别结果
+    private void sendRecognizeState(CustomFileEntity customFile) {
+        Intent intent = new Intent();
+        intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
+        intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -169,9 +167,5 @@ public class RecognizeService extends Service {
             initState = false;
             mClient = null;
         }
-    }
-
-    public interface IRecognizeListener {
-        void onRecognizeState(boolean processing);
     }
 }

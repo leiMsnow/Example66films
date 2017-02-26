@@ -32,7 +32,7 @@ public class RecognizeDialogFragment extends BaseDialogFragment {
         setCancelable(false);
         CustomFileEntity customFile = getArguments().getParcelable(Constants.KEY_RECOGNIZE_RESULT);
         if (customFile == null) {
-            getActivity().finish();
+            dismiss();
             return;
         }
         tvTitle = (TextView) mView.findViewById(R.id.tv_title);
@@ -59,7 +59,7 @@ public class RecognizeDialogFragment extends BaseDialogFragment {
                 Intent intent = new Intent(mContext, RecognizeResultActivity.class);
                 intent.putExtras(getArguments());
                 startActivity(intent);
-                getActivity().finish();
+                dismiss();
             }
         });
     }

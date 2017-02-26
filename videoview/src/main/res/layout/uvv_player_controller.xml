@@ -45,7 +45,8 @@
             android:contentDescription="返回"
             android:gravity="center"
             android:scaleType="centerInside"
-            android:src="@mipmap/ic_menu_back"/>
+            android:src="@mipmap/ic_menu_back"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/title"

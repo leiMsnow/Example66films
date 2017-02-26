@@ -36,7 +36,7 @@
             android:exported="true" />
 
         <activity android:name=".activity.DialogActivity"
-            android:theme="@style/AppTheme.Main.Translucent"/>
+            android:theme="@style/AppTheme.Main.Dialog"/>
 
         <activity android:name=".activity.RecognizeResultActivity" />
 

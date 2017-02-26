@@ -18,11 +18,16 @@ import cn.com.films66.app.utils.Constants;
 
 public abstract class EventFragment extends BaseFragment {
 
-    protected FilmEventsEntity mEvents;
     private MyHandler myHandler;
+    private IEventListener mEventListener;
+
+    protected FilmEventsEntity mEvents;
+
+    public void setEventListener(IEventListener eventListener) {
+        mEventListener = eventListener;
+    }
 
     private static class MyHandler extends Handler {
-
         private WeakReference<EventFragment> weakReference;
 
         public MyHandler(EventFragment weakObj) {
@@ -33,7 +38,9 @@ public abstract class EventFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             EventFragment weakObj = weakReference.get();
             if (weakObj != null) {
-                weakObj.getActivity().finish();
+                if (weakObj.mEventListener != null) {
+                    weakObj.mEventListener.eventFinish();
+                }
             }
         }
     }
@@ -41,9 +48,15 @@ public abstract class EventFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() == null)
+            return;
+
         mEvents = getArguments().getParcelable(Constants.KEY_EVENT_INFO);
         myHandler = new MyHandler(this);
         if (mEvents != null) {
+            if (mEvents.getEndTime() == 0) {
+                return;
+            }
             myHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -57,5 +70,9 @@ public abstract class EventFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         myHandler = null;
+    }
+
+    public interface IEventListener {
+        void eventFinish();
     }
 }

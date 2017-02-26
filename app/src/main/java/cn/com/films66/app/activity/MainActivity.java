@@ -1,14 +1,16 @@
 package cn.com.films66.app.activity;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.ChangeColorView;
 import com.shuyu.core.widget.WhewView;
 
@@ -18,24 +20,29 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 import cn.com.films66.app.R;
-import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.fragment.MainFragment;
+import cn.com.films66.app.fragment.PlayerFragment;
 import cn.com.films66.app.fragment.UserCenterFragment;
+import cn.com.films66.app.model.CustomFileEntity;
 import cn.com.films66.app.service.RecognizeService;
+import cn.com.films66.app.utils.Constants;
 
-public class MainActivity extends AppBaseActivity {
+public class MainActivity extends AbsRecognizeActivity {
 
     @Bind(R.id.ccv_main)
     ChangeColorView ccvMain;
     @Bind(R.id.ccv_me)
     ChangeColorView ccvMe;
+    @Bind(R.id.iv_recognize)
+    ImageView ivRecognize;
     @Bind(R.id.wv_view)
     WhewView whewView;
 
     private List<Fragment> mFragments = null;
     private List<ChangeColorView> mChangeColorViews = null;
     private int[] mTitles = {R.string.nav_main, R.string.nav_me};
-    private RecognizeService recognizeService;
+
+    protected RecognizeService mRecognizeService;
 
     @Override
     protected int getLayoutRes() {
@@ -44,49 +51,28 @@ public class MainActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        hideToolbarBack();
-        initBottomMenu();
-        initDefaultFragment();
-        Intent intent = new Intent(mContext, RecognizeService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            recognizeService = ((RecognizeService.RecognizeBinder) service).getService();
-            recognizeService.setRecognizeListener(recognizeListener);
-            recognizeService.startRecognize();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            recognizeService.cancelRecognize();
-            recognizeService = null;
-        }
-    };
-
-    private RecognizeService.IRecognizeListener recognizeListener =
-            new RecognizeService.IRecognizeListener() {
-                @Override
-                public void onRecognizeState(boolean processing) {
-                    if (processing) {
-                        whewView.start();
-                    } else {
-                        whewView.stop();
-                    }
-                }
-            };
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(serviceConnection);
+//        hideToolbarBack();
+//        initBottomMenu();
+//        initDefaultFragment();
+//        Intent intent = new Intent(mContext, RecognizeService.class);
+//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_container, new PlayerFragment())
+                .commitAllowingStateLoss();
     }
 
     @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
-        recognizeService.startRecognize();
+        if (mRecognizeService != null) {
+            mRecognizeService.startRecognize();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        if (mRecognizeService != null) {
+            mRecognizeService.setLoop(false);
+        }
+        super.onResume();
     }
 
     private void initDefaultFragment() {
@@ -143,5 +129,60 @@ public class MainActivity extends AppBaseActivity {
         }
         ft.show(mFragments.get(position));
         ft.commit();
+    }
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
+            mRecognizeService.startRecognize();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mRecognizeService.cancelRecognize();
+            mRecognizeService = null;
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unRegisterReceiver();
+    }
+
+    @Override
+    protected void onRecognizeState(boolean state) {
+        LogUtils.d(MainActivity.class.getName(), "onRecognizeState:" + state);
+        if (state) {
+            whewView.start();
+            ivRecognize.setEnabled(false);
+        } else {
+            whewView.stop();
+            ivRecognize.setEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onRecognizeResult(CustomFileEntity customFile) {
+        LogUtils.d(MainActivity.class.getName(), "onRecognizeResult");
+//        RecognizeDialogFragment recognizeDialogFragment = new RecognizeDialogFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
+//        recognizeDialogFragment.setArguments(bundle);
+//        recognizeDialogFragment.show(getSupportFragmentManager(), "dialog");
+
+        Intent intentDialog = new Intent(mContext, DialogActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
+        intentDialog.putExtras(bundle);
+        startActivity(intentDialog);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mRecognizeService != null)
+            unbindService(serviceConnection);
     }
 }

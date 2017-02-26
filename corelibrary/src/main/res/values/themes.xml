@@ -24,6 +24,11 @@
 
     </style>
 
+    <style name="AppTheme.Main.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.Main.Dark">
         <item name="android:windowBackground">@color/theme_dark_bg</item>
         <item name="android:textViewStyle">@style/Widget.TextView.Style.Dark</item>
@@ -46,5 +51,6 @@
     <style name="AppTheme.Main.Translucent.Full">
         <item name="android:windowFullscreen">true</item>
     </style>
+
 
 </resources>

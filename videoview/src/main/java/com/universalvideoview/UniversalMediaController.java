@@ -34,8 +34,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.shuyu.core.uils.ToastUtils;
-
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -290,9 +288,6 @@ public class UniversalMediaController extends FrameLayout{
                         msg = obtainMessage(SHOW_PROGRESS);
                         sendMessageDelayed(msg, 1000 - (pos % 1000));
                     }
-                    break;
-                case HIDE_PROGRESS:
-                    freeTimeEnd();
                     break;
                 case SHOW_LOADING: //3
                     show();
@@ -639,28 +634,8 @@ public class UniversalMediaController extends FrameLayout{
         }
     };
 
-
-    public void freeTimeEnd() {
-        if (mFreeTime == 0) return;
-        if (mPlayer != null && mPlayer.isPlaying()) {
-            long lastTime = 15 - mPlayer.getCurrentPosition() / 1000;
-            if (lastTime > 0) {
-                ToastUtils.getInstance().showToast(String.format("试播剩余%02d秒", lastTime));
-                Message msg = mHandler.obtainMessage(HIDE_PROGRESS);
-                mHandler.sendMessageDelayed(msg, 1000);
-            } else {
-                ToastUtils.getInstance().showToast("试播结束，VIP可免费观看完整视频");
-                if (mIFreeTimeListener != null) {
-                    mIFreeTimeListener.freeTimeEnd();
-                }
-                reset();
-            }
-        }
-    }
-
     @Override
     public void setEnabled(boolean enabled) {
-//        super.setEnabled(enabled);
         if (mTurnButton != null) {
             mTurnButton.setEnabled(enabled);
         }
