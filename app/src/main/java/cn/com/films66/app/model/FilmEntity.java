@@ -1,7 +1,5 @@
 package cn.com.films66.app.model;
 
-import com.shuyu.core.uils.DateUtils;
-
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ public class FilmEntity {
     public int id;
     public String name;
     public String introduction;
-    public int runtime;
+    public String runtime;
     public String created_at;
     public String updated_at;
     public String cover_url;
@@ -22,6 +20,7 @@ public class FilmEntity {
     public List<LocationCards> location_cards;
 
     public String getRuntime() {
-        return DateUtils.formatTime(runtime * 60 * 1000);
+//        return DateUtils.formatTime(runtime * 60 * 1000);
+        return runtime;
     }
 }

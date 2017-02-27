@@ -34,7 +34,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void initData() {
-        setTitle("识别中...");
+        setTitle("正在识别...");
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mCustomFile = getIntent().getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
@@ -94,7 +94,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private boolean matchEvent(int time) {
-        return time != -1 && Math.abs(mCustomFile.play_offset_ms - time) <= 500;
+        return time != -1 && Math.abs(mCustomFile.play_offset_ms - time) <= 1500;
     }
 
     private Class<? extends AbsEventActivity> getEventActivity(int type) {

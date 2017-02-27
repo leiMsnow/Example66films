@@ -1,5 +1,6 @@
 package cn.com.films66.app.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,15 +40,23 @@ public abstract class AbsEventActivity extends AppBaseActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent() == null)
-            return;
+        initIntent(getIntent());
+    }
 
-        mEvents = getIntent().getParcelableExtra(Constants.KEY_EVENT_INFO);
-        myHandler = new MyHandler(this);
+    private void initIntent(Intent intent) {
+        if (intent == null)
+            return;
+        mEvents = intent.getParcelableExtra(Constants.KEY_EVENT_INFO);
         if (mEvents != null) {
+
             if (mEvents.getEndTime() == 0) {
                 return;
             }
+
+            if (myHandler == null) {
+                myHandler = new MyHandler(this);
+            }
+
             myHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -55,6 +64,13 @@ public abstract class AbsEventActivity extends AppBaseActivity {
                 }
             }, mEvents.getEndTime() - mEvents.getStartTime());
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        initIntent(intent);
+
     }
 
     @Override

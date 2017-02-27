@@ -102,5 +102,5 @@ def releaseTime() {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':corelibrary')
-    compile project(':jcvideoplayer-lib')
+    compile project(':videoview')
 }

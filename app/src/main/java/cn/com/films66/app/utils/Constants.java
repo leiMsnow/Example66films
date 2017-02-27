@@ -21,4 +21,6 @@ public interface Constants {
     String KEY_RECOGNIZE_STATE = "KEY_RECOGNIZE_STATE";
     String KEY_RECOGNIZE_LOOP = "KEY_RECOGNIZE_LOOP";
 
+    String KEY_FLOAT_WINDOW = "KEY_FLOAT_WINDOW";
+    String KEY_VIDEO_URL = "KEY_VIDEO_URL";
 }

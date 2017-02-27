@@ -17,7 +17,7 @@ public class WhewView extends View {
 
     private Paint paint;
     private int maxWidth = 120;
-    private int maxAlpha = 255 / 3;
+    private int maxAlpha = 255 / 2;
 
     private List<Integer> alphaList = new ArrayList<>();
     private List<Integer> startWidthList = new ArrayList<>();

@@ -20,7 +20,7 @@ public class AboutActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        String version = getString(R.string.app_name)+"\nV"+ AppUtils.getVersionName();
+        String version = "Ver " + AppUtils.getVersionName();
         mTvVersion.setText(version);
     }
 

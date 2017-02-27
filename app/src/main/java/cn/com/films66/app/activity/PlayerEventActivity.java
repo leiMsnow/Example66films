@@ -1,48 +1,61 @@
 package cn.com.films66.app.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
+
+import com.universalvideoview.UniversalMediaController;
+import com.universalvideoview.UniversalVideoView;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+import cn.com.films66.app.service.FloatWindowService;
+import cn.com.films66.app.utils.Constants;
 
 public class PlayerEventActivity extends AbsEventActivity {
 
+
     @Bind(R.id.video_view)
-    fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard videoView;
+    UniversalVideoView videoView;
+    @Bind(R.id.media_controller)
+    UniversalMediaController mediaController;
 
     @Override
     protected int getLayoutRes() {
-        return R.layout.fragment_player_event;
+        return R.layout.activity_player_event;
     }
 
     @Override
     protected void initData() {
-       
+        toolbarHide();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("视频");
-        videoView.setUp("http://video.1udev.com/zzz07.mp4", JCVideoPlayer.SCREEN_LAYOUT_NORMAL, "");
+        videoView.setMediaController(mediaController);
+        videoView.setVideoPath("http://video.1udev.com/zzz07.mp4");
+        videoView.start();
+
+        mediaController.setBackListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, FloatWindowService.class);
+                intent.putExtra(Constants.KEY_VIDEO_URL, "http://video.1udev.com/zzz07.mp4");
+                startService(intent);
+                finish();
+            }
+        });
+
         if (mEvents != null) {
-//            videoView.setUp(mEvents.resources_url, JCVideoPlayer.SCREEN_LAYOUT_NORMAL, "");
+
         }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        JCVideoPlayer.releaseAllVideos();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (JCVideoPlayer.backPress()) {
-            return;
-        }
-        super.onBackPressed();
+    protected boolean setOrientationPortrait() {
+        return false;
     }
 }

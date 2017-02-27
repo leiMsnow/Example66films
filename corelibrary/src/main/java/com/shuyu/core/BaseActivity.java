@@ -79,14 +79,14 @@ public abstract class BaseActivity extends AppCompatActivity {
             setOverflowShowingAlways();
         }
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, DensityUtils.dp2px(mContext, mToolbarHeight));
+                ViewGroup.LayoutParams.MATCH_PARENT, getToolbarHeight());
         addContentView(toolbarView, layoutParams);
-        setToolbarMarginTop(getToolbarMarginTop());
+        setToolbarMarginTop();
     }
 
-    private void setToolbarMarginTop(int toolbarMarginTop) {
+    private void setToolbarMarginTop() {
         FrameLayout.LayoutParams rootParams = (FrameLayout.LayoutParams) getRootView().getLayoutParams();
-        rootParams.topMargin = toolbarMarginTop;
+        rootParams.topMargin = getToolbarHeight();
         getRootView().setLayoutParams(rootParams);
     }
 
@@ -102,14 +102,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
-    protected void setToolBarMarginTop(int toolbarMarginTop) {
-        setToolbarMarginTop(toolbarMarginTop);
-    }
-
     protected void toolbarHide() {
-        if (getSupportActionBar() != null)
-            getSupportActionBar().hide();
-        setToolBarMarginTop(0);
+        if (mToolbar != null) {
+            mToolbar.setVisibility(View.GONE);
+            mToolbarHeight = 0;
+            setToolbarMarginTop();
+        }
     }
 
     protected void hideToolbarBack() {
@@ -117,7 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
-    protected int getToolbarMarginTop() {
+    protected int getToolbarHeight() {
         return DensityUtils.dp2px(mContext, mToolbarHeight);
     }
 
