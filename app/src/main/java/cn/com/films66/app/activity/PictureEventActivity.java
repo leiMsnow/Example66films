@@ -21,7 +21,7 @@ public class PictureEventActivity extends AbsEventActivity {
 
     @Override
     protected void initData() {
-
+        setTitle("图片");
     }
 
     @Override

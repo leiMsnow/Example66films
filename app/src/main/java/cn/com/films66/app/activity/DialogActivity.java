@@ -10,6 +10,7 @@ import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.CustomFileEntity;
 import cn.com.films66.app.utils.Constants;
 
+@Deprecated
 public class DialogActivity extends AppBaseActivity {
 
     private TextView tvTitle;

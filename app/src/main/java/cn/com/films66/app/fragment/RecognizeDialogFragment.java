@@ -15,6 +15,7 @@ import cn.com.films66.app.utils.Constants;
 /**
  * Created by zhangleilei on 10/27/16.
  */
+@Deprecated
 public class RecognizeDialogFragment extends BaseDialogFragment {
 
     private TextView tvTitle;

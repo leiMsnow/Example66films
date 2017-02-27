@@ -24,6 +24,7 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.fragment.MainFragment;
 import cn.com.films66.app.fragment.UserCenterFragment;
 import cn.com.films66.app.model.CustomFileEntity;
+import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
 
@@ -164,17 +165,12 @@ public class MainActivity extends AbsRecognizeActivity {
     @Override
     protected void onRecognizeResult(CustomFileEntity customFile) {
         LogUtils.d(MainActivity.class.getName(), "onRecognizeResult");
-//        RecognizeDialogFragment recognizeDialogFragment = new RecognizeDialogFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
-//        recognizeDialogFragment.setArguments(bundle);
-//        recognizeDialogFragment.show(getSupportFragmentManager(), "dialog");
-
-        Intent intentDialog = new Intent(mContext, DialogActivity.class);
+        Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
-        intentDialog.putExtras(bundle);
-        startActivity(intentDialog);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -182,5 +178,9 @@ public class MainActivity extends AbsRecognizeActivity {
         super.onDestroy();
         if (mRecognizeService != null)
             unbindService(serviceConnection);
+
+        Intent intent = new Intent(mContext, FloatWindowService.class);
+        intent.putExtra(Constants.KEY_FLOAT_WINDOW, true);
+        startService(intent);
     }
 }

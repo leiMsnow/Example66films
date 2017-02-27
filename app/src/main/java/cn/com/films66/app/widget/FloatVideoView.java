@@ -13,6 +13,7 @@ import com.universalvideoview.UniversalVideoView;
 import java.lang.reflect.Field;
 
 import cn.com.films66.app.R;
+import cn.com.films66.app.utils.MyWindowManager;
 
 /**
  * Created by zhangleilei on 2017/2/27.
@@ -145,7 +146,7 @@ public class FloatVideoView extends LinearLayout {
         mediaController.setBackListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MyWindowManager.removeSmallWindow(getContext());
             }
         });
     }

@@ -1,6 +1,6 @@
 package cn.com.films66.app.activity;
 
-import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -10,11 +10,8 @@ import com.universalvideoview.UniversalVideoView;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
-import cn.com.films66.app.service.FloatWindowService;
-import cn.com.films66.app.utils.Constants;
 
 public class PlayerEventActivity extends AbsEventActivity {
-
 
     @Bind(R.id.video_view)
     UniversalVideoView videoView;
@@ -34,28 +31,27 @@ public class PlayerEventActivity extends AbsEventActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("视频");
         videoView.setMediaController(mediaController);
-        videoView.setVideoPath("http://video.1udev.com/zzz07.mp4");
-        videoView.start();
-
-        mediaController.setBackListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, FloatWindowService.class);
-                intent.putExtra(Constants.KEY_VIDEO_URL, "http://video.1udev.com/zzz07.mp4");
-                startService(intent);
-                finish();
-            }
-        });
-
         if (mEvents != null) {
+//            videoView.setVideoPath(mEvents.resources_url);
+            videoView.setVideoPath("http://video.jiecao.fm/11/23/xin/%E5%81%87%E4%BA%BA.mp4");
+            videoView.start();
+            mediaController.setBackListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Intent intent = new Intent(mContext, FloatWindowService.class);
+//                    intent.putExtra(Constants.KEY_VIDEO_URL, mEvents.resources_url);
+//                    startService(intent);
+                    finish();
+                }
+            });
 
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    finish();
+                }
+            });
         }
-    }
-
-    @Override
-    protected boolean setOrientationPortrait() {
-        return false;
     }
 }

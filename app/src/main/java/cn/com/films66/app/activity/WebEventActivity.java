@@ -26,13 +26,12 @@ public class WebEventActivity extends AbsEventActivity {
 
     @Override
     protected void initData() {
-
+        setTitle("网页");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("网页");
         if (mEvents != null) {
             webView.loadUrl(mEvents.resources_url);
         }

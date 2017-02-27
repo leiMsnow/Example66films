@@ -50,7 +50,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
             return;
         BaseApi.request(BaseApi.createApi(IServiceApi.class)
                         .getFilmDetail(Integer.parseInt(mCustomFile.audio_id))
-                , new BaseApi.IResponseListener<FilmEntity>() {
+                 , new BaseApi.IResponseListener<FilmEntity>() {
                     @Override
                     public void onSuccess(FilmEntity filmDetail) {
                         mFilmDetail = filmDetail;

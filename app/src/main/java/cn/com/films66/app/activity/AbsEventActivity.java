@@ -70,7 +70,6 @@ public abstract class AbsEventActivity extends AppBaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         initIntent(intent);
-
     }
 
     @Override
