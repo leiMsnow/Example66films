@@ -1,24 +1,8 @@
-/*
-* Copyright (C) 2015 Author <dictfb#gmail.com>
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-
 package com.universalvideoview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -29,35 +13,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.shuyu.core.uils.ToastUtils;
-
 import java.util.Formatter;
 import java.util.Locale;
 
-public class UniversalMediaController extends FrameLayout{
+public class UniversalMediaController extends FrameLayout {
 
     private UniversalMediaController.MediaPlayerControl mPlayer;
     private Context mContext;
     private ProgressBar mProgress;
     private TextView mEndTime, mCurrentTime;
     private TextView mTitle;
-    private boolean mShowing = true;
+    private boolean mShowing = false;
+    private boolean mShowVoiceLayout = true;
     private boolean mDragging;
     private boolean mScalable = false;
     private boolean mIsFullScreen = false;
     private static final int sDefaultTimeout = 3000;
-    private static final int STATE_PLAYING = 1;
-    private static final int STATE_PAUSE = 2;
-    private static final int STATE_LOADING = 3;
-    private static final int STATE_ERROR = 4;
-    private static final int STATE_COMPLETE = 5;
-
-    private int mState = STATE_LOADING;
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
@@ -67,29 +44,24 @@ public class UniversalMediaController extends FrameLayout{
     private static final int HIDE_ERROR = 6;
     private static final int SHOW_COMPLETE = 7;
     private static final int HIDE_COMPLETE = 8;
-    private static final int HIDE_PROGRESS = 9;
-    StringBuilder mFormatBuilder;
 
+    StringBuilder mFormatBuilder;
     Formatter mFormatter;
 
     private ImageButton mTurnButton;// 开启暂停按钮
-
     private ImageButton mScaleButton;
-
     private View mBackButton;// 返回按钮
-
     private ViewGroup loadingLayout;
-
     private ViewGroup errorLayout;
-
     private View mTitleLayout;
     private View mControlLayout;
-
     private View mCenterPlayButton;
-
     private OnClickListener mOnBackClickListener;
 
-    private long mFreeTime = 0;
+    private ImageView ivVoiceDown;
+    private ImageView ivVoiceUp;
+    private SeekBar voiceSeekBar;
+    private AudioManager mAudioManager;
 
     public void setBackListener(OnClickListener mOnBackClickListener) {
         this.mOnBackClickListener = mOnBackClickListener;
@@ -111,23 +83,23 @@ public class UniversalMediaController extends FrameLayout{
 
     private void init(Context context) {
         mContext = context;
+        mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewRoot = inflater.inflate(R.layout.uvv_player_controller, this);
         viewRoot.setOnTouchListener(mTouchListener);
         initControllerView(viewRoot);
     }
 
-    public void setScalable(boolean scalable) {
-        if (scalable) {
-            if (mScaleButton != null) {
-                mScaleButton.setVisibility(VISIBLE);
-                mScaleButton.setOnClickListener(mScaleListener);
-            }
-        } else {
-            if (mScaleButton != null) {
-                mScaleButton.setVisibility(GONE);
-            }
+    private void setVolume(int index) {
+        int newVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + index;
+        if (newVolume < 0) {
+            newVolume = 0;
+        } else if (newVolume > mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
+            newVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         }
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume,
+                AudioManager.FLAG_PLAY_SOUND);
+        voiceSeekBar.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
     }
 
     private void initControllerView(View v) {
@@ -140,18 +112,55 @@ public class UniversalMediaController extends FrameLayout{
         mCenterPlayButton = v.findViewById(R.id.center_play_btn);
         mBackButton = v.findViewById(R.id.back_btn);
 
+        ivVoiceDown = (ImageView) v.findViewById(R.id.iv_voice_down);
+        ivVoiceUp = (ImageView) v.findViewById(R.id.iv_voice_up);
+        voiceSeekBar = (SeekBar) v.findViewById(R.id.voice_seekbar);
+
+        ivVoiceDown.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setVolume(AudioManager.ADJUST_LOWER);
+            }
+        });
+
+        ivVoiceUp.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setVolume(AudioManager.ADJUST_RAISE);
+            }
+        });
+
+        voiceSeekBar.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        voiceSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress,
+                            AudioManager.FLAG_PLAY_SOUND);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         if (mTurnButton != null) {
             mTurnButton.requestFocus();
             mTurnButton.setOnClickListener(mPauseListener);
         }
 
-        if (mScalable) {
-            if (mScaleButton != null) {
+        if (mScaleButton != null) {
+            if (mScalable) {
                 mScaleButton.setVisibility(VISIBLE);
                 mScaleButton.setOnClickListener(mScaleListener);
-            }
-        } else {
-            if (mScaleButton != null) {
+            } else {
                 mScaleButton.setVisibility(GONE);
             }
         }
@@ -187,10 +196,6 @@ public class UniversalMediaController extends FrameLayout{
         updatePausePlay();
     }
 
-    public void setFreeTime(long freeTime) {
-        mFreeTime = freeTime;
-    }
-
     /**
      * Show the controller on screen. It will go away
      * automatically after 3 seconds of inactivity.
@@ -224,6 +229,10 @@ public class UniversalMediaController extends FrameLayout{
      *                the controller until hide() is called.
      */
     public void show(int timeout) {//只负责上下两条bar的显示,不负责中央loading,error,playBtn的显示.
+
+        if (mShowVoiceLayout)
+            return;
+
         if (!mShowing) {
             setProgress();
             if (mTurnButton != null) {
@@ -271,10 +280,15 @@ public class UniversalMediaController extends FrameLayout{
             mTitle.setVisibility(GONE);
             mShowing = false;
         }
-        if (!mIsFullScreen) {
-            mTitleLayout.setVisibility(VISIBLE);
-        }
     }
+
+    // TODO: 2017/2/28
+    public void hideVoice() {
+        ivVoiceDown.setVisibility(GONE);
+        ivVoiceUp.setVisibility(GONE);
+        voiceSeekBar.setVisibility(GONE);
+    }
+
 
     private Handler mHandler = new Handler() {
         @Override
@@ -290,9 +304,6 @@ public class UniversalMediaController extends FrameLayout{
                         msg = obtainMessage(SHOW_PROGRESS);
                         sendMessageDelayed(msg, 1000 - (pos % 1000));
                     }
-                    break;
-                case HIDE_PROGRESS:
-                    freeTimeEnd();
                     break;
                 case SHOW_LOADING: //3
                     show();
@@ -365,17 +376,17 @@ public class UniversalMediaController extends FrameLayout{
         }
     }
 
-    public void reset() {
-        if (mPlayer.isPlaying()) {
-            mPlayer.pause();
-        }
-        mCurrentTime.setText("00:00");
-        mEndTime.setText("00:00");
-        mProgress.setProgress(0);
-        mTurnButton.setImageResource(R.drawable.uvv_player_player_btn);
-        setVisibility(View.VISIBLE);
-        hideLoading();
-    }
+//    public void reset() {
+//        if (mPlayer.isPlaying()) {
+//            mPlayer.pause();
+//        }
+//        mCurrentTime.setText("00:00");
+//        mEndTime.setText("00:00");
+//        mProgress.setProgress(0);
+//        mTurnButton.setImageResource(R.drawable.uvv_player_player_btn);
+//        setVisibility(View.VISIBLE);
+//        hideLoading();
+//    }
 
     public String stringForTime(long timeMs) {
         long totalSeconds = timeMs / 1000;
@@ -397,7 +408,7 @@ public class UniversalMediaController extends FrameLayout{
             return 0;
         }
         int position = mPlayer.getCurrentPosition();
-        long duration = mFreeTime > 0 ? mFreeTime : mPlayer.getDuration();
+        long duration = mPlayer.getDuration();
         if (mProgress != null) {
             if (duration > 0) {
                 // use long to avoid overflow
@@ -586,16 +597,6 @@ public class UniversalMediaController extends FrameLayout{
         updatePausePlay();
     }
 
-    public interface IFreeTimeListener {
-        void freeTimeEnd();
-    }
-
-    private IFreeTimeListener mIFreeTimeListener;
-
-    public void setIFreeTimeListener(IFreeTimeListener IFreeTimeListener) {
-        mIFreeTimeListener = IFreeTimeListener;
-    }
-
     private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
         int newPosition = 0;
         boolean change = false;
@@ -639,28 +640,8 @@ public class UniversalMediaController extends FrameLayout{
         }
     };
 
-
-    public void freeTimeEnd() {
-        if (mFreeTime == 0) return;
-        if (mPlayer != null && mPlayer.isPlaying()) {
-            long lastTime = 15 - mPlayer.getCurrentPosition() / 1000;
-            if (lastTime > 0) {
-                ToastUtils.getInstance().showToast(String.format("试播剩余%02d秒", lastTime));
-                Message msg = mHandler.obtainMessage(HIDE_PROGRESS);
-                mHandler.sendMessageDelayed(msg, 1000);
-            } else {
-                ToastUtils.getInstance().showToast("试播结束，VIP可免费观看完整视频");
-                if (mIFreeTimeListener != null) {
-                    mIFreeTimeListener.freeTimeEnd();
-                }
-                reset();
-            }
-        }
-    }
-
     @Override
     public void setEnabled(boolean enabled) {
-//        super.setEnabled(enabled);
         if (mTurnButton != null) {
             mTurnButton.setEnabled(enabled);
         }
@@ -675,7 +656,6 @@ public class UniversalMediaController extends FrameLayout{
 
     public void showLoading() {
         mHandler.sendEmptyMessage(SHOW_LOADING);
-        mHandler.sendEmptyMessage(HIDE_PROGRESS);
     }
 
     public void hideLoading() {
@@ -686,46 +666,12 @@ public class UniversalMediaController extends FrameLayout{
         mHandler.sendEmptyMessage(SHOW_ERROR);
     }
 
-    public void hideError() {
-        mHandler.sendEmptyMessage(HIDE_ERROR);
-    }
-
     public void showComplete() {
         mHandler.sendEmptyMessage(SHOW_COMPLETE);
     }
 
-    public void hideComplete() {
-        mHandler.sendEmptyMessage(HIDE_COMPLETE);
-    }
-
     public void setTitle(String title) {
         mTitle.setText(title);
-    }
-
-    public void setOnErrorView(int resId) {
-        errorLayout.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        inflater.inflate(resId, errorLayout, true);
-    }
-
-    public void setOnErrorView(View onErrorView) {
-        errorLayout.removeAllViews();
-        errorLayout.addView(onErrorView);
-    }
-
-    public void setOnLoadingView(int resId) {
-        loadingLayout.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        inflater.inflate(resId, loadingLayout, true);
-    }
-
-    public void setOnLoadingView(View onLoadingView) {
-        loadingLayout.removeAllViews();
-        loadingLayout.addView(onLoadingView);
-    }
-
-    public void setOnErrorViewClick(View.OnClickListener onClickListener) {
-        errorLayout.setOnClickListener(onClickListener);
     }
 
     public interface MediaPlayerControl {

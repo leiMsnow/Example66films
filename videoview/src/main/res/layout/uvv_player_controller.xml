@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@android:color/transparent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:id="@+id/loading_layout"
@@ -13,7 +14,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <include layout="@layout/uvv_on_loading_layout"/>
+        <include layout="@layout/uvv_on_loading_layout" />
 
     </LinearLayout>
 
@@ -26,7 +27,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <include layout="@layout/uvv_on_error_layout"/>
+        <include layout="@layout/uvv_on_error_layout" />
     </LinearLayout>
 
     <LinearLayout
@@ -35,17 +36,17 @@
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:background="@drawable/shape_gradient_title"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/back_btn"
-            android:layout_width="50dp"
-            android:layout_height="fill_parent"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
             android:background="#00000000"
-            android:contentDescription="返回"
             android:gravity="center"
             android:scaleType="centerInside"
-            android:src="@mipmap/ic_menu_back"/>
+            android:src="@mipmap/ic_menu_back" />
 
         <TextView
             android:id="@+id/title"
@@ -59,7 +60,8 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textColor="#ffffff"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            tools:text="标题" />
 
     </LinearLayout>
 
@@ -71,7 +73,7 @@
         android:contentDescription="@null"
         android:scaleType="fitXY"
         android:src="@drawable/uvv_itv_player_play"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/control_layout"
@@ -79,7 +81,8 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:background="@color/uvv_titlebar_bg"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/turn_button"
@@ -92,7 +95,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/uvv_player_player_btn"/>
+            android:src="@drawable/uvv_player_player_btn" />
 
         <ImageButton
             android:id="@+id/scale_button"
@@ -105,7 +108,7 @@
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/uvv_player_scale_btn"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -123,7 +126,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:text="00:00"
-                android:textColor="@color/uvv_light_gray"/>
+                android:textColor="@color/uvv_light_gray" />
 
             <SeekBar
                 android:id="@+id/seekbar"
@@ -133,7 +136,7 @@
                 android:layout_weight="1"
                 android:maxHeight="2dp"
                 android:minHeight="2dp"
-                android:progressDrawable="@drawable/uvv_star_play_progress_seek"/>
+                android:progressDrawable="@drawable/uvv_star_play_progress_seek" />
 
             <TextView
                 android:id="@+id/duration"
@@ -142,9 +145,54 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="10dp"
                 android:text="00:00"
-                android:textColor="@color/uvv_light_gray"/>
+                android:textColor="@color/uvv_light_gray" />
         </LinearLayout>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/control_voice_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/uvv_titlebar_bg"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iv_voice_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:background="#00000000"
+            android:gravity="center"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_voice_down" />
+
+        <SeekBar
+            android:id="@+id/voice_seekbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/iv_voice_up"
+            android:layout_toRightOf="@+id/iv_voice_down"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+            android:progressDrawable="@drawable/uvv_star_play_progress_seek" />
+
+        <ImageView
+            android:id="@+id/iv_voice_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="4dp"
+            android:background="#00000000"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_voice_up" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

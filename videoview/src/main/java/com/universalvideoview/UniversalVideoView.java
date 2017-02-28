@@ -658,7 +658,6 @@ public class UniversalVideoView extends SurfaceView
 
         if (isInPlaybackState()) {
             mMediaPlayer.start();
-            mMediaController.freeTimeEnd();
             mCurrentState = STATE_PLAYING;
             if (this.videoViewCallback != null) {
                 this.videoViewCallback.onStart(mMediaPlayer);
