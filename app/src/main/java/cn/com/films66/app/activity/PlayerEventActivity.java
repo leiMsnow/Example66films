@@ -9,8 +9,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.shuyu.core.uils.LogUtils;
+import com.shuyu.core.uils.SDCardUtils;
 import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
+
+import java.net.URLDecoder;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
@@ -59,9 +63,11 @@ public class PlayerEventActivity extends AbsEventActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoView.setMediaController(mediaController);
+        videoView.setVideoPath("http://video.jiecao.fm/11/23/xin/%E5%81%87%E4%BA%BA.mp4");
+//        videoView.setVideoPath(getResources_url("http://film-server.b0.upaiyun.com/movie/%E7%96%AF%E5%AD%90a.mp4"));
+        videoView.start();
         if (mEvents != null) {
-            videoView.setVideoPath(mEvents.resources_url);
-//        videoView.setVideoPath("http://video.jiecao.fm/11/23/xin/%E5%81%87%E4%BA%BA.mp4");
+            videoView.setVideoPath(getResources_url(mEvents.resources_url));
             videoView.start();
             mediaController.setBackListener(new View.OnClickListener() {
                 @Override
@@ -77,5 +83,19 @@ public class PlayerEventActivity extends AbsEventActivity {
                 }
             });
         }
+    }
+
+    private String getResources_url(String resources_url) {
+        if (!TextUtils.isEmpty(resources_url)) {
+            int lastSplit = resources_url.lastIndexOf("/");
+            if (lastSplit != -1) {
+
+                String localUrl = SDCardUtils.getSDCardPath() + "midea/" +
+                        URLDecoder.decode(resources_url.substring(lastSplit + 1));
+                LogUtils.d(PlayerEventActivity.class.getName(), localUrl);
+                return localUrl;
+            }
+        }
+        return resources_url;
     }
 }

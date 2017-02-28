@@ -9,7 +9,7 @@ import cn.com.films66.app.utils.TimeUtils;
  * Created by zhangleilei on 2017/2/25.
  */
 
-public class FilmEventsEntity implements Parcelable{
+public class FilmEventsEntity implements Parcelable {
 
     public static final int TYPE_FILM = 1;
     public static final int TYPE_PICTURE = 2;
@@ -65,4 +65,5 @@ public class FilmEventsEntity implements Parcelable{
         dest.writeString(end_time);
         dest.writeString(resources_url);
     }
+
 }
