@@ -63,9 +63,8 @@ public class PlayerEventActivity extends AbsEventActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoView.setMediaController(mediaController);
-        videoView.setVideoPath("http://video.jiecao.fm/11/23/xin/%E5%81%87%E4%BA%BA.mp4");
 //        videoView.setVideoPath(getResources_url("http://film-server.b0.upaiyun.com/movie/%E7%96%AF%E5%AD%90a.mp4"));
-        videoView.start();
+//        videoView.start();
         if (mEvents != null) {
             videoView.setVideoPath(getResources_url(mEvents.resources_url));
             videoView.start();
