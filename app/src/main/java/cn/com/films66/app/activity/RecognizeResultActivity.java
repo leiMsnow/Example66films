@@ -1,10 +1,14 @@
 package cn.com.films66.app.activity;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.shuyu.core.uils.ImageShowUtils;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
@@ -22,10 +26,12 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     @Bind(R.id.iv_location_card)
     ImageView ivLocationCard;
 
+    private static final int CHANGE_EVENT = 0;
+
     private CustomFileEntity mCustomFile;
     private FilmEntity mFilmDetail;
-    private int mCurrentEvent = 0;
-    private int mCurrentLocation = 0;
+    private MyHandler mHandler;
+    private int mOffset = 0;
 
     @Override
     protected int getLayoutRes() {
@@ -34,11 +40,13 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void initData() {
-        setTitle("正在识别...");
+        setTitle("");
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mCustomFile = getIntent().getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
         getFilmDetail();
+
+        mHandler = new MyHandler(this);
 
         Intent intent = new Intent(mContext, RecognizeService.class);
         intent.putExtra(Constants.KEY_RECOGNIZE_LOOP, true);
@@ -50,11 +58,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
             return;
         BaseApi.request(BaseApi.createApi(IServiceApi.class)
                         .getFilmDetail(Integer.parseInt(mCustomFile.audio_id))
-                 , new BaseApi.IResponseListener<FilmEntity>() {
+                , new BaseApi.IResponseListener<FilmEntity>() {
                     @Override
                     public void onSuccess(FilmEntity filmDetail) {
                         mFilmDetail = filmDetail;
-                        switchFragment();
+                        startSwitch();
                     }
 
                     @Override
@@ -64,20 +72,28 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 });
     }
 
-    private void switchFragment() {
-        for (int i = mFilmDetail.location_cards.size() - 1; i >= mCurrentLocation; i--) {
+    private void startSwitch() {
+        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
+        mOffset += 1000;
+        switchCard();
+        switchEvent();
+    }
+
+    private void switchCard() {
+        for (int i = mFilmDetail.location_cards.size() - 1; i >= 0; i--) {
             LocationCards locationCards = mFilmDetail.location_cards.get(i);
             if (matchCart(locationCards.getStartTime())) {
-//                mCurrentLocation = i + 1;
                 ImageShowUtils.showImage(mContext
                         , locationCards.card_url, ivLocationCard);
                 break;
             }
         }
-        for (int i = mCurrentEvent, count = mFilmDetail.events.size(); i < count; i++) {
-            final FilmEventsEntity event = mFilmDetail.events.get(i);
+    }
+
+    private void switchEvent() {
+        for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
+            FilmEventsEntity event = mFilmDetail.events.get(i);
             if (matchEvent(event.getStartTime())) {
-//                mCurrentEvent = i + 1;
                 Class eventActivity = getEventActivity(event.type);
                 if (eventActivity != null) {
                     Intent intent = new Intent(mContext, eventActivity);
@@ -89,12 +105,19 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         }
     }
 
+    private int getOffsetTime() {
+        if (Math.abs(mCustomFile.play_offset_ms - mOffset) <= 500) {
+            mOffset = mCustomFile.play_offset_ms;
+        }
+        return mOffset;
+    }
+
     private boolean matchCart(int time) {
-        return time != -1 && mCustomFile.play_offset_ms - time >= 0;
+        return time != -1 && mOffset - time >= 0;
     }
 
     private boolean matchEvent(int time) {
-        return time != -1 && Math.abs(mCustomFile.play_offset_ms - time) <= 1500;
+        return time != -1 && Math.abs(mOffset - time) <= 500;
     }
 
     private Class<? extends AbsEventActivity> getEventActivity(int type) {
@@ -116,7 +139,38 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFileEntity customFile) {
-        mCustomFile = customFile;
-        switchFragment();
+        if (mCustomFile == null || mCustomFile.audio_id.equals(customFile.audio_id)) {
+            mCustomFile = customFile;
+            getOffsetTime();
+            getFilmDetail();
+        } else {
+            mCustomFile = customFile;
+            getOffsetTime();
+            startSwitch();
+        }
+    }
+
+    private static class MyHandler extends Handler {
+
+        private WeakReference<RecognizeResultActivity> weakReference;
+
+        public MyHandler(RecognizeResultActivity weakObj) {
+            weakReference = new WeakReference<>(weakObj);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            RecognizeResultActivity weakObj = weakReference.get();
+            if (weakObj != null) {
+                weakObj.startSwitch();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeMessages(CHANGE_EVENT);
+        mHandler = null;
     }
 }

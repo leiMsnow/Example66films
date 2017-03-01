@@ -52,7 +52,8 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void initData() {
-        hideToolbarBack();
+        toolbarHide();
+//        hideToolbarBack();
         initBottomMenu();
         initDefaultFragment();
         Intent intent = new Intent(mContext, RecognizeService.class);
@@ -134,7 +135,7 @@ public class MainActivity extends AbsRecognizeActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
-            mRecognizeService.startRecognize();
+//            mRecognizeService.startRecognize();
         }
 
         @Override

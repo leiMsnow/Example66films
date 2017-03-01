@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_logo_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/toolbar_main_color"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_logo_title" />
 
     <FrameLayout
         android:id="@+id/fl_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_bottom_menu"
-        android:layout_alignParentTop="true"/>
+        android:layout_below="@+id/iv_logo_title" />
 
     <LinearLayout
         android:id="@+id/ll_bottom_menu"
@@ -26,7 +34,7 @@
             app:changeIcon="@mipmap/ic_nav_main"
             app:changeText="首页"
             app:changeTextSize="10sp"
-            app:defaultColor="@color/normal_light_grey"/>
+            app:defaultColor="@color/normal_light_grey" />
 
         <com.shuyu.core.widget.ChangeColorView
             android:id="@+id/ccv_me"
@@ -35,7 +43,7 @@
             app:changeIcon="@mipmap/ic_nav_me"
             app:changeText="我的"
             app:changeTextSize="10sp"
-            app:defaultColor="@color/normal_light_grey"/>
+            app:defaultColor="@color/normal_light_grey" />
 
     </LinearLayout>
 
@@ -50,13 +58,13 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_centerInParent="true"
-            android:src="@mipmap/ic_nav_rec"/>
+            android:src="@mipmap/ic_nav_rec" />
 
         <com.shuyu.core.widget.WhewView
             android:id="@+id/wv_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 
