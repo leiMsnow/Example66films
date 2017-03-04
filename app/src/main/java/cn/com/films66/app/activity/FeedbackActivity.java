@@ -50,6 +50,7 @@ public class FeedbackActivity extends AppBaseActivity {
                     @Override
                     public void onSuccess(NoBodyEntity data) {
                         ToastUtils.getInstance().showToast("感谢您的反馈");
+                        finish();
                     }
 
                     @Override
