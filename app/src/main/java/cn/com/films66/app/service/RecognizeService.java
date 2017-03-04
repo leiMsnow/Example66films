@@ -49,10 +49,10 @@ public class RecognizeService extends Service {
         mConfig.host = "cn-north-1.api.acrcloud.com";
         // offline db path, you can change it with other path which this app can access.
         mConfig.dbPath = path;
-        mConfig.accessKey = "bb04322f38c38b18a931320d00b2eb8b";
-        mConfig.accessSecret = "arJFm2S5MIuY9PBMkRJmrdzQrD64P1stIYCjCXCK";
+        mConfig.accessKey = "e3c58e23b70a881d960cfa963d0f1965";
+        mConfig.accessSecret = "wP2o4851sOditOCixl8s8ru2iTf9pdQ7f10xofxr";
         mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_REMOTE;
-        mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_LOCAL;
+//        mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_LOCAL;
         //mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_BOTH;
         mConfig.acrcloudListener = acrCloudListener;
         mClient = new ACRCloudClient();

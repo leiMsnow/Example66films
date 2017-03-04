@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -26,7 +25,6 @@ import cn.com.films66.app.fragment.UserCenterFragment;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
-import cn.com.films66.app.utils.AssetsCopyToSDCard;
 import cn.com.films66.app.utils.Constants;
 
 public class MainActivity extends AbsRecognizeActivity {
@@ -46,11 +44,11 @@ public class MainActivity extends AbsRecognizeActivity {
 
     protected RecognizeService mRecognizeService;
 
-    private String[] acrFiles = {
-            "acrcloud/afp.df",
-            "acrcloud/afp.iv",
-            "acrcloud/afp.op"
-    };
+//    private String[] acrFiles = {
+//            "acrcloud/afp.df",
+//            "acrcloud/afp.iv",
+//            "acrcloud/afp.op"
+//    };
 
     @Override
     protected int getLayoutRes() {
@@ -62,19 +60,19 @@ public class MainActivity extends AbsRecognizeActivity {
         toolbarHide();
         initBottomMenu();
         initDefaultFragment();
-        copyAssert();
+//        copyAssert();
         Intent intent = new Intent(mContext, RecognizeService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private void copyAssert() {
-        AssetsCopyToSDCard assetsCopyTOSDcard = new AssetsCopyToSDCard(getApplicationContext());
-        for (String path : acrFiles) {
-            assetsCopyTOSDcard.assetToSD(path,
-                    Environment.getExternalStorageDirectory().toString()
-                            + "/" + path);
-        }
-    }
+//    private void copyAssert() {
+//        AssetsCopyToSDCard assetsCopyTOSDcard = new AssetsCopyToSDCard(getApplicationContext());
+//        for (String path : acrFiles) {
+//            assetsCopyTOSDcard.assetToSD(path,
+//                    Environment.getExternalStorageDirectory().toString()
+//                            + "/" + path);
+//        }
+//    }
 
     @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
