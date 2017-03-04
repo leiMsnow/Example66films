@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 
-import cn.com.films66.app.base.AppBaseActivity;
+import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.model.FilmEvents;
 import cn.com.films66.app.utils.Constants;
 
@@ -16,10 +16,11 @@ import cn.com.films66.app.utils.Constants;
  * Created by Azure on 2017/2/26.
  */
 
-public abstract class AbsEventActivity extends AppBaseActivity {
+public abstract class AbsEventActivity extends AbsRecognizeActivity {
 
     private MyHandler myHandler;
     protected FilmEvents mEvents;
+    protected int mOffset = -1;
 
     private static class MyHandler extends Handler {
         private WeakReference<AbsEventActivity> weakReference;
@@ -70,6 +71,21 @@ public abstract class AbsEventActivity extends AppBaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         initIntent(intent);
+    }
+
+    @Override
+    protected void onRecognizeState(boolean state) {
+
+    }
+
+    @Override
+    protected void onRecognizeResult(CustomFile customFile) {
+        mOffset = customFile.play_offset_ms;
+        if (mEvents != null) {
+            if (mOffset >= mEvents.getEndTime() || mOffset < mEvents.getStartTime()) {
+                finish();
+            }
+        }
     }
 
     @Override

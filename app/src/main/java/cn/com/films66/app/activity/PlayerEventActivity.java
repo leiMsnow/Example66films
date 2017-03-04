@@ -14,6 +14,7 @@ import com.shuyu.core.uils.SDCardUtils;
 import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
 
+import java.io.File;
 import java.net.URLDecoder;
 
 import butterknife.Bind;
@@ -63,18 +64,21 @@ public class PlayerEventActivity extends AbsEventActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoView.setMediaController(mediaController);
-//        videoView.setVideoPath(getResources_url("http://film-server.b0.upaiyun.com/movie/%E7%96%AF%E5%AD%90a.mp4"));
-//        videoView.start();
         if (mEvents != null) {
-            videoView.setVideoPath(getResources_url(mEvents.resources_url));
+            String url = getResources_url(mEvents.resources_url);
+            LogUtils.d(PlayerEventActivity.class.getName(), url);
+            videoView.setVideoPath(url);
             videoView.start();
+            if (mOffset >= 0) {
+                videoView.seekTo(mOffset);
+                LogUtils.d("Player", "调整时间： " + mOffset);
+            }
             mediaController.setBackListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     finish();
                 }
             });
-
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
@@ -88,11 +92,10 @@ public class PlayerEventActivity extends AbsEventActivity {
         if (!TextUtils.isEmpty(resources_url)) {
             int lastSplit = resources_url.lastIndexOf("/");
             if (lastSplit != -1) {
-
                 String localUrl = SDCardUtils.getSDCardPath() + "midea/" +
                         URLDecoder.decode(resources_url.substring(lastSplit + 1));
-                LogUtils.d(PlayerEventActivity.class.getName(), localUrl);
-                return localUrl;
+                File file = new File(localUrl);
+                return file.exists() ? localUrl : resources_url;
             }
         }
         return resources_url;

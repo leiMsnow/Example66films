@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import com.shuyu.core.uils.DateUtils;
+import com.shuyu.core.uils.LogUtils;
+
 import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.utils.Constants;
@@ -22,10 +25,12 @@ public abstract class AbsRecognizeActivity extends AppBaseActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.RECOGNIZE_STATE_ACTION)) {
                 boolean processing = intent.getBooleanExtra(Constants.KEY_RECOGNIZE_STATE, false);
+                LogUtils.d(MainActivity.class.getName(), "onRecognizeState:" + processing);
                 onRecognizeState(processing);
 
             } else if (intent.getAction().equals(Constants.RECOGNIZE_RESULT_ACTION)) {
                 CustomFile customFile = intent.getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
+                LogUtils.d("RecognizeReceiver", "RecognizeTime: " + DateUtils.formatTime(customFile.play_offset_ms));
                 onRecognizeResult(customFile);
             }
         }

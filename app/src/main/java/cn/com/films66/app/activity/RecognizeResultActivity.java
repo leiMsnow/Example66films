@@ -3,10 +3,13 @@ package cn.com.films66.app.activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
+import com.shuyu.core.uils.LogUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -47,10 +50,18 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         getFilmDetail();
 
         mHandler = new MyHandler(this);
-
         Intent intent = new Intent(mContext, RecognizeService.class);
         intent.putExtra(Constants.KEY_RECOGNIZE_LOOP, true);
         startService(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            startActivity(new Intent(mContext, MainActivity.class));
+            finish();
+        }
+        return true;
     }
 
     private void getFilmDetail() {
@@ -62,6 +73,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     @Override
                     public void onSuccess(Film filmDetail) {
                         mFilmDetail = filmDetail;
+                        getOffsetTime();
+                        mHandler.removeMessages(CHANGE_EVENT);
+                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
                         startSwitch();
                     }
 
@@ -73,10 +87,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private void startSwitch() {
-        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
-        mOffset += 1000;
         switchCard();
         switchEvent();
+        mOffset += 1000;
     }
 
     private void switchCard() {
@@ -106,7 +119,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private int getOffsetTime() {
-        if (Math.abs(mCustomFile.play_offset_ms - mOffset) <= 500) {
+        if (mOffset == 0) {
+            mOffset = mCustomFile.play_offset_ms;
+        } else if (Math.abs(mCustomFile.play_offset_ms - mOffset) >= 500) {
             mOffset = mCustomFile.play_offset_ms;
         }
         return mOffset;
@@ -139,9 +154,8 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
-        if (mCustomFile == null || mCustomFile.audio_id.equals(customFile.audio_id)) {
+        if (mCustomFile == null || !mCustomFile.audio_id.equals(customFile.audio_id)) {
             mCustomFile = customFile;
-            getOffsetTime();
             getFilmDetail();
         } else {
             mCustomFile = customFile;
@@ -154,7 +168,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
         private WeakReference<RecognizeResultActivity> weakReference;
 
-        public MyHandler(RecognizeResultActivity weakObj) {
+        MyHandler(RecognizeResultActivity weakObj) {
             weakReference = new WeakReference<>(weakObj);
         }
 
@@ -162,7 +176,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         public void handleMessage(Message msg) {
             RecognizeResultActivity weakObj = weakReference.get();
             if (weakObj != null) {
-                weakObj.startSwitch();
+                if (msg.what == CHANGE_EVENT) {
+                    weakObj.startSwitch();
+                    sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
+                    LogUtils.d("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
+                }
             }
         }
     }

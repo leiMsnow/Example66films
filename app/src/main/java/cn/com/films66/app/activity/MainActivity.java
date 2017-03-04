@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.ChangeColorView;
 import com.shuyu.core.widget.WhewView;
 
@@ -26,6 +26,7 @@ import cn.com.films66.app.fragment.UserCenterFragment;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
+import cn.com.films66.app.utils.AssetsCopyToSDCard;
 import cn.com.films66.app.utils.Constants;
 
 public class MainActivity extends AbsRecognizeActivity {
@@ -45,6 +46,12 @@ public class MainActivity extends AbsRecognizeActivity {
 
     protected RecognizeService mRecognizeService;
 
+    private String[] acrFiles = {
+            "acrcloud/afp.df",
+            "acrcloud/afp.iv",
+            "acrcloud/afp.op"
+    };
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_main;
@@ -53,11 +60,20 @@ public class MainActivity extends AbsRecognizeActivity {
     @Override
     protected void initData() {
         toolbarHide();
-//        hideToolbarBack();
         initBottomMenu();
         initDefaultFragment();
+        copyAssert();
         Intent intent = new Intent(mContext, RecognizeService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void copyAssert() {
+        AssetsCopyToSDCard assetsCopyTOSDcard = new AssetsCopyToSDCard(getApplicationContext());
+        for (String path : acrFiles) {
+            assetsCopyTOSDcard.assetToSD(path,
+                    Environment.getExternalStorageDirectory().toString()
+                            + "/" + path);
+        }
     }
 
     @OnClick(R.id.iv_recognize)
@@ -153,7 +169,6 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeState(boolean state) {
-        LogUtils.d(MainActivity.class.getName(), "onRecognizeState:" + state);
         if (state) {
             whewView.start();
             ivRecognize.setEnabled(false);
@@ -165,7 +180,6 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
-        LogUtils.d(MainActivity.class.getName(), "onRecognizeResult");
         Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);

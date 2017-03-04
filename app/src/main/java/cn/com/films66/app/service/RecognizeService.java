@@ -4,21 +4,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 
 import com.acrcloud.rec.sdk.ACRCloudClient;
 import com.acrcloud.rec.sdk.ACRCloudConfig;
 import com.acrcloud.rec.sdk.IACRCloudListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.shuyu.core.uils.AppUtils;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.uils.ToastUtils;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.model.RecognizeResult;
@@ -32,42 +28,41 @@ public class RecognizeService extends Service {
     private boolean initState = false;
     private long startTime = 0;
     private boolean isLoop = false;
-    private MyHandler mHandler;
+//    private MyHandler mHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mHandler = new MyHandler(this);
+//        mHandler = new MyHandler(this);
         initACRCloud();
     }
 
     private void initACRCloud() {
-        String path = Environment.getExternalStorageDirectory().toString() +
-                "/" + AppUtils.getPackageName() + "/acrcloud/model";
+        String path = Environment.getExternalStorageDirectory().toString()
+                + "/acrcloud";
         File file = new File(path);
         if (!file.exists()) {
-            if (file.mkdirs()) {
-                ACRCloudConfig mConfig = new ACRCloudConfig();
-                mConfig.context = this;
-                mConfig.host = "cn-north-1.api.acrcloud.com";
-                // offline db path, you can change it with other path which this app can access.
-                mConfig.dbPath = path;
-                mConfig.accessKey = "e3c58e23b70a881d960cfa963d0f1965";
-                mConfig.accessSecret = "wP2o4851sOditOCixl8s8ru2iTf9pdQ7f10xofxr";
-                mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_REMOTE;
-                // mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_LOCAL;
-                //mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_BOTH;
-                mConfig.acrcloudListener = acrCloudListener;
-                mClient = new ACRCloudClient();
-                // If reqMode is REC_MODE_LOCAL or REC_MODE_BOTH,
-                // the function initWithConfig is used to load offline db, and it may cost long time.
-                initState = mClient.initWithConfig(mConfig);
-                LogUtils.d(RecognizeService.class.getName(), "initState=" + initState);
-                if (initState) {
-                    //start prerecord, you can call "mClient.stopPreRecord()" to stop prerecord.
-                    mClient.startPreRecord(3000);
-                }
-            }
+            file.mkdirs();
+        }
+        ACRCloudConfig mConfig = new ACRCloudConfig();
+        mConfig.context = this;
+        mConfig.host = "cn-north-1.api.acrcloud.com";
+        // offline db path, you can change it with other path which this app can access.
+        mConfig.dbPath = path;
+        mConfig.accessKey = "bb04322f38c38b18a931320d00b2eb8b";
+        mConfig.accessSecret = "arJFm2S5MIuY9PBMkRJmrdzQrD64P1stIYCjCXCK";
+        mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_REMOTE;
+        mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_LOCAL;
+        //mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_BOTH;
+        mConfig.acrcloudListener = acrCloudListener;
+        mClient = new ACRCloudClient();
+        // If reqMode is REC_MODE_LOCAL or REC_MODE_BOTH,
+        // the function initWithConfig is used to load offline db, and it may cost long time.
+        initState = mClient.initWithConfig(mConfig);
+        LogUtils.d(RecognizeService.class.getName(), "initState=" + initState);
+        if (initState) {
+            //start prerecord, you can call "mClient.stopPreRecord()" to stop prerecord.
+            mClient.startPreRecord(3000);
         }
     }
 
@@ -79,7 +74,7 @@ public class RecognizeService extends Service {
             loopRecognize();
 
             long time = (System.currentTimeMillis() - startTime) / 1000;
-            LogUtils.d(RecognizeService.class.getName(), "识别结束，用时：" + time + "s 结果：" + s);
+//            LogUtils.d(RecognizeService.class.getName(), "识别结束，用时：" + time + "s 结果：" + s);
             RecognizeResult recognizeEntity = new Gson().fromJson(s
                     , new TypeToken<RecognizeResult>() {
                     }.getType());
@@ -98,7 +93,8 @@ public class RecognizeService extends Service {
 
     private void loopRecognize() {
         if (isLoop) {
-            mHandler.sendEmptyMessageDelayed(0, 10 * 1000);
+//            mHandler.sendEmptyMessageDelayed(0, 1000);
+            startRecognize();
         }
     }
 
@@ -133,23 +129,23 @@ public class RecognizeService extends Service {
         }
     }
 
-    private static class MyHandler extends Handler {
-
-        private WeakReference<RecognizeService> weakReference;
-
-        public MyHandler(RecognizeService weakObj) {
-            weakReference = new WeakReference<>(weakObj);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            RecognizeService weakObj = weakReference.get();
-            if (weakObj != null) {
-                if (msg.what == 0)
-                    weakObj.startRecognize();
-            }
-        }
-    }
+//    private static class MyHandler extends Handler {
+//
+//        private WeakReference<RecognizeService> weakReference;
+//
+//        public MyHandler(RecognizeService weakObj) {
+//            weakReference = new WeakReference<>(weakObj);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            RecognizeService weakObj = weakReference.get();
+//            if (weakObj != null) {
+//                if (msg.what == 0)
+//                    weakObj.startRecognize();
+//            }
+//        }
+//    }
 
 
     public void cancelRecognize() {
@@ -195,8 +191,8 @@ public class RecognizeService extends Service {
             mClient.release();
             initState = false;
             mClient = null;
-            mHandler.removeMessages(0);
-            mHandler = null;
+//            mHandler.removeMessages(0);
+//            mHandler = null;
         }
     }
 }
