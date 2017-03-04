@@ -61,7 +61,8 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
             myHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    myHandler.sendEmptyMessage(0);
+                    if (myHandler != null)
+                        myHandler.sendEmptyMessage(0);
                 }
             }, mEvents.getEndTime() - mEvents.getStartTime());
         }
