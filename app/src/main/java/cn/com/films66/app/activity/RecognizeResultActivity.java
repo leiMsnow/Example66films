@@ -14,9 +14,9 @@ import butterknife.Bind;
 import cn.com.films66.app.R;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
-import cn.com.films66.app.model.CustomFileEntity;
-import cn.com.films66.app.model.FilmEntity;
-import cn.com.films66.app.model.FilmEventsEntity;
+import cn.com.films66.app.model.CustomFile;
+import cn.com.films66.app.model.Film;
+import cn.com.films66.app.model.FilmEvents;
 import cn.com.films66.app.model.LocationCards;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
@@ -28,8 +28,8 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private static final int CHANGE_EVENT = 0;
 
-    private CustomFileEntity mCustomFile;
-    private FilmEntity mFilmDetail;
+    private CustomFile mCustomFile;
+    private Film mFilmDetail;
     private MyHandler mHandler;
     private int mOffset = 0;
 
@@ -58,9 +58,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
             return;
         BaseApi.request(BaseApi.createApi(IServiceApi.class)
                         .getFilmDetail(Integer.parseInt(mCustomFile.audio_id))
-                , new BaseApi.IResponseListener<FilmEntity>() {
+                , new BaseApi.IResponseListener<Film>() {
                     @Override
-                    public void onSuccess(FilmEntity filmDetail) {
+                    public void onSuccess(Film filmDetail) {
                         mFilmDetail = filmDetail;
                         startSwitch();
                     }
@@ -92,7 +92,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private void switchEvent() {
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
-            FilmEventsEntity event = mFilmDetail.events.get(i);
+            FilmEvents event = mFilmDetail.events.get(i);
             if (matchEvent(event.getStartTime())) {
                 Class eventActivity = getEventActivity(event.type);
                 if (eventActivity != null) {
@@ -122,11 +122,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private Class<? extends AbsEventActivity> getEventActivity(int type) {
         switch (type) {
-            case FilmEventsEntity.TYPE_FILM:
+            case FilmEvents.TYPE_FILM:
                 return PlayerEventActivity.class;
-            case FilmEventsEntity.TYPE_PICTURE:
+            case FilmEvents.TYPE_PICTURE:
                 return PictureEventActivity.class;
-            case FilmEventsEntity.TYPE_WEB:
+            case FilmEvents.TYPE_WEB:
                 return WebEventActivity.class;
         }
         return null;
@@ -138,7 +138,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     @Override
-    protected void onRecognizeResult(CustomFileEntity customFile) {
+    protected void onRecognizeResult(CustomFile customFile) {
         if (mCustomFile == null || mCustomFile.audio_id.equals(customFile.audio_id)) {
             mCustomFile = customFile;
             getOffsetTime();

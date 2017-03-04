@@ -3,10 +3,13 @@ package cn.com.films66.app.api;
 
 import java.util.List;
 
-import cn.com.films66.app.model.FilmEntity;
-import cn.com.films66.app.model.FilmEventsEntity;
+import cn.com.films66.app.model.Film;
+import cn.com.films66.app.model.HelpInfo;
+import cn.com.films66.app.model.NoBodyEntity;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -19,18 +22,22 @@ public interface IServiceApi {
      * 获取电影列表
      */
     @GET("films")
-    Observable<List<FilmEntity>> getFilms();
+    Observable<List<Film>> getFilms();
 
     /**
      * 获取单个电影
      */
     @GET("films/{id}")
-    Observable<FilmEntity> getFilmDetail(@Path("id") int id);
+    Observable<Film> getFilmDetail(@Path("id") int id);
 
     /**
-     * 获取电影互动内容
+     * 获取帮助信息
      */
-    @GET("films/{id}/events")
-    Observable<List<FilmEventsEntity>> getFilmEvents();
+    @GET("help_info")
+    Observable<List<HelpInfo>> getHelpInfo();
+
+    @POST("feedback")
+    Observable<NoBodyEntity> sendFeedback(@Query("content") String context,
+                                          @Query("platform") int platform);
 
 }

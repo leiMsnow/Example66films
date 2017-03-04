@@ -9,7 +9,7 @@ import com.shuyu.core.BaseDialogFragment;
 
 import cn.com.films66.app.R;
 import cn.com.films66.app.activity.RecognizeResultActivity;
-import cn.com.films66.app.model.CustomFileEntity;
+import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.utils.Constants;
 
 /**
@@ -31,7 +31,7 @@ public class RecognizeDialogFragment extends BaseDialogFragment {
     @Override
     protected void init() {
         setCancelable(false);
-        CustomFileEntity customFile = getArguments().getParcelable(Constants.KEY_RECOGNIZE_RESULT);
+        CustomFile customFile = getArguments().getParcelable(Constants.KEY_RECOGNIZE_RESULT);
         if (customFile == null) {
             dismiss();
             return;

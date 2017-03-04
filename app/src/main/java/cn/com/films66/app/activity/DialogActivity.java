@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import cn.com.films66.app.R;
 import cn.com.films66.app.base.AppBaseActivity;
-import cn.com.films66.app.model.CustomFileEntity;
+import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.utils.Constants;
 
 @Deprecated
@@ -30,7 +30,7 @@ public class DialogActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        CustomFileEntity customFile = getIntent().getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
+        CustomFile customFile = getIntent().getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
         if (customFile == null) {
             finish();
             return;

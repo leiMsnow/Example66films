@@ -9,7 +9,7 @@ import cn.com.films66.app.utils.TimeUtils;
  * Created by zhangleilei on 2017/2/25.
  */
 
-public class FilmEventsEntity implements Parcelable {
+public class FilmEvents implements Parcelable {
 
     public static final int TYPE_FILM = 1;
     public static final int TYPE_PICTURE = 2;
@@ -22,7 +22,7 @@ public class FilmEventsEntity implements Parcelable {
     public String end_time;
     public String resources_url;
 
-    protected FilmEventsEntity(Parcel in) {
+    protected FilmEvents(Parcel in) {
         id = in.readInt();
         film_id = in.readInt();
         type = in.readInt();
@@ -31,15 +31,15 @@ public class FilmEventsEntity implements Parcelable {
         resources_url = in.readString();
     }
 
-    public static final Creator<FilmEventsEntity> CREATOR = new Creator<FilmEventsEntity>() {
+    public static final Creator<FilmEvents> CREATOR = new Creator<FilmEvents>() {
         @Override
-        public FilmEventsEntity createFromParcel(Parcel in) {
-            return new FilmEventsEntity(in);
+        public FilmEvents createFromParcel(Parcel in) {
+            return new FilmEvents(in);
         }
 
         @Override
-        public FilmEventsEntity[] newArray(int size) {
-            return new FilmEventsEntity[size];
+        public FilmEvents[] newArray(int size) {
+            return new FilmEvents[size];
         }
     };
 

@@ -10,7 +10,7 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.base.AppBaseActivity;
-import cn.com.films66.app.model.FilmEntity;
+import cn.com.films66.app.model.Film;
 import cn.com.films66.app.utils.Constants;
 
 /**
@@ -47,9 +47,9 @@ public class FilmDetailActivity extends AppBaseActivity {
         }
 
         BaseApi.request(BaseApi.createApi(IServiceApi.class).getFilmDetail(mFilmId)
-                , new BaseApi.IResponseListener<FilmEntity>() {
+                , new BaseApi.IResponseListener<Film>() {
                     @Override
-                    public void onSuccess(FilmEntity filmDetail) {
+                    public void onSuccess(Film filmDetail) {
                         setTitle(filmDetail.name);
                         ImageShowUtils.showImage(mContext, filmDetail.cover_url, ivVideoBg);
                         tvVideoTitle.setText(filmDetail.name);

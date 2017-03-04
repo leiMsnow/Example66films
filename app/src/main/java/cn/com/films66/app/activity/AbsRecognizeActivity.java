@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import cn.com.films66.app.base.AppBaseActivity;
-import cn.com.films66.app.model.CustomFileEntity;
+import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.utils.Constants;
 
 /**
@@ -25,7 +25,7 @@ public abstract class AbsRecognizeActivity extends AppBaseActivity {
                 onRecognizeState(processing);
 
             } else if (intent.getAction().equals(Constants.RECOGNIZE_RESULT_ACTION)) {
-                CustomFileEntity customFile = intent.getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
+                CustomFile customFile = intent.getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
                 onRecognizeResult(customFile);
             }
         }
@@ -39,7 +39,7 @@ public abstract class AbsRecognizeActivity extends AppBaseActivity {
 
     protected abstract void onRecognizeState(boolean state);
 
-    protected abstract void onRecognizeResult(CustomFileEntity customFile);
+    protected abstract void onRecognizeResult(CustomFile customFile);
 
     private void registerReceiver() {
         if (mRecognizeReceiver == null) {

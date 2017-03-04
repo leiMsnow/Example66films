@@ -20,7 +20,7 @@ import cn.com.films66.app.activity.FilmDetailActivity;
 import cn.com.films66.app.adapter.FilmsAdapter;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
-import cn.com.films66.app.model.FilmEntity;
+import cn.com.films66.app.model.Film;
 import cn.com.films66.app.utils.Constants;
 
 public class MainFragment extends BaseFragment {
@@ -74,9 +74,9 @@ public class MainFragment extends BaseFragment {
     private void getFilms() {
         mSwipeContainer.setRefreshing(false);
         BaseApi.request(BaseApi.createApi(IServiceApi.class).getFilms()
-                , new BaseApi.IResponseListener<List<FilmEntity>>() {
+                , new BaseApi.IResponseListener<List<Film>>() {
                     @Override
-                    public void onSuccess(List<FilmEntity> data) {
+                    public void onSuccess(List<Film> data) {
                         filmsAdapter.replaceAll(data);
                     }
 

@@ -6,7 +6,7 @@ import java.util.List;
  * Created by zhangleilei on 21/02/2017.
  */
 
-public class RecognizeEntity {
+public class RecognizeResult {
 
     public StatusEntity status;
     public MetadataEntity metadata;
@@ -16,6 +16,6 @@ public class RecognizeEntity {
     }
 
     public static class MetadataEntity {
-        public List<CustomFileEntity> custom_files;
+        public List<CustomFile> custom_files;
     }
 }

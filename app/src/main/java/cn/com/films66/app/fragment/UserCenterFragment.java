@@ -19,10 +19,10 @@ import butterknife.Bind;
 import cn.com.films66.app.R;
 import cn.com.films66.app.activity.AboutActivity;
 import cn.com.films66.app.activity.FeedbackActivity;
-import cn.com.films66.app.activity.ServiceActivity;
+import cn.com.films66.app.activity.HelpInfoActivity;
 import cn.com.films66.app.activity.WebViewActivity;
 import cn.com.films66.app.adapter.SettingAdapter;
-import cn.com.films66.app.model.SettingEntity;
+import cn.com.films66.app.model.SettingInfo;
 import cn.com.films66.app.utils.Constants;
 
 public class UserCenterFragment extends BaseFragment {
@@ -54,29 +54,29 @@ public class UserCenterFragment extends BaseFragment {
             public void onItemClick(View itemView, int viewType, int position) {
                 Intent intent;
                 switch (mSettingAdapter.getItem(position).getSetId()) {
-                    case SettingEntity.RECOMMEND:
+                    case SettingInfo.RECOMMEND:
                         break;
-                    case SettingEntity.CLEAR:
+                    case SettingInfo.CLEAR:
                         ToastUtils.getInstance().showToast("清除完成");
                         break;
-                    case SettingEntity.FEEDBACK:
+                    case SettingInfo.FEEDBACK:
                         intent = new Intent(mContext, FeedbackActivity.class);
                         startActivity(intent);
 //                        Router.build("feedback").go(mContext);
                         break;
-                    case SettingEntity.UPDATE:
+                    case SettingInfo.UPDATE:
                         ToastUtils.getInstance().showToast("已经是最新版本");
                         break;
-                    case SettingEntity.DISCLAIMER:
+                    case SettingInfo.DISCLAIMER:
                         intent = new Intent(mContext, WebViewActivity.class);
                         intent.putExtra(Constants.KEY_WEB_VIEW_TYPE, 1);
                         startActivity(intent);
                         break;
-                    case SettingEntity.SERVICE:
-                        intent = new Intent(mContext, ServiceActivity.class);
+                    case SettingInfo.SERVICE:
+                        intent = new Intent(mContext, HelpInfoActivity.class);
                         startActivity(intent);
                         break;
-                    case SettingEntity.ABOUT:
+                    case SettingInfo.ABOUT:
                         intent = new Intent(mContext, AboutActivity.class);
                         startActivity(intent);
                         break;
@@ -86,14 +86,14 @@ public class UserCenterFragment extends BaseFragment {
     }
 
 
-    private List<SettingEntity> initSettingData() {
-        List<SettingEntity> settings = new ArrayList<>();
+    private List<SettingInfo> initSettingData() {
+        List<SettingInfo> settings = new ArrayList<>();
 //        settings.add(new SettingsInfo(SettingsInfo.RECOMMEND, R.mipmap.ic_protocol, getString(R.string.recommend)));
 //        settings.add(new SettingsInfo(SettingsInfo.SERVICE, R.mipmap.ic_service, getString(R.string.download)));
-        settings.add(new SettingEntity(SettingEntity.SERVICE, R.mipmap.ic_help, getString(R.string.help)));
-        settings.add(new SettingEntity(SettingEntity.FEEDBACK, R.mipmap.ic_feedback, getString(R.string.feedback)));
-        settings.add(new SettingEntity(SettingEntity.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)));
-        settings.add(new SettingEntity(SettingEntity.ABOUT, R.mipmap.ic_about, getString(R.string.about)));
+        settings.add(new SettingInfo(SettingInfo.SERVICE, R.mipmap.ic_help, getString(R.string.help)));
+        settings.add(new SettingInfo(SettingInfo.FEEDBACK, R.mipmap.ic_feedback, getString(R.string.feedback)));
+        settings.add(new SettingInfo(SettingInfo.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)));
+        settings.add(new SettingInfo(SettingInfo.ABOUT, R.mipmap.ic_about, getString(R.string.about)));
 //        settings.add(new SettingsInfo(SettingsInfo.UPDATE, R.mipmap.ic_update, getString(R.string.update)));
 //        settings.add(new SettingsInfo(SettingsInfo.DISCLAIMER, R.mipmap.ic_disclaimer, getString(R.string.disclaimer)));
 

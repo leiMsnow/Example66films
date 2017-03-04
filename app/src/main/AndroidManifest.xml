@@ -29,8 +29,8 @@
             android:name=".activity.FeedbackActivity"
             android:label="@string/feedback" />
         <activity
-            android:name=".activity.ServiceActivity"
-            android:label="@string/service" />
+            android:name=".activity.HelpInfoActivity"
+            android:label="@string/help" />
         <activity
             android:name=".activity.WebViewActivity"
             android:launchMode="singleTask" />

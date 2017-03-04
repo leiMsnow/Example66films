@@ -11,20 +11,20 @@ import org.byteam.superadapter.SuperViewHolder;
 import java.util.List;
 
 import cn.com.films66.app.R;
-import cn.com.films66.app.model.FilmEntity;
+import cn.com.films66.app.model.Film;
 
 /**
  * Created by zhangleilei on 21/02/2017.
  */
 
-public class FilmsAdapter extends SuperAdapter<FilmEntity> {
+public class FilmsAdapter extends SuperAdapter<Film> {
 
-    public FilmsAdapter(Context context, List<FilmEntity> items, int layoutResId) {
+    public FilmsAdapter(Context context, List<Film> items, int layoutResId) {
         super(context, items, layoutResId);
     }
 
     @Override
-    public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, FilmEntity item) {
+    public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, Film item) {
         holder.setText(R.id.tv_video_title, item.name)
                 .setText(R.id.tv_video_time, item.getRuntime());
 

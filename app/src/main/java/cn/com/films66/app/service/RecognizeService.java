@@ -20,8 +20,8 @@ import com.shuyu.core.uils.ToastUtils;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import cn.com.films66.app.model.CustomFileEntity;
-import cn.com.films66.app.model.RecognizeEntity;
+import cn.com.films66.app.model.CustomFile;
+import cn.com.films66.app.model.RecognizeResult;
 import cn.com.films66.app.utils.Constants;
 
 public class RecognizeService extends Service {
@@ -80,8 +80,8 @@ public class RecognizeService extends Service {
 
             long time = (System.currentTimeMillis() - startTime) / 1000;
             LogUtils.d(RecognizeService.class.getName(), "识别结束，用时：" + time + "s 结果：" + s);
-            RecognizeEntity recognizeEntity = new Gson().fromJson(s
-                    , new TypeToken<RecognizeEntity>() {
+            RecognizeResult recognizeEntity = new Gson().fromJson(s
+                    , new TypeToken<RecognizeResult>() {
                     }.getType());
             if (recognizeEntity != null && recognizeEntity.status.code == 0) {
                 if (recognizeEntity.metadata.custom_files != null) {
@@ -169,7 +169,7 @@ public class RecognizeService extends Service {
     }
 
     // 发送识别结果
-    private void sendRecognizeState(CustomFileEntity customFile) {
+    private void sendRecognizeState(CustomFile customFile) {
         Intent intent = new Intent();
         intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
         intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);

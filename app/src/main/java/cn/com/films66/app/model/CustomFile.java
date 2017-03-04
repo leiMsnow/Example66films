@@ -7,29 +7,29 @@ import android.os.Parcelable;
  * Created by zhangleilei on 21/02/2017.
  */
 
-public class CustomFileEntity implements Parcelable{
+public class CustomFile implements Parcelable{
 
     public int play_offset_ms;
     public String title;
     public String acrid;
     public String audio_id;
 
-    protected CustomFileEntity(Parcel in) {
+    protected CustomFile(Parcel in) {
         play_offset_ms = in.readInt();
         title = in.readString();
         acrid = in.readString();
         audio_id = in.readString();
     }
 
-    public static final Creator<CustomFileEntity> CREATOR = new Creator<CustomFileEntity>() {
+    public static final Creator<CustomFile> CREATOR = new Creator<CustomFile>() {
         @Override
-        public CustomFileEntity createFromParcel(Parcel in) {
-            return new CustomFileEntity(in);
+        public CustomFile createFromParcel(Parcel in) {
+            return new CustomFile(in);
         }
 
         @Override
-        public CustomFileEntity[] newArray(int size) {
-            return new CustomFileEntity[size];
+        public CustomFile[] newArray(int size) {
+            return new CustomFile[size];
         }
     };
 

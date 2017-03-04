@@ -23,7 +23,7 @@ import butterknife.OnClick;
 import cn.com.films66.app.R;
 import cn.com.films66.app.fragment.MainFragment;
 import cn.com.films66.app.fragment.UserCenterFragment;
-import cn.com.films66.app.model.CustomFileEntity;
+import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
@@ -164,7 +164,7 @@ public class MainActivity extends AbsRecognizeActivity {
     }
 
     @Override
-    protected void onRecognizeResult(CustomFileEntity customFile) {
+    protected void onRecognizeResult(CustomFile customFile) {
         LogUtils.d(MainActivity.class.getName(), "onRecognizeResult");
         Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();

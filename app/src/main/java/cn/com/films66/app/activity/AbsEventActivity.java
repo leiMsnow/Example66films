@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import java.lang.ref.WeakReference;
 
 import cn.com.films66.app.base.AppBaseActivity;
-import cn.com.films66.app.model.FilmEventsEntity;
+import cn.com.films66.app.model.FilmEvents;
 import cn.com.films66.app.utils.Constants;
 
 /**
@@ -19,7 +19,7 @@ import cn.com.films66.app.utils.Constants;
 public abstract class AbsEventActivity extends AppBaseActivity {
 
     private MyHandler myHandler;
-    protected FilmEventsEntity mEvents;
+    protected FilmEvents mEvents;
 
     private static class MyHandler extends Handler {
         private WeakReference<AbsEventActivity> weakReference;

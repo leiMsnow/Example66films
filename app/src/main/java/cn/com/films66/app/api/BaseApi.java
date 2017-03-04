@@ -29,9 +29,10 @@ public class BaseApi {
                 , KEY_BASE_URL, BASE_URL).toString();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(url)
+                .addConverterFactory(NobodyConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .client(MyApplication.getApplication().genericClient())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
                 .build();
         return retrofit.create(service);
     }
