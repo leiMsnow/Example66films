@@ -82,7 +82,7 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
         mOffset = customFile.play_offset_ms;
-        if (mEvents != null) {
+        if (mEvents != null && mEvents.type != FilmEvents.TYPE_FILM) {
             if (mOffset >= mEvents.getEndTime() || mOffset < mEvents.getStartTime()) {
                 finish();
             }

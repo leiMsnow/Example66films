@@ -106,7 +106,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     private void switchEvent() {
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
-            if (matchEvent(event.getStartTime())) {
+            if (matchEvent(event.getStartTime(), event.type)) {
                 Class eventActivity = getEventActivity(event.type);
                 if (eventActivity != null) {
                     Intent intent = new Intent(mContext, eventActivity);
@@ -131,8 +131,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         return time != -1 && mOffset - time >= 0;
     }
 
-    private boolean matchEvent(int time) {
-        return time != -1 && Math.abs(mOffset - time) <= 500;
+    private boolean matchEvent(int time, int type) {
+        if (type == FilmEvents.TYPE_FILM) {
+            return time != -1 && time - mOffset <= 5000;
+        }
+        return time != -1 && Math.abs(time - mOffset) <= 500;
     }
 
     private Class<? extends AbsEventActivity> getEventActivity(int type) {

@@ -10,12 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shuyu.core.uils.LogUtils;
-import com.shuyu.core.uils.SDCardUtils;
 import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
-
-import java.io.File;
-import java.net.URLDecoder;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
@@ -89,15 +85,15 @@ public class PlayerEventActivity extends AbsEventActivity {
     }
 
     private String getResources_url(String resources_url) {
-        if (!TextUtils.isEmpty(resources_url)) {
-            int lastSplit = resources_url.lastIndexOf("/");
-            if (lastSplit != -1) {
-                String localUrl = SDCardUtils.getSDCardPath() + "midea/" +
-                        URLDecoder.decode(resources_url.substring(lastSplit + 1));
-                File file = new File(localUrl);
-                return file.exists() ? localUrl : resources_url;
-            }
-        }
+//        if (!TextUtils.isEmpty(resources_url)) {
+//            int lastSplit = resources_url.lastIndexOf("/");
+//            if (lastSplit != -1) {
+//                String localUrl = SDCardUtils.getSDCardPath() + "midea/" +
+//                        URLDecoder.decode(resources_url.substring(lastSplit + 1));
+//                File file = new File(localUrl);
+//                return file.exists() ? localUrl : resources_url;
+//            }
+//        }
         return resources_url;
     }
 }

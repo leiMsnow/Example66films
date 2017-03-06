@@ -48,23 +48,29 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_circle">
 
-        <ImageView
+        <com.shuyu.core.widget.RoundImageView
             android:id="@+id/iv_recognize"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/ic_nav_rec" />
-
-        <com.shuyu.core.widget.WhewView
-            android:id="@+id/wv_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            android:layout_margin="8dp"
+            android:src="@mipmap/ic_eye" />
+
+        <ImageView
+            android:id="@+id/iv_rec_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_margin="8dp"
+            android:src="@mipmap/ic_eye"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

@@ -11,8 +11,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.widget.ChangeColorView;
-import com.shuyu.core.widget.WhewView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +35,8 @@ public class MainActivity extends AbsRecognizeActivity {
     ChangeColorView ccvMe;
     @Bind(R.id.iv_recognize)
     ImageView ivRecognize;
-    @Bind(R.id.wv_view)
-    WhewView whewView;
+    @Bind(R.id.iv_rec_loading)
+    ImageView ivRecLoading;
 
     private List<Fragment> mFragments = null;
     private List<ChangeColorView> mChangeColorViews = null;
@@ -63,6 +63,8 @@ public class MainActivity extends AbsRecognizeActivity {
 //        copyAssert();
         Intent intent = new Intent(mContext, RecognizeService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+        ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
     }
 
 //    private void copyAssert() {
@@ -168,11 +170,11 @@ public class MainActivity extends AbsRecognizeActivity {
     @Override
     protected void onRecognizeState(boolean state) {
         if (state) {
-            whewView.start();
             ivRecognize.setEnabled(false);
+            ivRecLoading.setVisibility(View.VISIBLE);
         } else {
-            whewView.stop();
             ivRecognize.setEnabled(true);
+            ivRecLoading.setVisibility(View.INVISIBLE);
         }
     }
 
