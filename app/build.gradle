@@ -36,6 +36,16 @@ android {
         javaMaxHeapSize "2g"
     }
 
+    signingConfigs {
+
+        release {
+            keyAlias 'films66'
+            keyPassword '66film'
+            storeFile file('../films66.jks')
+            storePassword '66film'
+        }
+    }
+
     sourceSets {
         main {
             java.srcDirs = ['src/main/java', 'src/main/java-gen']
@@ -57,14 +67,16 @@ android {
 
     buildTypes {
         debug {
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             applicationIdSuffix ".debug"
             buildConfigField "boolean", "IS_DEBUG", "true"
             resValue "string", "app_name", "多动娱乐"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
 
         release {
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             buildConfigField "boolean", "IS_DEBUG", "false"
             minifyEnabled true
             zipAlignEnabled true
@@ -76,9 +88,9 @@ android {
                 variant.outputs.each { output ->
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                        def fileName = "${variant.productFlavors[0].name}_V" +
+                        def fileName = "${variant.productFlavors[0].name}_v" +
                                 "${variant.productFlavors[0].versionName}" +
-//                                "_${releaseTime()}" +
+                                "_${releaseTime()}" +
                                 ".apk"
                         output.outputFile = new File(outputFile.parent, fileName)
                     }
