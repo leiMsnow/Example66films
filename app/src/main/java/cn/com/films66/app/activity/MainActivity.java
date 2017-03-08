@@ -180,12 +180,12 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
-        Intent intent = new Intent(mContext, RecognizeResultActivity.class);
+        Intent intent = new Intent(mContext, DialogActivity.class);
+//        Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
         intent.putExtras(bundle);
         startActivity(intent);
-        finish();
     }
 
     @Override

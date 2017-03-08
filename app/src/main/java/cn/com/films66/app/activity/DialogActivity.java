@@ -1,7 +1,6 @@
 package cn.com.films66.app.activity;
 
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,7 +9,6 @@ import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.utils.Constants;
 
-@Deprecated
 public class DialogActivity extends AppBaseActivity {
 
     private TextView tvTitle;
@@ -41,10 +39,7 @@ public class DialogActivity extends AppBaseActivity {
         tvRight = (TextView) findViewById(R.id.tv_right);
 
         tvTitle.setText("识别结果");
-        if (!TextUtils.isEmpty(customFile.title))
-            tvMessage.setText(customFile.title);
-        else
-            tvMessage.setText(customFile.audio_id);
+        tvMessage.setText("要立刻播放当前识别到的剧集吗？");
 
         tvLeft.setOnClickListener(new View.OnClickListener() {
             @Override

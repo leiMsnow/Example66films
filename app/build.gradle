@@ -90,7 +90,7 @@ android {
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
                         def fileName = "${variant.productFlavors[0].name}_v" +
                                 "${variant.productFlavors[0].versionName}" +
-                                "_${releaseTime()}" +
+//                                "_${releaseTime()}" +
                                 ".apk"
                         output.outputFile = new File(outputFile.parent, fileName)
                     }

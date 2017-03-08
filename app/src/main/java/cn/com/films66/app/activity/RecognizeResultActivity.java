@@ -106,11 +106,12 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     private void switchEvent() {
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
-            if (matchEvent(event.getStartTime(), event.type)) {
+            if (matchEvent(event.getStartTime(), event.getEndTime())) {
                 Class eventActivity = getEventActivity(event.type);
                 if (eventActivity != null) {
                     Intent intent = new Intent(mContext, eventActivity);
                     intent.putExtra(Constants.KEY_EVENT_INFO, event);
+                    intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
                     startActivity(intent);
                 }
                 break;
@@ -119,9 +120,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private int getOffsetTime() {
-        if (mOffset == 0) {
-            mOffset = mCustomFile.play_offset_ms;
-        } else if (Math.abs(mCustomFile.play_offset_ms - mOffset) >= 500) {
+        if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 500) {
             mOffset = mCustomFile.play_offset_ms;
         }
         return mOffset;
@@ -131,11 +130,10 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         return time != -1 && mOffset - time >= 0;
     }
 
-    private boolean matchEvent(int time, int type) {
-        if (type == FilmEvents.TYPE_FILM) {
-            return time != -1 && time - mOffset <= 5000;
-        }
-        return time != -1 && Math.abs(time - mOffset) <= 500;
+    private boolean matchEvent(int startTime, int endTime) {
+
+        return startTime != -1 && endTime != -1
+                && (mOffset >= startTime || mOffset <= endTime);
     }
 
     private Class<? extends AbsEventActivity> getEventActivity(int type) {

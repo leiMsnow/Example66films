@@ -64,7 +64,7 @@
             android:layout_weight="1"
             android:background="@drawable/selector_dialog_text"
             android:gravity="center"
-            android:text="关闭"
+            android:text="稍后"
             android:textSize="16sp" />
 
         <View
@@ -80,7 +80,7 @@
             android:layout_weight="1"
             android:background="@drawable/selector_dialog_text"
             android:gravity="center"
-            android:text="查看"
+            android:text="确定"
             android:textSize="16sp" />
     </LinearLayout>
 

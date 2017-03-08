@@ -20,7 +20,7 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
 
     private MyHandler myHandler;
     protected FilmEvents mEvents;
-    protected int mOffset = -1;
+    protected int mOffset = 0;
 
     private static class MyHandler extends Handler {
         private WeakReference<AbsEventActivity> weakReference;
@@ -33,7 +33,11 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
         public void handleMessage(Message msg) {
             AbsEventActivity weakObj = weakReference.get();
             if (weakObj != null) {
-                weakObj.finish();
+                if (weakObj.mEvents.getEndTime() - weakObj.mEvents.getStartTime() <= weakObj.mOffset) {
+                    weakObj.finish();
+                } else {
+                    sendEmptyMessageDelayed(0, 1000);
+                }
             }
         }
     }
@@ -48,23 +52,12 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
         if (intent == null)
             return;
         mEvents = intent.getParcelableExtra(Constants.KEY_EVENT_INFO);
+        mOffset = intent.getIntExtra(Constants.KEY_RECOGNIZE_OFFSET, 0);
         if (mEvents != null) {
-
-            if (mEvents.getEndTime() == 0) {
-                return;
-            }
-
             if (myHandler == null) {
                 myHandler = new MyHandler(this);
+                myHandler.sendEmptyMessage(0);
             }
-
-            myHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (myHandler != null)
-                        myHandler.sendEmptyMessage(0);
-                }
-            }, mEvents.getEndTime() - mEvents.getStartTime());
         }
     }
 
@@ -82,7 +75,7 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
         mOffset = customFile.play_offset_ms;
-        if (mEvents != null && mEvents.type != FilmEvents.TYPE_FILM) {
+        if (mEvents != null && mEvents.getEndTime() > 0) {
             if (mOffset >= mEvents.getEndTime() || mOffset < mEvents.getStartTime()) {
                 finish();
             }
