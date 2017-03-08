@@ -26,14 +26,11 @@ public class RecognizeService extends Service {
 
     private boolean mProcessing = false;
     private boolean initState = false;
-    private long startTime = 0;
     private boolean isLoop = false;
-//    private MyHandler mHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
-//        mHandler = new MyHandler(this);
         initACRCloud();
     }
 
@@ -52,8 +49,6 @@ public class RecognizeService extends Service {
         mConfig.accessKey = "e3c58e23b70a881d960cfa963d0f1965";
         mConfig.accessSecret = "wP2o4851sOditOCixl8s8ru2iTf9pdQ7f10xofxr";
         mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_REMOTE;
-//        mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_LOCAL;
-        //mConfig.reqMode = ACRCloudConfig.ACRCloudRecMode.REC_MODE_BOTH;
         mConfig.acrcloudListener = acrCloudListener;
         mClient = new ACRCloudClient();
         // If reqMode is REC_MODE_LOCAL or REC_MODE_BOTH,
@@ -73,15 +68,17 @@ public class RecognizeService extends Service {
             cancelRecognize();
             loopRecognize();
 
-            long time = (System.currentTimeMillis() - startTime) / 1000;
-//            LogUtils.d(RecognizeService.class.getName(), "识别结束，用时：" + time + "s 结果：" + s);
             RecognizeResult recognizeEntity = new Gson().fromJson(s
                     , new TypeToken<RecognizeResult>() {
                     }.getType());
             if (recognizeEntity != null && recognizeEntity.status.code == 0) {
                 if (recognizeEntity.metadata.custom_files != null) {
-                    sendRecognizeState(recognizeEntity.metadata.custom_files.get(0));
+                    sendRecognizeResult(recognizeEntity.metadata.custom_files.get(0));
+                } else {
+                    sendRecognizeResult(null);
                 }
+            } else {
+                sendRecognizeResult(null);
             }
         }
 
@@ -93,7 +90,6 @@ public class RecognizeService extends Service {
 
     private void loopRecognize() {
         if (isLoop) {
-//            mHandler.sendEmptyMessageDelayed(0, 1000);
             startRecognize();
         }
     }
@@ -122,31 +118,11 @@ public class RecognizeService extends Service {
             mProcessing = true;
             if (mClient == null || !mClient.startRecognize()) {
                 mProcessing = false;
-                LogUtils.d(RecognizeService.class.getName(), "start error!");
+                LogUtils.d(RecognizeService.class.getName(), "启动识别失败");
             }
-            startTime = System.currentTimeMillis();
             sendRecognizeState();
         }
     }
-
-//    private static class MyHandler extends Handler {
-//
-//        private WeakReference<RecognizeService> weakReference;
-//
-//        public MyHandler(RecognizeService weakObj) {
-//            weakReference = new WeakReference<>(weakObj);
-//        }
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            RecognizeService weakObj = weakReference.get();
-//            if (weakObj != null) {
-//                if (msg.what == 0)
-//                    weakObj.startRecognize();
-//            }
-//        }
-//    }
-
 
     public void cancelRecognize() {
         if (mProcessing && mClient != null) {
@@ -165,7 +141,7 @@ public class RecognizeService extends Service {
     }
 
     // 发送识别结果
-    private void sendRecognizeState(CustomFile customFile) {
+    private void sendRecognizeResult(CustomFile customFile) {
         Intent intent = new Intent();
         intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
         intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);
@@ -191,8 +167,6 @@ public class RecognizeService extends Service {
             mClient.release();
             initState = false;
             mClient = null;
-//            mHandler.removeMessages(0);
-//            mHandler = null;
         }
     }
 }

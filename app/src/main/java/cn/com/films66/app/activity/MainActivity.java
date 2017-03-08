@@ -151,7 +151,6 @@ public class MainActivity extends AbsRecognizeActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
-//            mRecognizeService.startRecognize();
         }
 
         @Override
@@ -180,8 +179,9 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
+        if (customFile == null)
+            return;
         Intent intent = new Intent(mContext, DialogActivity.class);
-//        Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
         intent.putExtras(bundle);

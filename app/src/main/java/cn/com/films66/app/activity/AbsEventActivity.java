@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
+
+import com.shuyu.core.uils.LogUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -32,12 +35,8 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
         @Override
         public void handleMessage(Message msg) {
             AbsEventActivity weakObj = weakReference.get();
-            if (weakObj != null) {
-                if (weakObj.mEvents.getEndTime() - weakObj.mEvents.getStartTime() <= weakObj.mOffset) {
-                    weakObj.finish();
-                } else {
-                    sendEmptyMessageDelayed(0, 1000);
-                }
+            if (weakObj != null && !weakObj.canFinish()) {
+                sendEmptyMessageDelayed(0, 1000);
             }
         }
     }
@@ -56,7 +55,7 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
         if (mEvents != null) {
             if (myHandler == null) {
                 myHandler = new MyHandler(this);
-                myHandler.sendEmptyMessage(0);
+                myHandler.sendEmptyMessageDelayed(0, 200);
             }
         }
     }
@@ -74,12 +73,39 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
+        if (customFile == null)
+            return;
         mOffset = customFile.play_offset_ms;
+        canFinish();
+    }
+
+    private boolean canFinish() {
         if (mEvents != null && mEvents.getEndTime() > 0) {
             if (mOffset >= mEvents.getEndTime() || mOffset < mEvents.getStartTime()) {
+                LogUtils.d(AbsEventActivity.class.getName(), "需要关闭当前event：" + mEvents);
                 finish();
+                return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.KEY_EVENT_CANCEL, true);
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override

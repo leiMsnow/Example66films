@@ -36,6 +36,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     private MyHandler mHandler;
     private int mOffset = 0;
 
+    private FilmEvents mCurrentEvent;
+    private boolean isOpen = false;
+
+    private int mRryRecognize = 0;
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_recognize_result;
@@ -44,15 +49,27 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     @Override
     protected void initData() {
         setTitle("");
+        mHandler = new MyHandler(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mCustomFile = getIntent().getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
         getFilmDetail();
 
-        mHandler = new MyHandler(this);
         Intent intent = new Intent(mContext, RecognizeService.class);
         intent.putExtra(Constants.KEY_RECOGNIZE_LOOP, true);
         startService(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isOpen = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isOpen = false;
     }
 
     @Override
@@ -65,8 +82,10 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private void getFilmDetail() {
-        if (mCustomFile == null)
+        if (mCustomFile == null) {
+            mHandler.removeMessages(CHANGE_EVENT);
             return;
+        }
         BaseApi.request(BaseApi.createApi(IServiceApi.class)
                         .getFilmDetail(Integer.parseInt(mCustomFile.audio_id))
                 , new BaseApi.IResponseListener<Film>() {
@@ -95,7 +114,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     private void switchCard() {
         for (int i = mFilmDetail.location_cards.size() - 1; i >= 0; i--) {
             LocationCards locationCards = mFilmDetail.location_cards.get(i);
-            if (matchCart(locationCards.getStartTime())) {
+            if (matchCart(locationCards)) {
                 ImageShowUtils.showImage(mContext
                         , locationCards.card_url, ivLocationCard);
                 break;
@@ -104,17 +123,37 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private void switchEvent() {
+        if (isOpen) return;
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
-            if (matchEvent(event.getStartTime(), event.getEndTime())) {
-                Class eventActivity = getEventActivity(event.type);
+            if (mCurrentEvent != null && mCurrentEvent.id == event.id && mCurrentEvent.isUserCancel) {
+                break;
+            }
+            if (matchEvent(event)) {
+                if (mCurrentEvent != null) {
+                    mCurrentEvent.isUserCancel = false;
+                }
+                mCurrentEvent = event;
+                Class eventActivity = getEventActivity(mCurrentEvent.type);
                 if (eventActivity != null) {
                     Intent intent = new Intent(mContext, eventActivity);
                     intent.putExtra(Constants.KEY_EVENT_INFO, event);
                     intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
-                    startActivity(intent);
+                    startActivityForResult(intent, 0);
                 }
                 break;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 && resultCode == RESULT_OK) {
+            if (data != null && data.getExtras() != null) {
+                if (mCurrentEvent != null) {
+                    mCurrentEvent.isUserCancel = data.getBooleanExtra(Constants.KEY_EVENT_CANCEL, false);
+                }
             }
         }
     }
@@ -126,14 +165,19 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         return mOffset;
     }
 
-    private boolean matchCart(int time) {
-        return time != -1 && mOffset - time >= 0;
+    private boolean matchCart(LocationCards cards) {
+        return (cards.getStartTime() != -1) && mOffset - cards.getStartTime() >= 0;
     }
 
-    private boolean matchEvent(int startTime, int endTime) {
-
-        return startTime != -1 && endTime != -1
-                && (mOffset >= startTime || mOffset <= endTime);
+    private boolean matchEvent(FilmEvents events) {
+        if (events.getStartTime() != -1 && events.getEndTime() != -1) {
+            if (mCurrentEvent != null && mCurrentEvent.id == events.id && mCurrentEvent.isUserCancel) {
+                return false;
+            } else {
+                return mOffset >= events.getStartTime() && mOffset <= events.getEndTime();
+            }
+        }
+        return false;
     }
 
     private Class<? extends AbsEventActivity> getEventActivity(int type) {
@@ -155,7 +199,17 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
-        if (mCustomFile == null || !mCustomFile.audio_id.equals(customFile.audio_id)) {
+        if (customFile == null) {
+            mRryRecognize++;
+            LogUtils.d(RecognizeResultActivity.class.getName(), "未识别到次数：" + mRryRecognize);
+            if (mRryRecognize >= 5) {
+                mRryRecognize = 0;
+                mHandler.removeMessages(CHANGE_EVENT);
+            }
+            return;
+        }
+        mRryRecognize = 0;
+        if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
             mCustomFile = customFile;
             getFilmDetail();
         } else {
@@ -184,6 +238,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 }
             }
         }
+
     }
 
     @Override

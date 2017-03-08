@@ -21,6 +21,7 @@ public class FilmEvents implements Parcelable {
     public String start_time;
     public String end_time;
     public String resources_url;
+    public boolean isUserCancel = false;
 
     protected FilmEvents(Parcel in) {
         id = in.readInt();
@@ -66,4 +67,15 @@ public class FilmEvents implements Parcelable {
         dest.writeString(resources_url);
     }
 
+    @Override
+    public String toString() {
+        return "FilmEvents{" +
+                "id=" + id +
+                ", type=" + type +
+                ", start_time='" + start_time + '\'' +
+                ", end_time='" + end_time + '\'' +
+                ", resources_url='" + resources_url + '\'' +
+                ", isUserCancel=" + isUserCancel +
+                '}';
+    }
 }

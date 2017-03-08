@@ -22,7 +22,7 @@ public class SplashActivity extends AppBaseActivity {
 
     private MyHandler mMyHandler;
     private Timer mTimer;
-    private int mSecond = 3;
+    private int mSecond = 2;
 
     @Override
     protected int getLayoutRes() {

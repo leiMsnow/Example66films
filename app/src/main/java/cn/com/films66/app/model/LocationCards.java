@@ -9,7 +9,6 @@ import cn.com.films66.app.utils.TimeUtils;
 public class LocationCards {
 
     public int id;
-    public int film_id;
     public String start_time;
     public String card_url;
 
