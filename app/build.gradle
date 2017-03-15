@@ -101,7 +101,6 @@ android {
     productFlavors {
         online {
             versionName "1.0.0"
-            applicationIdSuffix ".online"
             resValue "string", "app_name", "多动娱乐"
         }
     }

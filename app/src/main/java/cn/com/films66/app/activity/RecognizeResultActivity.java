@@ -1,6 +1,8 @@
 package cn.com.films66.app.activity;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.view.MenuItem;
@@ -41,6 +43,8 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private int mRryRecognize = 0;
 
+    private SoundPool mSoundPool;
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_recognize_result;
@@ -48,6 +52,10 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void initData() {
+
+        mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
+        mSoundPool.load(this, R.raw.tips, 1);
+
         setTitle("");
         mHandler = new MyHandler(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
@@ -130,6 +138,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 break;
             }
             if (matchEvent(event)) {
+                mSoundPool.play(1, 1, 1, 0, 0, 1);
                 if (mCurrentEvent != null) {
                     mCurrentEvent.isUserCancel = false;
                 }

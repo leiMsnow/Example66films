@@ -44,6 +44,8 @@ public class MainActivity extends AbsRecognizeActivity {
 
     protected RecognizeService mRecognizeService;
 
+    private boolean mRecognizeState = false;
+
 //    private String[] acrFiles = {
 //            "acrcloud/afp.df",
 //            "acrcloud/afp.iv",
@@ -79,7 +81,11 @@ public class MainActivity extends AbsRecognizeActivity {
     @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
-            mRecognizeService.startRecognize();
+            if (!mRecognizeState) {
+                mRecognizeService.startRecognize();
+            } else {
+                mRecognizeService.cancelRecognize();
+            }
         }
     }
 
@@ -168,11 +174,10 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeState(boolean state) {
-        if (state) {
-            ivRecognize.setEnabled(false);
+        mRecognizeState = state;
+        if (mRecognizeState) {
             ivRecLoading.setVisibility(View.VISIBLE);
         } else {
-            ivRecognize.setEnabled(true);
             ivRecLoading.setVisibility(View.INVISIBLE);
         }
     }

@@ -28,10 +28,12 @@ public class RecognizeService extends Service {
     private boolean initState = false;
     private boolean isLoop = false;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
         initACRCloud();
+
     }
 
     private void initACRCloud() {
