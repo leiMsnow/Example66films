@@ -15,11 +15,7 @@
             android:launchMode="singleTask" />
 
         <activity android:name=".activity.SplashActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".activity.FilmDetailActivity" />
         <activity
@@ -43,7 +39,11 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
             android:taskAffinity=".event">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.WebEventActivity"

@@ -7,13 +7,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.universalvideoview.UniversalMediaController;
-import com.universalvideoview.UniversalVideoView;
-
 import java.lang.reflect.Field;
 
 import cn.com.films66.app.R;
-import cn.com.films66.app.utils.MyWindowManager;
 
 /**
  * Created by zhangleilei on 2017/2/27.
@@ -65,8 +61,8 @@ public class FloatVideoView extends LinearLayout {
      */
     private float yInView;
 
-    private UniversalVideoView videoView;
-    private UniversalMediaController mediaController;
+//    private UniversalVideoView videoView;
+//    private UniversalMediaController mediaController;
 
     public FloatVideoView(Context context) {
         super(context);
@@ -75,9 +71,9 @@ public class FloatVideoView extends LinearLayout {
         View view = findViewById(R.id.small_window_layout);
         viewWidth = view.getLayoutParams().width;
         viewHeight = view.getLayoutParams().height;
-        videoView = (UniversalVideoView) view.findViewById(R.id.video_view);
-        mediaController = (UniversalMediaController) view.findViewById(R.id.media_controller);
-        videoView.setMediaController(mediaController);
+//        videoView = (UniversalVideoView) view.findViewById(R.id.video_view);
+//        mediaController = (UniversalMediaController) view.findViewById(R.id.media_controller);
+//        videoView.setMediaController(mediaController);
     }
 
 
@@ -140,14 +136,14 @@ public class FloatVideoView extends LinearLayout {
     }
 
     public void setUrl(String url) {
-        videoView.setVideoPath(url);
-        videoView.start();
+//        videoView.setVideoPath(url);
+//        videoView.start();
 
-        mediaController.setBackListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyWindowManager.removeSmallWindow(getContext());
-            }
-        });
+//        mediaController.setBackListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MyWindowManager.removeSmallWindow(getContext());
+//            }
+//        });
     }
 }
