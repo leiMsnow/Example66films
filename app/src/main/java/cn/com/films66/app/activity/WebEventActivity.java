@@ -26,7 +26,7 @@ public class WebEventActivity extends AbsEventActivity {
 
     @Override
     protected void initData() {
-        setTitle("网页");
+        setTitle("");
     }
 
     @Override

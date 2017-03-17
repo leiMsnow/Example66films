@@ -65,14 +65,16 @@ public class PlayerEventActivity extends AbsEventActivity {
 //        String url = "http://film-server.b0.upaiyun.com/人物及档案卡/演示用mp4/03A.1.雾桥直播-Untitled%20MPEG-4.mp4";
             String url = getResources_url(mEvents.resources_url);
             LogUtils.d(PlayerEventActivity.class.getName(), url);
-            videoView.setVideoPath(url);
             int seek = mOffset - mEvents.getStartTime();
             LogUtils.d(PlayerEventActivity.class.getName(), "当前识别时间： " + mOffset);
             LogUtils.d(PlayerEventActivity.class.getName(), "播放开始时间： " + mEvents.getStartTime());
+            seek = seek / 1000;
             if (seek > 0) {
+                url += "start=" + seek;
                 LogUtils.d(PlayerEventActivity.class.getName(), "调整时间： " + seek);
                 videoView.seekTo(seek);
             }
+            videoView.setVideoPath(url);
             videoView.start();
             mediaController.setBackListener(new View.OnClickListener() {
                 @Override
