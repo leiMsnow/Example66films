@@ -3,6 +3,7 @@ package com.shuyu.core.proxy;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.uils.MD5Utils;
 import com.shuyu.core.uils.SDCardUtils;
 
@@ -40,7 +41,7 @@ public class HttpGetProxy {
     /**
      * 预加载缓存文件的最大数量
      */
-    private int mBufferFileMaximum;
+    private static final int mBufferFileMaximum = 30;
     /**
      * 链接带的端口
      */
@@ -77,14 +78,7 @@ public class HttpGetProxy {
      * 缓存文件夹
      */
     private String mBufferDirPath = null;
-    /**
-     * 视频id，预加载文件以ID命名
-     */
-    private String mId, mUrl;
-    /**
-     * 有效的媒体文件链接(重定向之后)
-     */
-    private String mMediaUrl;
+
     /**
      * 预加载文件路径
      */
@@ -97,12 +91,17 @@ public class HttpGetProxy {
     private Proxy proxy = null;
 
     /**
+     * 视频id，预加载文件以ID命名
+     */
+    private String mId;
+    private String mResourceURL;
+
+    /**
      * 初始化代理服务器，并启动代理服务器
      *
-     * @param size    所需预加载的大小
-     * @param maximum 预加载文件最大数
+     * @param size 所需预加载的大小
      */
-    public HttpGetProxy(int size, int maximum) {
+    public HttpGetProxy(int size) {
         try {
             String path = SDCardUtils.getDownloadFilePath() + "/videoCache";
             File file = new File(path);
@@ -112,10 +111,10 @@ public class HttpGetProxy {
             //初始化代理服务器
             mBufferDirPath = path;
             mBufferSize = size;
-            mBufferFileMaximum = maximum;
             localHost = Config.LOCAL_IP_ADDRESS;
             localServer = new ServerSocket(0, 1, InetAddress.getByName(localHost));
-            localPort = localServer.getLocalPort();//有ServerSocket自动分配端口
+            //ServerSocket自动分配端口
+            localPort = localServer.getLocalPort();
             //启动代理服务器
             new Thread() {
                 public void run() {
@@ -143,10 +142,10 @@ public class HttpGetProxy {
         File dir = new File(mBufferDirPath);
         mEnable = dir.exists();
         if (!mEnable)
-            return mEnable;
+            return false;
 
         //获取可用空间大小
-        long freeSize = Utils.getAvailaleSize(mBufferDirPath);
+        long freeSize = Utils.getAvailableSize(mBufferDirPath);
         mEnable = (freeSize > mBufferSize);
 
         return mEnable;
@@ -163,22 +162,21 @@ public class HttpGetProxy {
     /**
      * 开始预加载,一个时间只能预加载一个视频
      *
-     * @param url        视频链接
-     * @param isDownload 是否下载
+     * @param url 视频链接
      * @throws Exception
      */
-    public void startDownload(String url, boolean isDownload) throws Exception {
+    public void startDownload(String url) throws Exception {
         //代理服务器不可用
         if (!getEnable())
             return;
 
         //清除过去的缓存文件
-        Utils.asynRemoveBufferFile(mBufferDirPath, mBufferFileMaximum);
+        Utils.asyncRemoveBufferFile(mBufferDirPath, mBufferFileMaximum);
 
         mId = MD5Utils.md5(url);
-        mUrl = url;
-        String fileName = Utils.getValidFileName(mId);
-        mMediaFilePath = mBufferDirPath + "/" + fileName;
+        mResourceURL = url;
+//        String fileName = Utils.getValidFileName(mId);
+        mMediaFilePath = mBufferDirPath + "/" + mId;
 
         //判断文件是否存在，忽略已经缓冲过的文件
         File tmpFile = new File(mMediaFilePath);
@@ -187,27 +185,25 @@ public class HttpGetProxy {
             return;
         }
         stopDownload();
-        if (isDownload) {
-            downloadThread = new DownloadThread(mUrl, mMediaFilePath, mBufferSize);
-            downloadThread.startThread();
-            Log.i(TAG, "----startDownload:" + mMediaFilePath);
-        }
+        downloadThread = new DownloadThread(mResourceURL, mMediaFilePath, mBufferSize);
+        downloadThread.startThread();
+        LogUtils.i(TAG, "----startDownload:" + mResourceURL);
     }
 
     /**
      * 获取播放链接
      */
-    public String getLocalURL(String id) {
-        if (TextUtils.isEmpty(mId)        //没预加载过
-                || !mId.equals(id))//与预加载的Id不符合
+    public String getProxyURL() {
+
+        if (TextUtils.isEmpty(mId))     //没预加载过
             return "";
 
         //代理服务器不可用
         if (!getEnable())
-            return mUrl;
+            return mResourceURL;
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
-        DownTask task = new DownTask(mUrl);
+        DownTask task = new DownTask(mResourceURL);
         FutureTask<String> futureTask = new FutureTask<>(task);
         executorService.submit(futureTask);
         executorService.shutdown();
@@ -224,7 +220,7 @@ public class HttpGetProxy {
         return url;
     }
 
-    class DownTask implements Callable<String> {
+    private class DownTask implements Callable<String> {
 
         private String mUrl;
 
@@ -236,16 +232,20 @@ public class HttpGetProxy {
         public String call() throws Exception {
             //排除HTTP特殊,如重定向
             String mMediaUrl = Utils.getRedirectUrl(mUrl);
-            //Log.e("Http mMediaUrl",mMediaUrl);
             // ----获取对应本地代理服务器的链接----//
-            String localUrl = "";
+            String localUrl;
             URI originalURI = URI.create(mMediaUrl);
             remoteHost = originalURI.getHost();
-            if (originalURI.getPort() != -1) {// URL带Port
-                serverAddress = new InetSocketAddress(remoteHost, originalURI.getPort());// 使用默认端口
-                remotePort = originalURI.getPort();// 保存端口，中转时替换
-                localUrl = mMediaUrl.replace(remoteHost + ":" + originalURI.getPort(), localHost + ":" + localPort);
-            } else {// URL不带Port
+            // 保存端口，中转时替换
+            remotePort = originalURI.getPort();
+            // URL带Port
+            if (remotePort != -1) {
+                // 使用默认端口
+                serverAddress = new InetSocketAddress(remoteHost, remotePort);
+                localUrl = mMediaUrl.replace(remoteHost + ":" + remotePort, localHost + ":" + localPort);
+            }
+            // URL不带Port
+            else {
                 serverAddress = new InetSocketAddress(remoteHost, Config.HTTP_PORT);// 使用80端口
                 remotePort = -1;
                 localUrl = mMediaUrl.replace(remoteHost, localHost + ":" + localPort);
@@ -255,40 +255,35 @@ public class HttpGetProxy {
         }
     }
 
+
     private void startProxy() {
         while (true) {
             // --------------------------------------
             // 监听MediaPlayer的请求，MediaPlayer->代理服务器
             // --------------------------------------
-            Log.i(TAG, "......ready to start...........");
             try {
                 Socket s = localServer.accept();
                 if (proxy != null) {
                     proxy.closeSockets();
                 }
-                Log.i(TAG, "......started...........");
                 proxy = new Proxy(s);
-
                 new Thread() {
                     public void run() {
-                        Log.i(TAG, "......ready to start...........");
                         try {
                             Socket s = localServer.accept();
                             proxy.closeSockets();
-                            Log.i(TAG, "......started...........");
                             proxy = new Proxy(s);
                             proxy.run();
                         } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                            Log.e(TAG, Utils.getExceptionMessage(e));
+                            LogUtils.e(TAG, e.toString());
+                            LogUtils.e(TAG, Utils.getExceptionMessage(e));
                         }
-
                     }
                 }.start();
                 proxy.run();
             } catch (IOException e) {
-                Log.e(TAG, e.toString());
-                Log.e(TAG, Utils.getExceptionMessage(e));
+                LogUtils.e(TAG, e.toString());
+                LogUtils.e(TAG, Utils.getExceptionMessage(e));
             }
         }
     }
@@ -303,15 +298,16 @@ public class HttpGetProxy {
          */
         private Socket sckServer = null;
 
-        public Proxy(Socket sckPlayer) {
+        Proxy(Socket sckPlayer) {
             this.sckPlayer = sckPlayer;
         }
 
         /**
          * 关闭现有的链接
          */
-        public void closeSockets() {
-            try {// 开始新的request之前关闭过去的Socket
+        void closeSockets() {
+            try {
+                // 开始新的request之前关闭过去的Socket
                 if (sckPlayer != null) {
                     sckPlayer.close();
                     sckPlayer = null;
@@ -326,8 +322,8 @@ public class HttpGetProxy {
         }
 
         public void run() {
-            HttpParser httpParser = null;
-            HttpGetProxyUtils utils = null;
+            HttpParser httpParser;
+            HttpGetProxyUtils utils;
             int bytes_read;
 
             byte[] local_request = new byte[1024];
@@ -336,7 +332,6 @@ public class HttpGetProxy {
             boolean sentResponseHeader = false;
 
             try {
-                Log.i(TAG, "<----------------------------------->");
                 stopDownload();
 
                 httpParser = new HttpParser(remoteHost, remotePort, localHost,
@@ -356,7 +351,7 @@ public class HttpGetProxy {
                 utils = new HttpGetProxyUtils(sckPlayer, serverAddress);
                 boolean isExists = new File(mMediaFilePath).exists();
                 if (request != null) {// MediaPlayer的request有效
-                    sckServer = utils.sentToServer(request._body);// 发送MediaPlayer的request
+                    sckServer = utils.sentToServer(request.body);// 发送MediaPlayer的request
                 } else {// MediaPlayer的request无效
                     closeSockets();
                     return;
@@ -365,14 +360,13 @@ public class HttpGetProxy {
                 // 把网络服务器的反馈发到MediaPlayer，网络服务器->代理服务器->MediaPlayer
                 // ------------------------------------------------------
                 while (sckServer != null
-                        && ((bytes_read = sckServer.getInputStream().read(
-                        remote_reply)) != -1)) {
+                        && ((bytes_read = sckServer.getInputStream().read(remote_reply)) != -1)) {
                     if (sentResponseHeader) {
                         try {// 拖动进度条时，容易在此异常，断开重连
                             utils.sendToMP(remote_reply, bytes_read);
                         } catch (Exception e) {
-                            Log.e(TAG, e.toString());
-                            Log.e(TAG, Utils.getExceptionMessage(e));
+                            LogUtils.e(TAG, e.toString());
+                            LogUtils.e(TAG, Utils.getExceptionMessage(e));
                             break;// 发送异常直接退出while
                         }
 
@@ -380,13 +374,12 @@ public class HttpGetProxy {
                             continue;// 没Response Header则退出本次循环
 
                         // 已完成读取
-                        if (proxyResponse._currentPosition > proxyResponse._duration - SIZE) {
-                            Log.i(TAG, "....ready....over....");
-                            proxyResponse._currentPosition = -1;
-                        } else if (proxyResponse._currentPosition != -1) {// 没完成读取
-                            proxyResponse._currentPosition += bytes_read;
+                        if (proxyResponse.currentPosition > proxyResponse.duration - SIZE) {
+                            LogUtils.i(TAG, "....ready....over....");
+                            proxyResponse.currentPosition = -1;
+                        } else if (proxyResponse.currentPosition != -1) {// 没完成读取
+                            proxyResponse.currentPosition += bytes_read;
                         }
-
                         continue;// 退出本次while
                     }
                     proxyResponse = httpParser.getProxyResponse(remote_reply,
@@ -396,20 +389,20 @@ public class HttpGetProxy {
 
                     sentResponseHeader = true;
                     // send http header to mediaplayer
-                    utils.sendToMP(proxyResponse._body);
+                    utils.sendToMP(proxyResponse.body);
 
                     if (isExists) {// 需要发送预加载到MediaPlayer
-                        Log.i(TAG, "----------------->需要发送预加载到MediaPlayer");
+                        LogUtils.i(TAG, "----------------->需要发送预加载到MediaPlayer");
                         isExists = false;
                         int sentBufferSize = 0;
-                        sentBufferSize = utils.sendPrebufferToMP(
-                                mMediaFilePath, request._rangePosition);
+                        sentBufferSize = utils.sendPreBufferToMP(
+                                mMediaFilePath, request.rangePosition);
                         if (sentBufferSize > 0) {// 成功发送预加载，重新发送请求到服务器
                             // 修改Range后的Request发送给服务器
-                            int newRange = (int) (sentBufferSize + request._rangePosition);
+                            int newRange = (int) (sentBufferSize + request.rangePosition);
                             String newRequestStr = httpParser
-                                    .modifyRequestRange(request._body, newRange);
-                            Log.i(TAG, newRequestStr);
+                                    .modifyRequestRange(request.body, newRange);
+                            LogUtils.i(TAG, newRequestStr);
                             try {
                                 if (sckServer != null)
                                     sckServer.close();
@@ -422,20 +415,16 @@ public class HttpGetProxy {
                             continue;
                         }
                     }
-
                     // 发送剩余数据
-                    if (proxyResponse._other != null) {
-                        utils.sendToMP(proxyResponse._other);
+                    if (proxyResponse.other != null) {
+                        utils.sendToMP(proxyResponse.other);
                     }
                 }
-
                 // 关闭 2个SOCKET
                 closeSockets();
             } catch (Exception e) {
-                Log.e(TAG, e.toString());
-                Log.e(TAG, Utils.getExceptionMessage(e));
+                e.printStackTrace();
             }
         }
     }
-
 }

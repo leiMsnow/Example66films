@@ -2,20 +2,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black"
     android:gravity="center"
     android:orientation="vertical">
 
-    <VideoView
+    <com.universalvideoview.UniversalVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_top"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center" />
+
+    <com.universalvideoview.UniversalMediaController
+        android:id="@+id/media_controller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:uvv_scalable="true" />
+
 
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true">
+        android:layout_height="48dp">
 
         <TextView
             android:id="@+id/tv_complete"
@@ -39,3 +49,4 @@
 
 
 </RelativeLayout>
+

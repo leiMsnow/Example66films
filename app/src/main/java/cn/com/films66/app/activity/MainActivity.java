@@ -43,14 +43,8 @@ public class MainActivity extends AbsRecognizeActivity {
     private int[] mTitles = {R.string.nav_main, R.string.nav_me};
 
     protected RecognizeService mRecognizeService;
-
     private boolean mRecognizeState = false;
-
-//    private String[] acrFiles = {
-//            "acrcloud/afp.df",
-//            "acrcloud/afp.iv",
-//            "acrcloud/afp.op"
-//    };
+    private boolean isAutoRecognize = true;
 
     @Override
     protected int getLayoutRes() {
@@ -62,25 +56,15 @@ public class MainActivity extends AbsRecognizeActivity {
         toolbarHide();
         initBottomMenu();
         initDefaultFragment();
-//        copyAssert();
         Intent intent = new Intent(mContext, RecognizeService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
         ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
     }
-
-//    private void copyAssert() {
-//        AssetsCopyToSDCard assetsCopyTOSDcard = new AssetsCopyToSDCard(getApplicationContext());
-//        for (String path : acrFiles) {
-//            assetsCopyTOSDcard.assetToSD(path,
-//                    Environment.getExternalStorageDirectory().toString()
-//                            + "/" + path);
-//        }
-//    }
 
     @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
+            isAutoRecognize = false;
             if (!mRecognizeState) {
                 mRecognizeService.startRecognize();
             } else {
@@ -120,7 +104,7 @@ public class MainActivity extends AbsRecognizeActivity {
         mChangeColorViews.get(0).setIconAlpha(1.0f);
     }
 
-    class OnButtonMenuClickListener implements View.OnClickListener {
+    private class OnButtonMenuClickListener implements View.OnClickListener {
         int position;
 
         OnButtonMenuClickListener(int position) {
@@ -157,6 +141,7 @@ public class MainActivity extends AbsRecognizeActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
+            mRecognizeService.startRecognize();
         }
 
         @Override
@@ -186,7 +171,8 @@ public class MainActivity extends AbsRecognizeActivity {
     protected void onRecognizeResult(CustomFile customFile) {
         if (customFile == null)
             return;
-        Intent intent = new Intent(mContext, DialogActivity.class);
+        Intent intent = new Intent(mContext, isAutoRecognize ?
+                DialogActivity.class : RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
         intent.putExtras(bundle);
@@ -199,6 +185,7 @@ public class MainActivity extends AbsRecognizeActivity {
         if (mRecognizeService != null)
             unbindService(serviceConnection);
 
+        // 关闭浮窗
         Intent intent = new Intent(mContext, FloatWindowService.class);
         intent.putExtra(Constants.KEY_FLOAT_WINDOW, true);
         startService(intent);

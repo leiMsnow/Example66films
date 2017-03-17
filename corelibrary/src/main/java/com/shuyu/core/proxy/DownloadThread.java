@@ -1,7 +1,7 @@
 package com.shuyu.core.proxy;
 
 
-import android.util.Log;
+import com.shuyu.core.uils.LogUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,7 +13,7 @@ import java.net.URL;
 /**
  * 下载模块，支持断点下载
  *
- * @author hellogv
+ * @author helLogUtilsv
  */
 public class DownloadThread extends Thread {
     static private final String TAG = "DownloadThread";
@@ -29,7 +29,6 @@ public class DownloadThread extends Thread {
     public DownloadThread(String url, String savePath, int targetSize) {
         mUrl = url;
         mPath = savePath;
-
         //如果文件存在，则继续
         File file = new File(mPath);
         if (file.exists()) {
@@ -93,14 +92,14 @@ public class DownloadThread extends Thread {
     /**
      * 是否下载成功
      */
-    public boolean isDownloadSuccessed() {
+    public boolean isDownloadSuccess() {
         return (mDownloadSize != 0 && mDownloadSize >= mTargetSize);
     }
 
     private void download() {
         //下载成功则关闭
-        if (isDownloadSuccessed()) {
-            Log.i(TAG, "...DownloadSuccessed...");
+        if (isDownloadSuccess()) {
+            LogUtils.i(TAG, "...DownloadSuccess...");
             return;
         }
         InputStream is = null;
@@ -116,12 +115,12 @@ public class DownloadThread extends Thread {
             is = urlConnection.getInputStream();
             if (mDownloadSize == 0) {//全新文件
                 os = new FileOutputStream(mPath);
-                Log.i(TAG, "download file:" + mPath);
+                LogUtils.i(TAG, "download file:" + mPath);
             } else {//追加数据
                 os = new FileOutputStream(mPath, true);
-                Log.i(TAG, "append exists file:" + mPath);
+                LogUtils.i(TAG, "append exists file:" + mPath);
             }
-            int len = 0;
+            int len;
             byte[] bs = new byte[1024];
             if (mStop) {
                 return;
@@ -134,8 +133,8 @@ public class DownloadThread extends Thread {
             }
         } catch (Exception e) {
             mError = true;
-            Log.i(TAG, "download error:" + e.toString() + "");
-            Log.i(TAG, Utils.getExceptionMessage(e));
+            LogUtils.i(TAG, "download error:" + e.toString() + "");
+            LogUtils.i(TAG, Utils.getExceptionMessage(e));
         } finally {
             if (os != null) {
                 try {
@@ -157,7 +156,7 @@ public class DownloadThread extends Thread {
             if (nullFile.exists() && nullFile.length() == 0)
                 nullFile.delete();
 
-            Log.i(TAG, "mDownloadSize:" + mDownloadSize + ",mTargetSize:" + mTargetSize);
+            LogUtils.i(TAG, "mDownloadSize:" + mDownloadSize + ",mTargetSize:" + mTargetSize);
         }
     }
 }

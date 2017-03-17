@@ -21,7 +21,7 @@ public class HttpParser {
     private int headerBufferLength = 0;
 
     /**
-     * 链接带的端口
+     * 远程服务器端口
      */
     private int remotePort = -1;
     /**
@@ -76,25 +76,25 @@ public class HttpParser {
     public Config.ProxyRequest getProxyRequest(byte[] bodyBytes) {
         Config.ProxyRequest result = new Config.ProxyRequest();
         //获取Body
-        result._body = new String(bodyBytes);
+        result.body = new String(bodyBytes);
 
         // 把request中的本地ip改为远程ip
-        result._body = result._body.replace(localHost, remoteHost);
+        result.body = result.body.replace(localHost, remoteHost);
         // 把代理服务器端口改为原URL端口
         if (remotePort == -1)
-            result._body = result._body.replace(":" + localPort, "");
+            result.body = result.body.replace(":" + localPort, "");
         else
-            result._body = result._body.replace(":" + localPort, ":" + remotePort);
+            result.body = result.body.replace(":" + localPort, ":" + remotePort);
         //不带Ranage则添加补上，方便后面处理
-        if (result._body.contains(RANGE_PARAMS) == false)
-            result._body = result._body.replace(Config.HTTP_BODY_END,
+        if (result.body.contains(RANGE_PARAMS) == false)
+            result.body = result.body.replace(Config.HTTP_BODY_END,
                     "\r\n" + RANGE_PARAMS_0 + Config.HTTP_BODY_END);
-        Log.i(TAG, result._body);
+        Log.i(TAG, result.body);
 
         //获取Ranage的位置
-        String rangePosition = Utils.getSubString(result._body, RANGE_PARAMS, "-");
+        String rangePosition = Utils.getSubString(result.body, RANGE_PARAMS, "-");
         Log.i(TAG, "------->rangePosition:" + rangePosition);
-        result._rangePosition = Integer.valueOf(rangePosition);
+        result.rangePosition = Integer.valueOf(rangePosition);
 
         return result;
     }
@@ -117,24 +117,24 @@ public class HttpParser {
         Config.ProxyResponse result = new Config.ProxyResponse();
 
         //获取Response正文
-        result._body = httpResponse.get(0);
-        String text = new String(result._body);
+        result.body = httpResponse.get(0);
+        String text = new String(result.body);
 
         Log.i(TAG + "<---", text);
         //获取二进制数据
         if (httpResponse.size() == 2)
-            result._other = httpResponse.get(1);
+            result.other = httpResponse.get(1);
 
         //样例：Content-Range: bytes 2267097-257405191/257405192
         try {
             // 获取起始位置
             String currentPosition = Utils.getSubString(text, CONTENT_RANGE_PARAMS, "-");
-            result._currentPosition = Integer.valueOf(currentPosition);
+            result.currentPosition = Integer.valueOf(currentPosition);
 
             // 获取最终位置
             String startStr = CONTENT_RANGE_PARAMS + currentPosition + "-";
             String duration = Utils.getSubString(text, startStr, "/");
-            result._duration = Integer.valueOf(duration);
+            result.duration = Integer.valueOf(duration);
         } catch (Exception ex) {
             Log.e(TAG, Utils.getExceptionMessage(ex));
         }

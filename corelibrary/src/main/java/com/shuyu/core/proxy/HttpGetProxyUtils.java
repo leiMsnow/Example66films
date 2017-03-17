@@ -1,6 +1,7 @@
 package com.shuyu.core.proxy;
 
-import android.util.Log;
+
+import com.shuyu.core.uils.LogUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,10 +12,11 @@ import java.net.SocketAddress;
 /**
  * 代理服务器工具类
  *
- * @author hellogv
+ * @author helLogUtilsv
  */
 public class HttpGetProxyUtils {
-    final static public String TAG = "HttpGetProxy";
+
+    public final static String TAG = "HttpGetProxy";
 
     /**
      * 收发Media Player请求的Socket
@@ -39,26 +41,26 @@ public class HttpGetProxyUtils {
      * @return 已发送的大小，不含skip的大小
      * @throws Exception
      */
-    public int sendPrebufferToMP(String fileName, long range) {
+    public int sendPreBufferToMP(String fileName, long range) {
+        
         final int MIN_SIZE = 100 * 1024;
         int fileBufferSize = 0;
+        byte[] fileBuffer = new byte[1024];
+        int bytesRead ;
 
-        byte[] file_buffer = new byte[1024];
-        int bytes_read = 0;
         long startTimeMills = System.currentTimeMillis();
 
         File file = new File(fileName);
-        if (file.exists() == false) {
-            Log.i(TAG, ">>>不存在预加载文件");
+        if (!file.exists()) {
+            LogUtils.i(TAG, ">>>不存在预加载文件");
             return 0;
         }
         if (range > (file.length())) {// Range大小超过预缓存的太小
-            Log.i(TAG, ">>>不读取预加载文件 range:" + range + ",buffer:" + file.length());
+            LogUtils.i(TAG, ">>>不读取预加载文件 range:" + range + ",buffer:" + file.length());
             return 0;
         }
-
         if (file.length() < MIN_SIZE) {// 可用的预缓存太小，没必要读取以及重发Request
-            Log.i(TAG, ">>>预加载文件太小，不读取预加载");
+            LogUtils.i(TAG, ">>>预加载文件太小，不读取预加载");
             return 0;
         }
 
@@ -68,18 +70,18 @@ public class HttpGetProxyUtils {
             if (range > 0) {
                 byte[] tmp = new byte[(int) range];
                 long skipByteCount = fInputStream.read(tmp);
-                Log.i(TAG, ">>>skip:" + skipByteCount);
+                LogUtils.i(TAG, ">>>skip:" + skipByteCount);
             }
 
-            while ((bytes_read = fInputStream.read(file_buffer)) != -1) {
-                mSckPlayer.getOutputStream().write(file_buffer, 0, bytes_read);
-                fileBufferSize += bytes_read;//成功发送才计算
+            while ((bytesRead = fInputStream.read(fileBuffer)) != -1) {
+                mSckPlayer.getOutputStream().write(fileBuffer, 0, bytesRead);
+                fileBufferSize += bytesRead;//成功发送才计算
             }
             mSckPlayer.getOutputStream().flush();
 
             long costTime = (System.currentTimeMillis() - startTimeMills);
-            Log.i(TAG, ">>>读取预加载耗时:" + costTime);
-            Log.i(TAG, ">>>读取完毕...下载:" + file.length() + ",读取:" + fileBufferSize);
+            LogUtils.i(TAG, ">>>读取预加载耗时:" + costTime);
+            LogUtils.i(TAG, ">>>读取完毕...下载:" + file.length() + ",读取:" + fileBufferSize);
         } catch (Exception ex) {
         } finally {
             try {
@@ -106,8 +108,8 @@ public class HttpGetProxyUtils {
                 continue;// 没Header则退出本次循环
 
             // 接收到Response的Header
-            if (result._other != null) {// 发送剩余数据
-                sendToMP(result._other);
+            if (result.other != null) {// 发送剩余数据
+                sendToMP(result.other);
             }
             break;
         }
