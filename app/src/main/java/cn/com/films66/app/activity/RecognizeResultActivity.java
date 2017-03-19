@@ -146,10 +146,6 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
             FilmEvents event = mFilmDetail.events.get(i);
             LogUtils.i(RecognizeResultActivity.class.getName(), "matchEvent-event：" + event);
             LogUtils.i(RecognizeResultActivity.class.getName(), "matchEvent-offset：" + mOffset);
-            if (mCurrentEvent != null && mCurrentEvent.id == event.id && mCurrentEvent.isUserCancel) {
-                LogUtils.d(RecognizeResultActivity.class.getName(), "mCurrentEvent：" + mCurrentEvent);
-                break;
-            }
             if (matchEvent(event)) {
                 mSoundPool.play(sampleId, 1, 1, 1, 1, 1);
                 if (mCurrentEvent != null) {
@@ -217,6 +213,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 200) {
             mOffset = mCustomFile.play_offset_ms;
         }
+        mCurrentEvent = null;
         return mOffset;
     }
 
