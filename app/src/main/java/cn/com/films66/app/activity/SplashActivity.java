@@ -72,7 +72,7 @@ public class SplashActivity extends AppBaseActivity {
             SplashActivity activity = activityWeakReference.get();
             if (activity != null) {
                 if (msg.what == MESSAGE_GOTO_MAIN) {
-                    activity.startActivity(new Intent(activity, PlayerEventActivity.class));
+                    activity.startActivity(new Intent(activity, MainActivity.class));
                     activity.finish();
                 } else if (msg.what == MESSAGE_COUNTDOWN) {
                     activity.tvCountdown.setVisibility(View.VISIBLE);

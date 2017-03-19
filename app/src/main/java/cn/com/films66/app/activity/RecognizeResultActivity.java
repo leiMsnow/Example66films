@@ -1,17 +1,20 @@
 package cn.com.films66.app.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
+import com.shuyu.core.widget.BaseDialog;
 
 import java.lang.ref.WeakReference;
 
@@ -23,13 +26,17 @@ import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.model.Film;
 import cn.com.films66.app.model.FilmEvents;
 import cn.com.films66.app.model.LocationCards;
+import cn.com.films66.app.service.DownloadService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
+import cn.com.films66.app.utils.VideoUtils;
 
 public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Bind(R.id.iv_location_card)
     ImageView ivLocationCard;
+    @Bind(R.id.rl_wait)
+    View waitView;
 
     private static final int CHANGE_EVENT = 0;
 
@@ -39,11 +46,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     private int mOffset = 0;
 
     private FilmEvents mCurrentEvent;
-    private boolean isOpen = false;
-
     private int mRryRecognize = 0;
-
     private SoundPool mSoundPool;
+    private boolean isPause = false;
 
     @Override
     protected int getLayoutRes() {
@@ -69,15 +74,15 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        isOpen = true;
+    protected void onResume() {
+        super.onResume();
+        isPause = false;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        isOpen = false;
+    protected void onPause() {
+        super.onPause();
+        isPause = true;
     }
 
     @Override
@@ -102,7 +107,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                         mFilmDetail = filmDetail;
                         getOffsetTime();
                         mHandler.removeMessages(CHANGE_EVENT);
-                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
+                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT,100);
                         startSwitch();
                     }
 
@@ -131,7 +136,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private void switchEvent() {
-        if (isOpen) return;
+
+        if (isPause) return;
+
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
             if (mCurrentEvent != null && mCurrentEvent.id == event.id && mCurrentEvent.isUserCancel) {
@@ -143,12 +150,39 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     mCurrentEvent.isUserCancel = false;
                 }
                 mCurrentEvent = event;
-                Class eventActivity = getEventActivity(mCurrentEvent.type);
-                if (eventActivity != null) {
-                    Intent intent = new Intent(mContext, eventActivity);
-                    intent.putExtra(Constants.KEY_EVENT_INFO, event);
-                    intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
-                    startActivityForResult(intent, 0);
+                if (event.type == FilmEvents.TYPE_FILM &&
+                        !VideoUtils.hasLocalURL(event.resources_url)) {
+                    isPause = true;
+                    LogUtils.d(RecognizeResultActivity.class.getName(),"识别到未下载的视频");
+                    BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
+                    builder.setCancelable(false)
+                            .setMessage("识别到精彩剧集啦，下载观看吗？")
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    isPause = false;
+                                    dialog.dismiss();
+                                }
+                            })
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            isPause = true;
+                            waitView.setVisibility(View.VISIBLE);
+                            Intent intent = new Intent(mContext, DownloadService.class);
+                            intent.putExtra(Constants.KEY_EVENT_INFO, mCurrentEvent);
+                            startService(intent);
+                            dialog.dismiss();
+                        }
+                    }).show();
+                } else {
+                    Class eventActivity = getEventActivity(mCurrentEvent.type);
+                    if (eventActivity != null) {
+                        Intent intent = new Intent(mContext, eventActivity);
+                        intent.putExtra(Constants.KEY_EVENT_INFO, event);
+                        intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
+                        startActivityForResult(intent, 0);
+                    }
                 }
                 break;
             }
@@ -215,7 +249,12 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 mRryRecognize = 0;
                 mHandler.removeMessages(CHANGE_EVENT);
             }
+            mCustomFile = null;
             return;
+        }
+        if (mCustomFile == null){
+            mCustomFile = customFile;
+            mHandler.sendEmptyMessage(CHANGE_EVENT);
         }
         mRryRecognize = 0;
         if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
@@ -228,14 +267,18 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         }
     }
 
+    @Override
+    protected void openPlayer() {
+        isPause = false;
+        waitView.setVisibility(View.GONE);
+    }
+
     private static class MyHandler extends Handler {
 
         private WeakReference<RecognizeResultActivity> weakReference;
-
         MyHandler(RecognizeResultActivity weakObj) {
             weakReference = new WeakReference<>(weakObj);
         }
-
         @Override
         public void handleMessage(Message msg) {
             RecognizeResultActivity weakObj = weakReference.get();
@@ -247,7 +290,6 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 }
             }
         }
-
     }
 
     @Override

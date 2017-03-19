@@ -7,6 +7,10 @@ package cn.com.films66.app.utils;
 
 public interface Constants {
 
+    String DOWNLOAD_PATH = "video/";
+
+    String DOWNLOAD_STATE_ACTION = "cn.com.films66.action.DOWNLOAD_STATE";
+
     String RECOGNIZE_STATE_ACTION = "cn.com.films66.action.RECOGNIZE_STATE";
     String RECOGNIZE_RESULT_ACTION = "cn.com.films66.action.RECOGNIZE_RESULT";
 
@@ -25,4 +29,6 @@ public interface Constants {
 
     String KEY_FLOAT_WINDOW = "KEY_FLOAT_WINDOW";
     String KEY_VIDEO_URL = "KEY_VIDEO_URL";
+
+    String KEY_DOWNLOAD_URL = "KEY_DOWNLOAD_URL";
 }

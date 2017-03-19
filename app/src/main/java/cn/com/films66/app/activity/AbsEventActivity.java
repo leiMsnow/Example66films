@@ -75,6 +75,11 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
     }
 
     @Override
+    protected void openPlayer() {
+
+    }
+
+    @Override
     protected void onRecognizeResult(CustomFile customFile) {
         if (customFile == null)
             return;

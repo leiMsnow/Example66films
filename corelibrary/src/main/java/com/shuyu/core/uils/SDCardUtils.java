@@ -84,10 +84,14 @@ public class SDCardUtils {
     }
 
     public static String getDownloadFilePath() {
-        return getSDCardPath() + AppUtils.getPackageName();
+        return getSDCardPath() + AppUtils.getPackageName() + "/download/";
     }
 
-    public static void saveFile(String filePath,String fileName,InputStream inputStream) {
+    public static String getCachePath(String cachePath) {
+        return getDownloadFilePath() + cachePath ;
+    }
+
+    public static void saveFile(String filePath, String fileName, InputStream inputStream) {
         try {
             InputStream is = inputStream;
             File file = new File(filePath, fileName);

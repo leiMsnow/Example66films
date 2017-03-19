@@ -27,6 +27,8 @@ public abstract class AbsRecognizeActivity extends AppBaseActivity {
             } else if (intent.getAction().equals(Constants.RECOGNIZE_RESULT_ACTION)) {
                 CustomFile customFile = intent.getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
                 onRecognizeResult(customFile);
+            } else if(intent.getAction().equals(Constants.DOWNLOAD_STATE_ACTION)){
+                openPlayer();
             }
         }
     }
@@ -41,12 +43,15 @@ public abstract class AbsRecognizeActivity extends AppBaseActivity {
 
     protected abstract void onRecognizeResult(CustomFile customFile);
 
+    protected abstract void openPlayer();
+
     private void registerReceiver() {
         if (mRecognizeReceiver == null) {
             mRecognizeReceiver = new RecognizeReceiver();
             IntentFilter filter = new IntentFilter();
             filter.addAction(Constants.RECOGNIZE_STATE_ACTION);
             filter.addAction(Constants.RECOGNIZE_RESULT_ACTION);
+            filter.addAction(Constants.DOWNLOAD_STATE_ACTION);
             registerReceiver(mRecognizeReceiver, filter);
         }
     }

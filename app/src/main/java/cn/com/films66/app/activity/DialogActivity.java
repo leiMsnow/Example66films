@@ -6,8 +6,7 @@ import android.widget.TextView;
 
 import cn.com.films66.app.R;
 import cn.com.films66.app.base.AppBaseActivity;
-import cn.com.films66.app.model.CustomFile;
-import cn.com.films66.app.utils.Constants;
+import cn.com.films66.app.service.DownloadService;
 
 public class DialogActivity extends AppBaseActivity {
 
@@ -28,18 +27,14 @@ public class DialogActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        CustomFile customFile = getIntent().getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
-        if (customFile == null) {
-            finish();
-            return;
-        }
+
         tvTitle = (TextView) findViewById(R.id.tv_title);
         tvMessage = (TextView) findViewById(R.id.tv_message);
         tvLeft = (TextView) findViewById(R.id.tv_left);
         tvRight = (TextView) findViewById(R.id.tv_right);
 
         tvTitle.setText("识别结果");
-        tvMessage.setText("要立刻播放当前识别到的剧集吗？");
+        tvMessage.setText("识别到精彩剧集啦，下载观看吗？");
 
         tvLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,9 +46,9 @@ public class DialogActivity extends AppBaseActivity {
         tvRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, RecognizeResultActivity.class);
-                intent.putExtras(getIntent().getExtras());
-                startActivity(intent);
+                Intent intent = new Intent(mContext, DownloadService.class);
+                intent.putExtras(getIntent());
+                startService(intent);
                 finish();
             }
         });

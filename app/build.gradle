@@ -70,7 +70,7 @@ android {
             signingConfig signingConfigs.release
             applicationIdSuffix ".debug"
             buildConfigField "boolean", "IS_DEBUG", "true"
-            resValue "string", "app_name", "多动娱乐"
+            resValue "string", "app_name", "多动娱乐Debug"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
         }

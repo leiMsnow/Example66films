@@ -13,6 +13,7 @@ import com.universalvideoview.UniversalVideoView;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
+import cn.com.films66.app.utils.VideoUtils;
 
 public class PlayerEventActivity extends AbsEventActivity {
 
@@ -61,47 +62,33 @@ public class PlayerEventActivity extends AbsEventActivity {
     }
 
     private void setPlayUrl() {
-        if (mEvents != null) {
-//        String url = "http://film-server.b0.upaiyun.com/人物及档案卡/演示用mp4/03A.1.雾桥直播-Untitled%20MPEG-4.mp4";
-            String url = getResources_url(mEvents.resources_url);
-            LogUtils.d(PlayerEventActivity.class.getName(), url);
-            int seek = mOffset - mEvents.getStartTime();
-            LogUtils.d(PlayerEventActivity.class.getName(), "当前识别时间： " + mOffset);
-            LogUtils.d(PlayerEventActivity.class.getName(), "播放开始时间： " + mEvents.getStartTime());
-            seek = seek / 1000;
-            if (seek > 0) {
-                url += "start=" + seek;
-                LogUtils.d(PlayerEventActivity.class.getName(), "调整时间： " + seek);
-                videoView.seekTo(seek);
-            }
-            videoView.setVideoPath(url);
-            videoView.start();
-            mediaController.setBackListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    LogUtils.d(PlayerEventActivity.class.getName(), "播放完成，关闭");
-                    finish();
-                }
-            });
+        if (mEvents == null) {
+            return;
         }
-    }
-
-    private String getResources_url(String resources_url) {
-//        if (!TextUtils.isEmpty(resources_url)) {
-//            int lastSplit = resources_url.lastIndexOf("/");
-//            if (lastSplit != -1) {
-//                String localUrl = SDCardUtils.getSDCardPath() + "midea/" +
-//                        URLDecoder.decode(resources_url.substring(lastSplit + 1));
-//                File file = new File(localUrl);
-//                return file.exists() ? localUrl : resources_url;
-//            }
-//        }
-        return resources_url;
+            String url = VideoUtils.getLocalURL(mEvents.resources_url);
+//        String url = VideoUtils.getLocalURL("http://film-server.b0.upaiyun.com/人物及档案卡/演示用mp4/03A.1.雾桥直播-Untitled%20MPEG-4.mp4");
+        videoView.setVideoPath(url);
+        LogUtils.d(PlayerEventActivity.class.getName(), "视频本地地址： " + url);
+        int seek = mOffset - mEvents.getStartTime();
+        LogUtils.d(PlayerEventActivity.class.getName(), "当前识别时间： " + mOffset);
+        LogUtils.d(PlayerEventActivity.class.getName(), "播放开始时间： " + mEvents.getStartTime());
+        if (seek > 0) {
+            LogUtils.d(PlayerEventActivity.class.getName(), "调整时间： " + seek);
+            videoView.seekTo(seek);
+        }
+        videoView.start();
+        mediaController.setBackListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                LogUtils.d(PlayerEventActivity.class.getName(), "播放完成，关闭");
+                finish();
+            }
+        });
     }
 }

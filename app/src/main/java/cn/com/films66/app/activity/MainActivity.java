@@ -44,7 +44,6 @@ public class MainActivity extends AbsRecognizeActivity {
 
     protected RecognizeService mRecognizeService;
     private boolean mRecognizeState = false;
-    private boolean isAutoRecognize = true;
 
     @Override
     protected int getLayoutRes() {
@@ -64,7 +63,6 @@ public class MainActivity extends AbsRecognizeActivity {
     @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
-            isAutoRecognize = false;
             if (!mRecognizeState) {
                 mRecognizeService.startRecognize();
             } else {
@@ -171,12 +169,16 @@ public class MainActivity extends AbsRecognizeActivity {
     protected void onRecognizeResult(CustomFile customFile) {
         if (customFile == null)
             return;
-        Intent intent = new Intent(mContext, isAutoRecognize ?
-                DialogActivity.class : RecognizeResultActivity.class);
+        Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @Override
+    protected void openPlayer() {
+
     }
 
     @Override

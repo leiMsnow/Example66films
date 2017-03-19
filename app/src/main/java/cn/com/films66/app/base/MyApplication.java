@@ -1,6 +1,5 @@
 package cn.com.films66.app.base;
 
-import com.chenenyu.router.Router;
 import com.shuyu.core.CoreApplication;
 import com.shuyu.core.api.CacheInterceptor;
 import com.shuyu.core.uils.LogUtils;
@@ -32,7 +31,6 @@ public class MyApplication extends CoreApplication {
         mApplication = this;
         if (BuildConfig.IS_DEBUG) {
             LogUtils.isDebug = true;
-            Router.openLog();
         }
     }
 

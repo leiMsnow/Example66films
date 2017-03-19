@@ -64,7 +64,7 @@
             android:layout_weight="1"
             android:background="@drawable/selector_dialog_text"
             android:gravity="center"
-            android:text="稍后"
+            android:text="取消"
             android:textSize="16sp" />
 
         <View
