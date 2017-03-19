@@ -70,8 +70,6 @@ public class FilmEvents implements Parcelable {
     @Override
     public String toString() {
         return "FilmEvents{" +
-                "id=" + id +
-                ", type=" + type +
                 ", start_time='" + start_time + '\'' +
                 ", end_time='" + end_time + '\'' +
                 ", resources_url='" + resources_url + '\'' +

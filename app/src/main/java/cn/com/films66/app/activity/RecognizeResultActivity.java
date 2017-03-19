@@ -48,8 +48,10 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private FilmEvents mCurrentEvent;
     private int mRryRecognize = 0;
-    private SoundPool mSoundPool;
     private boolean isPause = false;
+
+    private SoundPool mSoundPool;
+    private int sampleId = 0;
 
     @Override
     protected int getLayoutRes() {
@@ -58,11 +60,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Override
     protected void initData() {
-
-        mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
-        mSoundPool.load(this, R.raw.tips, 1);
-
         setTitle("");
+
+        mSoundPool = new SoundPool(1, AudioManager.STREAM_SYSTEM, 0);
+        sampleId = mSoundPool.load(this, R.raw.tips, 1);
+
         mHandler = new MyHandler(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -108,7 +110,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                         mFilmDetail = filmDetail;
                         getOffsetTime();
                         mHandler.removeMessages(CHANGE_EVENT);
-                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 100);
+                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
                         startSwitch();
                     }
 
@@ -142,11 +144,14 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
+            LogUtils.i(RecognizeResultActivity.class.getName(), "matchEvent-event：" + event);
+            LogUtils.i(RecognizeResultActivity.class.getName(), "matchEvent-offset：" + mOffset);
             if (mCurrentEvent != null && mCurrentEvent.id == event.id && mCurrentEvent.isUserCancel) {
+                LogUtils.d(RecognizeResultActivity.class.getName(), "mCurrentEvent：" + mCurrentEvent);
                 break;
             }
             if (matchEvent(event)) {
-                mSoundPool.play(1, 1, 1, 0, 0, 1);
+                mSoundPool.play(sampleId, 1, 1, 1, 1, 1);
                 if (mCurrentEvent != null) {
                     mCurrentEvent.isUserCancel = false;
                 }
@@ -295,7 +300,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 if (msg.what == CHANGE_EVENT) {
                     weakObj.startSwitch();
                     sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
-                    LogUtils.d("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
+                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
                 }
             }
         }

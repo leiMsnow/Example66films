@@ -64,8 +64,10 @@ public class MainActivity extends AbsRecognizeActivity {
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
             if (!mRecognizeState) {
+                ivRecLoading.setVisibility(View.VISIBLE);
                 mRecognizeService.startRecognize();
             } else {
+                ivRecLoading.setVisibility(View.GONE);
                 mRecognizeService.cancelRecognize();
             }
         }

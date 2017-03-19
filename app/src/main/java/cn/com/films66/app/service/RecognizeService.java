@@ -98,6 +98,9 @@ public class RecognizeService extends Service {
 
     public void setLoop(boolean loop) {
         isLoop = loop;
+        if (!isLoop) {
+            cancelRecognize();
+        }
     }
 
     @Override
