@@ -183,13 +183,13 @@ public class AppUtils {
         }
     }
 
-    public static boolean isBackground(Context context) {
-        ActivityManager activityManager = (ActivityManager) context
+    public static boolean isBackground() {
+        ActivityManager activityManager = (ActivityManager) CoreApplication.getApplication()
                 .getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager
                 .getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-            if (appProcess.processName.equals(context.getPackageName())) {
+            if (appProcess.processName.equals(CoreApplication.getApplication().getPackageName())) {
                 return appProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
             }
         }

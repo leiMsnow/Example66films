@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.shuyu.core.uils.AppUtils;
 import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
@@ -107,7 +108,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                         mFilmDetail = filmDetail;
                         getOffsetTime();
                         mHandler.removeMessages(CHANGE_EVENT);
-                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT,100);
+                        mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 100);
                         startSwitch();
                     }
 
@@ -137,7 +138,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private void switchEvent() {
 
-        if (isPause) return;
+        if (isPause && !AppUtils.isBackground()) return;
 
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
@@ -153,7 +154,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 if (event.type == FilmEvents.TYPE_FILM &&
                         !VideoUtils.hasLocalURL(event.resources_url)) {
                     isPause = true;
-                    LogUtils.d(RecognizeResultActivity.class.getName(),"识别到未下载的视频");
+                    LogUtils.d(RecognizeResultActivity.class.getName(), "识别到未下载的视频");
                     BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
                     builder.setCancelable(false)
                             .setMessage("识别到精彩剧集啦，下载观看吗？")
@@ -161,31 +162,37 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     isPause = false;
+                                    mCurrentEvent.isUserCancel = true;
                                     dialog.dismiss();
                                 }
                             })
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            isPause = true;
-                            waitView.setVisibility(View.VISIBLE);
-                            Intent intent = new Intent(mContext, DownloadService.class);
-                            intent.putExtra(Constants.KEY_EVENT_INFO, mCurrentEvent);
-                            startService(intent);
-                            dialog.dismiss();
-                        }
-                    }).show();
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    isPause = true;
+                                    waitView.setVisibility(View.VISIBLE);
+                                    Intent intent = new Intent(mContext, DownloadService.class);
+                                    intent.putExtra(Constants.KEY_EVENT_INFO, mCurrentEvent);
+                                    startService(intent);
+                                    dialog.dismiss();
+                                }
+                            }).show();
                 } else {
                     Class eventActivity = getEventActivity(mCurrentEvent.type);
-                    if (eventActivity != null) {
-                        Intent intent = new Intent(mContext, eventActivity);
-                        intent.putExtra(Constants.KEY_EVENT_INFO, event);
-                        intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
-                        startActivityForResult(intent, 0);
-                    }
+                    startEventActivity(eventActivity);
                 }
                 break;
             }
+        }
+    }
+
+    private void startEventActivity(Class eventActivity) {
+        if (eventActivity != null) {
+            Intent intent = new Intent(mContext, eventActivity);
+            intent.putExtra(Constants.KEY_EVENT_INFO, mCurrentEvent);
+            intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
+            startActivityForResult(intent, 0);
+            waitView.setVisibility(View.GONE);
         }
     }
 
@@ -202,7 +209,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private int getOffsetTime() {
-        if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 500) {
+        if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 200) {
             mOffset = mCustomFile.play_offset_ms;
         }
         return mOffset;
@@ -245,14 +252,14 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         if (customFile == null) {
             mRryRecognize++;
             LogUtils.d(RecognizeResultActivity.class.getName(), "未识别到次数：" + mRryRecognize);
-            if (mRryRecognize >= 1) {
+            if (mRryRecognize >= 2) {
                 mRryRecognize = 0;
                 mHandler.removeMessages(CHANGE_EVENT);
             }
             mCustomFile = null;
             return;
         }
-        if (mCustomFile == null){
+        if (mCustomFile == null) {
             mCustomFile = customFile;
             mHandler.sendEmptyMessage(CHANGE_EVENT);
         }
@@ -270,15 +277,17 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     @Override
     protected void openPlayer() {
         isPause = false;
-        waitView.setVisibility(View.GONE);
+        startEventActivity(PlayerEventActivity.class);
     }
 
     private static class MyHandler extends Handler {
 
         private WeakReference<RecognizeResultActivity> weakReference;
+
         MyHandler(RecognizeResultActivity weakObj) {
             weakReference = new WeakReference<>(weakObj);
         }
+
         @Override
         public void handleMessage(Message msg) {
             RecognizeResultActivity weakObj = weakReference.get();

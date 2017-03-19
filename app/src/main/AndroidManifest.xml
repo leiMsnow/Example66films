@@ -35,21 +35,19 @@
         <activity
             android:name=".activity.DialogActivity"
             android:theme="@style/AppTheme.Main.Dialog"/>
-        <activity android:name=".activity.RecognizeResultActivity"/>
+        <activity
+            android:name=".activity.RecognizeResultActivity"/>
         <activity
             android:name=".activity.PlayerEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTask"
-            android:taskAffinity=".event">
+            android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".activity.WebEventActivity"
-            android:launchMode="singleTask"
-            android:taskAffinity=".event"/>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.PictureEventActivity"
-            android:launchMode="singleTask"
-            android:taskAffinity=".event"/>
+            android:launchMode="singleTask"/>
 
         <service android:name=".service.FloatWindowService"/>
         <service
