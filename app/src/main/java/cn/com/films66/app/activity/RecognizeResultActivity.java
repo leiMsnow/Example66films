@@ -311,5 +311,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         super.onDestroy();
         mHandler.removeMessages(CHANGE_EVENT);
         mHandler = null;
+        mSoundPool.release();
+        mSoundPool = null;
     }
 }
