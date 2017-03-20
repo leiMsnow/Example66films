@@ -266,7 +266,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         if (customFile == null) {
             mRryRecognize++;
             LogUtils.d(RecognizeResultActivity.class.getName(), "未识别到次数：" + mRryRecognize);
-            if (mRryRecognize >= 2) {
+            if (mRryRecognize >= 1) {
                 mRryRecognize = 0;
                 mHandler.removeMessages(CHANGE_EVENT);
             }
@@ -291,7 +291,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     @Override
     protected void openPlayer() {
         isPause = false;
-//        startEventActivity(PlayerEventActivity.class);
+        startEventActivity(PlayerEventActivity.class);
     }
 
     private static class MyHandler extends Handler {

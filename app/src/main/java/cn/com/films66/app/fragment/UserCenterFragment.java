@@ -3,13 +3,13 @@ package cn.com.films66.app.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.shuyu.core.BaseFragment;
 import com.shuyu.core.uils.DataCleanUtils;
-import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.uils.ToastUtils;
 
 import org.byteam.superadapter.OnItemClickListener;
@@ -48,12 +48,6 @@ public class UserCenterFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        try {
-            String cache = DataCleanUtils.getCacheSize(VideoUtils.getVideoCacheDir());
-            LogUtils.d(UserCenterFragment.class.getName(), "换存大小：" + cache);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         mSettingAdapter = new SettingAdapter(mContext, initSettingData(), R.layout.item_setting);
         mRvContainer.setLayoutManager(new LinearLayoutManager(mContext));
         mRvContainer.setAdapter(mSettingAdapter);
@@ -106,6 +100,8 @@ public class UserCenterFragment extends BaseFragment {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            mSettingAdapter.getItem(2).setTitle(getString(R.string.clean_cache) + getCacheSize());
+                                            mSettingAdapter.notifyDataSetChanged();
                                             ToastUtils.getInstance().showToast("清除完成");
                                         }
                                     });
@@ -121,8 +117,21 @@ public class UserCenterFragment extends BaseFragment {
         List<SettingInfo> settings = new ArrayList<>();
         settings.add(new SettingInfo(SettingInfo.SERVICE, R.mipmap.ic_help, getString(R.string.help)));
         settings.add(new SettingInfo(SettingInfo.FEEDBACK, R.mipmap.ic_feedback, getString(R.string.feedback)));
-        settings.add(new SettingInfo(SettingInfo.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)));
+        settings.add(new SettingInfo(SettingInfo.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)
+                + getCacheSize()));
         settings.add(new SettingInfo(SettingInfo.ABOUT, R.mipmap.ic_about, getString(R.string.about)));
         return settings;
+    }
+
+    @NonNull
+    private String getCacheSize() {
+        String cache = "";
+        try {
+            cache = DataCleanUtils.getCacheSize(VideoUtils.getVideoCacheDir());
+            cache = "(" + cache + ")";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cache;
     }
 }

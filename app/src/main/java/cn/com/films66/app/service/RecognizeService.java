@@ -27,7 +27,7 @@ public class RecognizeService extends Service {
     private boolean mProcessing = false;
     private boolean initState = false;
     private boolean isLoop = false;
-
+    private int mRecognizeCount = 0;
 
     @Override
     public void onCreate() {
@@ -119,6 +119,10 @@ public class RecognizeService extends Service {
             return;
         }
 
+        if (mRecognizeCount >= 5) {
+            mRecognizeCount = 0;
+            return;
+        }
         if (!mProcessing) {
             mProcessing = true;
             if (mClient == null || !mClient.startRecognize()) {
@@ -139,6 +143,7 @@ public class RecognizeService extends Service {
 
     // 发送识别状态
     private void sendRecognizeState() {
+        LogUtils.d(RecognizeService.class.getName(), "sendRecognizeState=" + mProcessing);
         Intent intent = new Intent();
         intent.setAction(Constants.RECOGNIZE_STATE_ACTION);
         intent.putExtra(Constants.KEY_RECOGNIZE_STATE, mProcessing);
@@ -147,6 +152,12 @@ public class RecognizeService extends Service {
 
     // 发送识别结果
     private void sendRecognizeResult(CustomFile customFile) {
+        LogUtils.d(RecognizeService.class.getName(), "customFile=" + customFile);
+        if (customFile == null) {
+            mRecognizeCount++;
+        } else {
+            mRecognizeCount = 0;
+        }
         Intent intent = new Intent();
         intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
         intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);

@@ -36,7 +36,7 @@ public class MainActivity extends AbsRecognizeActivity {
     @Bind(R.id.iv_recognize)
     ImageView ivRecognize;
     @Bind(R.id.iv_rec_loading)
-    ImageView ivRecLoading;
+    ImageView ivRecLoading ;
 
     private List<Fragment> mFragments = null;
     private List<ChangeColorView> mChangeColorViews = null;
@@ -63,13 +63,18 @@ public class MainActivity extends AbsRecognizeActivity {
     @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
-            if (!mRecognizeState) {
-                ivRecLoading.setVisibility(View.VISIBLE);
-                mRecognizeService.startRecognize();
-            } else {
-                ivRecLoading.setVisibility(View.GONE);
-                mRecognizeService.cancelRecognize();
-            }
+            mRecognizeState = !mRecognizeState;
+            setRecognizeState();
+        }
+    }
+
+    private void setRecognizeState() {
+        if (mRecognizeState) {
+            ivRecLoading.setVisibility(View.VISIBLE);
+            mRecognizeService.startRecognize();
+        } else {
+            ivRecLoading.setVisibility(View.GONE);
+            mRecognizeService.cancelRecognize();
         }
     }
 
@@ -141,7 +146,8 @@ public class MainActivity extends AbsRecognizeActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
-            mRecognizeService.startRecognize();
+            mRecognizeState = true;
+            setRecognizeState();
         }
 
         @Override
@@ -160,17 +166,15 @@ public class MainActivity extends AbsRecognizeActivity {
     @Override
     protected void onRecognizeState(boolean state) {
         mRecognizeState = state;
-        if (mRecognizeState) {
-            ivRecLoading.setVisibility(View.VISIBLE);
-        } else {
-            ivRecLoading.setVisibility(View.INVISIBLE);
-        }
+        setRecognizeState();
     }
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
-        if (customFile == null)
+        if (customFile == null) {
+            onRecognizeState(false);
             return;
+        }
         Intent intent = new Intent(mContext, RecognizeResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.KEY_RECOGNIZE_RESULT, customFile);

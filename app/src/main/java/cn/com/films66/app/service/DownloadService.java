@@ -54,7 +54,7 @@ public class DownloadService extends Service {
         queueSet.disableCallbackProgressTimes();
         queueSet.setAutoRetryTimes(1);
         queueSet.downloadSequentially(tasks);
-
+        queueSet.start();
 //            FileDownloader.getImpl().create(currentUrl)
 //                    .setPath(path)
 //                    .setCallbackProgressTimes(0)
