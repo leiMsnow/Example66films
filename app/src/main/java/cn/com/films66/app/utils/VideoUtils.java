@@ -29,7 +29,7 @@ public class VideoUtils {
         if (!TextUtils.isEmpty(resources_url)) {
             String localName = createLocalName(resources_url);
             if (!localName.equals("temp")) {
-                String localUrl = SDCardUtils.getCachePath(Constants.DOWNLOAD_PATH) + localName;
+                String localUrl = getVideoCacheDir() + localName;
                 return new File(localUrl);
             }
         }
@@ -42,5 +42,9 @@ public class VideoUtils {
             return URLDecoder.decode(resources_url.substring(lastSplit + 1));
         }
         return "temp";
+    }
+
+    public static File getVideoCacheDir() {
+        return new File(SDCardUtils.getCachePath(Constants.DOWNLOAD_PATH));
     }
 }

@@ -18,6 +18,8 @@ import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.BaseDialog;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
@@ -52,6 +54,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private SoundPool mSoundPool;
     private int sampleId = 0;
+    private ArrayList<String> urls;
 
     @Override
     protected int getLayoutRes() {
@@ -108,6 +111,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     @Override
                     public void onSuccess(Film filmDetail) {
                         mFilmDetail = filmDetail;
+                        getEventsUrl(mFilmDetail.events);
                         getOffsetTime();
                         mHandler.removeMessages(CHANGE_EVENT);
                         mHandler.sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
@@ -155,7 +159,6 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 if (event.type == FilmEvents.TYPE_FILM &&
                         !VideoUtils.hasLocalURL(event.resources_url)) {
                     isPause = true;
-                    LogUtils.d(RecognizeResultActivity.class.getName(), "识别到未下载的视频");
                     BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
                     builder.setCancelable(false)
                             .setMessage("识别到精彩剧集啦，下载观看吗？")
@@ -173,7 +176,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                                     isPause = true;
                                     waitView.setVisibility(View.VISIBLE);
                                     Intent intent = new Intent(mContext, DownloadService.class);
-                                    intent.putExtra(Constants.KEY_EVENT_INFO, mCurrentEvent);
+                                    intent.putExtra(Constants.KEY_EVENTS_LIST, urls);
                                     startService(intent);
                                     dialog.dismiss();
                                 }
@@ -183,6 +186,15 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     startEventActivity(eventActivity);
                 }
                 break;
+            }
+        }
+    }
+
+    private void getEventsUrl(List<FilmEvents> events) {
+        urls = new ArrayList<>();
+        for (FilmEvents event : events) {
+            if (event.type == FilmEvents.TYPE_FILM) {
+                urls.add(event.resources_url);
             }
         }
     }
@@ -279,7 +291,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     @Override
     protected void openPlayer() {
         isPause = false;
-        startEventActivity(PlayerEventActivity.class);
+//        startEventActivity(PlayerEventActivity.class);
     }
 
     private static class MyHandler extends Handler {

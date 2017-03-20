@@ -8,6 +8,7 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.service.DownloadService;
 
+@Deprecated
 public class DialogActivity extends AppBaseActivity {
 
     private TextView tvTitle;

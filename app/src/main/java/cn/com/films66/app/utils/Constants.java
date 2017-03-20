@@ -20,6 +20,7 @@ public interface Constants {
     String KEY_FILM_DETAIL_ID = "KEY_FILM_DETAIL_ID";
 
     String KEY_EVENT_INFO = "KEY_EVENT_INFO";
+    String KEY_EVENTS_LIST = "KEY_EVENTS_LIST";
     String KEY_EVENT_CANCEL = "KEY_EVENT_CANCEL";
 
     String KEY_RECOGNIZE_RESULT = "KEY_RECOGNIZE_RESULT";

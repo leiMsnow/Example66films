@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.shuyu.core.BaseFragment;
+import com.shuyu.core.uils.DataCleanUtils;
+import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.uils.ToastUtils;
 
 import org.byteam.superadapter.OnItemClickListener;
@@ -24,6 +26,7 @@ import cn.com.films66.app.activity.WebViewActivity;
 import cn.com.films66.app.adapter.SettingAdapter;
 import cn.com.films66.app.model.SettingInfo;
 import cn.com.films66.app.utils.Constants;
+import cn.com.films66.app.utils.VideoUtils;
 
 public class UserCenterFragment extends BaseFragment {
 
@@ -45,6 +48,12 @@ public class UserCenterFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        try {
+            String cache = DataCleanUtils.getCacheSize(VideoUtils.getVideoCacheDir());
+            LogUtils.d(UserCenterFragment.class.getName(), "换存大小：" + cache);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mSettingAdapter = new SettingAdapter(mContext, initSettingData(), R.layout.item_setting);
         mRvContainer.setLayoutManager(new LinearLayoutManager(mContext));
         mRvContainer.setAdapter(mSettingAdapter);
@@ -57,12 +66,11 @@ public class UserCenterFragment extends BaseFragment {
                     case SettingInfo.RECOMMEND:
                         break;
                     case SettingInfo.CLEAR:
-                        ToastUtils.getInstance().showToast("清除完成");
+                        cleanCache();
                         break;
                     case SettingInfo.FEEDBACK:
                         intent = new Intent(mContext, FeedbackActivity.class);
                         startActivity(intent);
-//                        Router.build("feedback").go(mContext);
                         break;
                     case SettingInfo.UPDATE:
                         ToastUtils.getInstance().showToast("已经是最新版本");
@@ -85,18 +93,36 @@ public class UserCenterFragment extends BaseFragment {
         });
     }
 
+    private void cleanCache() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DataCleanUtils.cleanCustomCache(VideoUtils.getVideoCacheDir()
+                                .getAbsolutePath(),
+                        new DataCleanUtils.CleanCacheListener() {
+                            @Override
+                            public void cleanComplete() {
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ToastUtils.getInstance().showToast("清除完成");
+                                        }
+                                    });
+                                }
+                            }
+                        });
+            }
+        }).start();
+    }
+
 
     private List<SettingInfo> initSettingData() {
         List<SettingInfo> settings = new ArrayList<>();
-//        settings.add(new SettingsInfo(SettingsInfo.RECOMMEND, R.mipmap.ic_protocol, getString(R.string.recommend)));
-//        settings.add(new SettingsInfo(SettingsInfo.SERVICE, R.mipmap.ic_service, getString(R.string.download)));
         settings.add(new SettingInfo(SettingInfo.SERVICE, R.mipmap.ic_help, getString(R.string.help)));
         settings.add(new SettingInfo(SettingInfo.FEEDBACK, R.mipmap.ic_feedback, getString(R.string.feedback)));
         settings.add(new SettingInfo(SettingInfo.CLEAR, R.mipmap.ic_clean_cache, getString(R.string.clean_cache)));
         settings.add(new SettingInfo(SettingInfo.ABOUT, R.mipmap.ic_about, getString(R.string.about)));
-//        settings.add(new SettingsInfo(SettingsInfo.UPDATE, R.mipmap.ic_update, getString(R.string.update)));
-//        settings.add(new SettingsInfo(SettingsInfo.DISCLAIMER, R.mipmap.ic_disclaimer, getString(R.string.disclaimer)));
-
         return settings;
     }
 }
