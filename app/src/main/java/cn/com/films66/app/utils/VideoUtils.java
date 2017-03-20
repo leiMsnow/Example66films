@@ -29,7 +29,7 @@ public class VideoUtils {
         if (!TextUtils.isEmpty(resources_url)) {
             String localName = createLocalName(resources_url);
             if (!localName.equals("temp")) {
-                String localUrl = getVideoCacheDir() + localName;
+                String localUrl = getVideoCacheDir() + "/" + localName;
                 return new File(localUrl);
             }
         }

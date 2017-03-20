@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.shuyu.core.uils.ImageShowUtils;
+import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.ChangeColorView;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class MainActivity extends AbsRecognizeActivity {
     @Bind(R.id.iv_recognize)
     ImageView ivRecognize;
     @Bind(R.id.iv_rec_loading)
-    ImageView ivRecLoading ;
+    ImageView ivRecLoading;
 
     private List<Fragment> mFragments = null;
     private List<ChangeColorView> mChangeColorViews = null;
@@ -55,9 +56,12 @@ public class MainActivity extends AbsRecognizeActivity {
         toolbarHide();
         initBottomMenu();
         initDefaultFragment();
+
+        ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
+
         Intent intent = new Intent(mContext, RecognizeService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
+
     }
 
     @OnClick(R.id.iv_recognize)
@@ -80,7 +84,7 @@ public class MainActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onResume() {
-        if (mRecognizeService != null) {
+        if (mRecognizeService != null && !mRecognizeState) {
             mRecognizeService.setLoop(false);
         }
         super.onResume();
@@ -152,6 +156,7 @@ public class MainActivity extends AbsRecognizeActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            LogUtils.d(MainActivity.class.getName(), "cancelRecognize");
             mRecognizeService.cancelRecognize();
             mRecognizeService = null;
         }

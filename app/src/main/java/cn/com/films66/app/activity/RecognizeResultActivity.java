@@ -148,8 +148,6 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
-            LogUtils.i(RecognizeResultActivity.class.getName(), "matchEvent-event：" + event);
-            LogUtils.i(RecognizeResultActivity.class.getName(), "matchEvent-offset：" + mOffset);
             if (matchEvent(event)) {
                 mSoundPool.play(sampleId, 1, 1, 1, 1, 1);
                 if (mCurrentEvent != null) {
@@ -222,10 +220,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private int getOffsetTime() {
-        if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 200) {
+        if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 250) {
             mOffset = mCustomFile.play_offset_ms;
         }
-        mCurrentEvent = null;
         return mOffset;
     }
 
@@ -309,7 +306,8 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 if (msg.what == CHANGE_EVENT) {
                     weakObj.startSwitch();
                     sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
-                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
+                    weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
+//                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
                 }
             }
         }

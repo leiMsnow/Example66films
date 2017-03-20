@@ -45,4 +45,14 @@ public class CustomFile implements Parcelable{
         dest.writeString(acrid);
         dest.writeString(audio_id);
     }
+
+    @Override
+    public String toString() {
+        return "CustomFile{" +
+                "play_offset_ms=" + play_offset_ms +
+                ", title='" + title + '\'' +
+                ", acrid='" + acrid + '\'' +
+                ", audio_id='" + audio_id + '\'' +
+                '}';
+    }
 }

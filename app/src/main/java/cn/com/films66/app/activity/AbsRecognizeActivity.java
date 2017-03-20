@@ -23,7 +23,6 @@ public abstract class AbsRecognizeActivity extends AppBaseActivity {
             if (intent.getAction().equals(Constants.RECOGNIZE_STATE_ACTION)) {
                 boolean processing = intent.getBooleanExtra(Constants.KEY_RECOGNIZE_STATE, false);
                 onRecognizeState(processing);
-
             } else if (intent.getAction().equals(Constants.RECOGNIZE_RESULT_ACTION)) {
                 CustomFile customFile = intent.getParcelableExtra(Constants.KEY_RECOGNIZE_RESULT);
                 onRecognizeResult(customFile);

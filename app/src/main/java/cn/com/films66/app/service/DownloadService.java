@@ -21,6 +21,7 @@ public class DownloadService extends Service {
 
     //    private String mDownloadUrl;
     private List<String> eventsUrl;
+    private int downloadCount = 0;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -45,35 +46,28 @@ public class DownloadService extends Service {
             String currentUrl = url.get(i);
             String path = SDCardUtils.getCachePath(Constants.DOWNLOAD_PATH)
                     + VideoUtils.createLocalName(currentUrl);
-            LogUtils.d(DownloadService.class.getName(), "downloadPath: " + path);
-            LogUtils.d(DownloadService.class.getName(), "currentUrl: " + currentUrl);
 
             tasks.add(FileDownloader.getImpl().create(currentUrl)
                     .setPath(path).setTag(i + 1));
         }
         queueSet.disableCallbackProgressTimes();
         queueSet.setAutoRetryTimes(1);
-        queueSet.downloadSequentially(tasks);
+        queueSet.downloadTogether(tasks);
         queueSet.start();
-//            FileDownloader.getImpl().create(currentUrl)
-//                    .setPath(path)
-//                    .setCallbackProgressTimes(0)
-//                    .setListener(queueTarget)
-//                    .asInQueueTask()
-//                    .enqueue();
-//        FileDownloader.getImpl().start(queueTarget, true);
-
     }
 
     private SimpleFileDownloadListener queueTarget = new SimpleFileDownloadListener() {
         @Override
         protected void completed(BaseDownloadTask task) {
             super.completed(task);
-            if (Integer.parseInt(task.getTag().toString()) == 1) {
-                LogUtils.d(DownloadService.class.getName(), "completed-taskID: " + task.getTag());
+            LogUtils.d(DownloadService.class.getName(), "completed-taskID: " + task.getTag());
+            LogUtils.d(DownloadService.class.getName(), "currentUrl: " + task.getUrl());
+            downloadCount++;
+            if (downloadCount == eventsUrl.size()) {
                 Intent intent = new Intent();
                 intent.setAction(Constants.DOWNLOAD_STATE_ACTION);
                 sendBroadcast(intent);
+                stopSelf();
             }
         }
     };

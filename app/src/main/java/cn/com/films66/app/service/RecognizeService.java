@@ -33,7 +33,6 @@ public class RecognizeService extends Service {
     public void onCreate() {
         super.onCreate();
         initACRCloud();
-
     }
 
     private void initACRCloud() {
@@ -99,6 +98,7 @@ public class RecognizeService extends Service {
     public void setLoop(boolean loop) {
         isLoop = loop;
         if (!isLoop) {
+            LogUtils.d(RecognizeService.class.getName(), "cancelRecognize");
             cancelRecognize();
         }
     }
@@ -143,7 +143,6 @@ public class RecognizeService extends Service {
 
     // 发送识别状态
     private void sendRecognizeState() {
-        LogUtils.d(RecognizeService.class.getName(), "sendRecognizeState=" + mProcessing);
         Intent intent = new Intent();
         intent.setAction(Constants.RECOGNIZE_STATE_ACTION);
         intent.putExtra(Constants.KEY_RECOGNIZE_STATE, mProcessing);
@@ -152,7 +151,6 @@ public class RecognizeService extends Service {
 
     // 发送识别结果
     private void sendRecognizeResult(CustomFile customFile) {
-        LogUtils.d(RecognizeService.class.getName(), "customFile=" + customFile);
         if (customFile == null) {
             mRecognizeCount++;
         } else {
@@ -179,6 +177,7 @@ public class RecognizeService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (mClient != null) {
+            LogUtils.d(RecognizeService.class.getName(), "cancelRecognize");
             cancelRecognize();
             mClient.release();
             initState = false;
