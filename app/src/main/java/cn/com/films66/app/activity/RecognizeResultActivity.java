@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.shuyu.core.uils.AppUtils;
-import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.BaseDialog;
@@ -306,7 +305,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 if (msg.what == CHANGE_EVENT) {
                     weakObj.startSwitch();
                     sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
-                    weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
+//                    weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
 //                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
                 }
             }
