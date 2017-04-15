@@ -158,29 +158,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 mCurrentEvent = event;
                 if (event.type == FilmEvents.TYPE_FILM &&
                         !VideoUtils.hasLocalURL(event.resources_url)) {
-                    isPause = true;
-                    BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
-                    builder.setCancelable(false)
-                            .setMessage("识别到精彩剧集啦，下载观看吗？")
-                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    isPause = false;
-                                    mCurrentEvent.isUserCancel = true;
-                                    dialog.dismiss();
-                                }
-                            })
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    isPause = true;
-                                    waitView.setVisibility(View.VISIBLE);
-                                    Intent intent = new Intent(mContext, DownloadService.class);
-                                    intent.putExtra(Constants.KEY_EVENTS_LIST, urls);
-                                    startService(intent);
-                                    dialog.dismiss();
-                                }
-                            }).show();
+                    ArrayList<String> url = new ArrayList<>();
+                    url.add(event.resources_url);
+                    startDownload(url);
                 } else {
                     Class eventActivity = getEventActivity(mCurrentEvent.type);
                     startEventActivity(eventActivity);
@@ -190,11 +170,43 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         }
     }
 
+    private void startDownload(final ArrayList<String> url) {
+        isPause = true;
+        BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
+        builder.setCancelable(false)
+                .setMessage("识别到精彩剧集啦，下载观看吗？")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isPause = false;
+                        mCurrentEvent.isUserCancel = true;
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isPause = true;
+                        waitView.setVisibility(View.VISIBLE);
+                        Intent intent = new Intent(mContext, DownloadService.class);
+                        intent.putExtra(Constants.KEY_EVENTS_LIST, url);
+                        startService(intent);
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
     private void getEventsUrl(List<FilmEvents> events) {
         urls = new ArrayList<>();
         for (FilmEvents event : events) {
             if (event.type == FilmEvents.TYPE_FILM) {
                 urls.add(event.resources_url);
+            }
+        }
+        for (String url : urls) {
+            if (!VideoUtils.hasLocalURL(url)) {
+                startDownload(urls);
+                break;
             }
         }
     }
@@ -279,6 +291,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         mRryRecognize = 0;
         // 视频切换剧集
         if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
+            mCurrentEvent = null;
             mHandler.removeMessages(CHANGE_EVENT);
             mCustomFile = customFile;
             getFilmDetail();

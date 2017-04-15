@@ -19,7 +19,6 @@ import cn.com.films66.app.utils.VideoUtils;
 
 public class DownloadService extends Service {
 
-    //    private String mDownloadUrl;
     private List<String> eventsUrl;
     private int downloadCount = 0;
 
@@ -63,7 +62,7 @@ public class DownloadService extends Service {
             LogUtils.d(DownloadService.class.getName(), "completed-taskID: " + task.getTag());
             LogUtils.d(DownloadService.class.getName(), "currentUrl: " + task.getUrl());
             downloadCount++;
-            if (downloadCount == eventsUrl.size()) {
+            if (downloadCount >= eventsUrl.size()) {
                 Intent intent = new Intent();
                 intent.setAction(Constants.DOWNLOAD_STATE_ACTION);
                 sendBroadcast(intent);

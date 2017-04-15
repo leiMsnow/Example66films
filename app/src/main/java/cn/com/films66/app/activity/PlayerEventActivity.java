@@ -1,5 +1,6 @@
 package cn.com.films66.app.activity;
 
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shuyu.core.uils.LogUtils;
+import com.shuyu.core.widget.BaseDialog;
 import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
 
@@ -47,7 +49,19 @@ public class PlayerEventActivity extends AbsEventActivity {
         tvComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
+                builder.setMessage("是否退出观看？");
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                }).show();
             }
         });
 
@@ -75,7 +89,7 @@ public class PlayerEventActivity extends AbsEventActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     topView.setVisibility(View.VISIBLE);
-                    myHandler.sendEmptyMessageDelayed(100,3000);
+                    myHandler.sendEmptyMessageDelayed(100, 3000);
                 }
                 return false;
             }
