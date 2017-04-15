@@ -2,7 +2,10 @@ package cn.com.films66.app.activity;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,6 +13,8 @@ import android.widget.TextView;
 import com.shuyu.core.uils.LogUtils;
 import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
@@ -25,6 +30,10 @@ public class PlayerEventActivity extends AbsEventActivity {
     TextView tvComplete;
     @Bind(R.id.iv_scale)
     ImageView ivScale;
+    @Bind(R.id.rl_top)
+    View topView;
+
+    MyHandler myHandler;
 
     @Override
     protected int getLayoutRes() {
@@ -34,6 +43,7 @@ public class PlayerEventActivity extends AbsEventActivity {
     @Override
     protected void initData() {
         toolbarHide();
+        topView.setVisibility(View.GONE);
         tvComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,14 +69,41 @@ public class PlayerEventActivity extends AbsEventActivity {
         super.onCreate(savedInstanceState);
         videoView.setMediaController(mediaController);
         setPlayUrl();
+        myHandler = new MyHandler(this);
+        mediaController.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    topView.setVisibility(View.VISIBLE);
+                    myHandler.sendEmptyMessageDelayed(100,3000);
+                }
+                return false;
+            }
+        });
+    }
+
+    private static class MyHandler extends Handler {
+
+        private WeakReference<PlayerEventActivity> weakReference;
+
+        MyHandler(PlayerEventActivity weakObj) {
+            weakReference = new WeakReference<>(weakObj);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            PlayerEventActivity weakObj = weakReference.get();
+            if (weakObj != null) {
+                weakObj.topView.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void setPlayUrl() {
         if (mEvents == null) {
             return;
         }
-            String url = VideoUtils.getLocalURL(mEvents.resources_url);
-//        String url = VideoUtils.getLocalURL("http://film-server.b0.upaiyun.com/人物及档案卡/演示用mp4/03A.1.雾桥直播-Untitled%20MPEG-4.mp4");
+        String url = VideoUtils.getLocalURL(mEvents.resources_url);
         videoView.setVideoPath(url);
         LogUtils.d(PlayerEventActivity.class.getName(), "视频本地地址： " + url);
         int seek = mOffset - mEvents.getStartTime();

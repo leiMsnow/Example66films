@@ -4,7 +4,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import com.chenenyu.router.annotation.Route;
 import com.shuyu.core.uils.ToastUtils;
 
 import butterknife.Bind;
@@ -14,7 +13,6 @@ import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.NoBodyEntity;
 
-@Route("feedback")
 public class FeedbackActivity extends AppBaseActivity {
 
     @Bind(R.id.et_feedback)

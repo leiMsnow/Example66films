@@ -33,6 +33,9 @@ import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
 import cn.com.films66.app.utils.VideoUtils;
 
+/**
+ * 识别中界面
+ */
 public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     @Bind(R.id.iv_location_card)
@@ -274,7 +277,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
             mHandler.sendEmptyMessage(CHANGE_EVENT);
         }
         mRryRecognize = 0;
+        // 视频切换剧集
         if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
+            mHandler.removeMessages(CHANGE_EVENT);
             mCustomFile = customFile;
             getFilmDetail();
         } else {

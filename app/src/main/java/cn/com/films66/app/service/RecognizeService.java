@@ -68,7 +68,7 @@ public class RecognizeService extends Service {
         public void onResult(String s) {
             cancelRecognize();
             loopRecognize();
-
+            LogUtils.d(RecognizeService.class.getName(), "原始识别结果： " + s);
             RecognizeResult recognizeEntity = new Gson().fromJson(s
                     , new TypeToken<RecognizeResult>() {
                     }.getType());
