@@ -87,6 +87,14 @@ public class UserCenterFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mSettingAdapter != null) {
+            mSettingAdapter.replaceAll(initSettingData());
+        }
+    }
+
     private void cleanCache() {
         new Thread(new Runnable() {
             @Override

@@ -89,7 +89,7 @@ public class PlayerEventActivity extends AbsEventActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     topView.setVisibility(View.VISIBLE);
-                    myHandler.sendEmptyMessageDelayed(100, 3000);
+                    myHandler.sendEmptyMessageDelayed(100, 2000);
                 }
                 return false;
             }
@@ -115,10 +115,12 @@ public class PlayerEventActivity extends AbsEventActivity {
 
     private void setPlayUrl() {
         if (mEvents == null) {
+            LogUtils.d(PlayerEventActivity.class.getName(), "没有视频资源");
             return;
         }
         String url = VideoUtils.getLocalURL(mEvents.resources_url);
         videoView.setVideoPath(url);
+        LogUtils.d(PlayerEventActivity.class.getName(), "视频网络地址： " + mEvents.resources_url);
         LogUtils.d(PlayerEventActivity.class.getName(), "视频本地地址： " + url);
         int seek = mOffset - mEvents.getStartTime();
         LogUtils.d(PlayerEventActivity.class.getName(), "当前识别时间： " + mOffset);

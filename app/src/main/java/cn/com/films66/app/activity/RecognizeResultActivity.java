@@ -212,12 +212,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private void startEventActivity(Class eventActivity) {
-        if (eventActivity != null) {
+        if (eventActivity != null && mCurrentEvent != null) {
             Intent intent = new Intent(mContext, eventActivity);
             intent.putExtra(Constants.KEY_EVENT_INFO, mCurrentEvent);
             intent.putExtra(Constants.KEY_RECOGNIZE_OFFSET, mOffset);
             startActivityForResult(intent, 0);
-            waitView.setVisibility(View.GONE);
         }
     }
 
@@ -305,6 +304,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     @Override
     protected void openPlayer() {
         isPause = false;
+        waitView.setVisibility(View.GONE);
         startEventActivity(PlayerEventActivity.class);
     }
 
