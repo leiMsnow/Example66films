@@ -1,35 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/iv_location_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY" />
 
     <RelativeLayout
         android:id="@+id/rl_wait"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            android:src="@mipmap/bg_splash"/>
+            android:src="@mipmap/bg_splash" />
 
         <TextView
+            android:id="@+id/tv_wait"
             android:layout_width="wrap_content"
-            android:text="下载中，马上完成"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="96dp"
-            android:textSize="22sp"
-            android:layout_alignParentBottom="true"
-            android:textStyle="bold"
-            android:layout_height="wrap_content"/>
+            android:text="@string/wait"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
 
     </RelativeLayout>

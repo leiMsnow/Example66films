@@ -10,8 +10,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.shuyu.core.uils.AppUtils;
+import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.BaseDialog;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import cn.com.films66.app.BuildConfig;
 import cn.com.films66.app.R;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
@@ -42,8 +45,11 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     ImageView ivLocationCard;
     @Bind(R.id.rl_wait)
     View waitView;
+    @Bind(R.id.tv_wait)
+    TextView tvWait;
 
     private static final int CHANGE_EVENT = 0;
+    private static final int CHANGE_WAIT_TEXT = 1;
 
     private CustomFile mCustomFile;
     private Film mFilmDetail;
@@ -56,7 +62,9 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private SoundPool mSoundPool;
     private int sampleId = 0;
-    private ArrayList<String> urls;
+
+    private String[] waitDot = {".", "..", "..."};
+    private int waitIndex = 0;
 
     @Override
     protected int getLayoutRes() {
@@ -188,6 +196,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         isPause = true;
                         waitView.setVisibility(View.VISIBLE);
+                        mHandler.sendEmptyMessage(CHANGE_WAIT_TEXT);
                         Intent intent = new Intent(mContext, DownloadService.class);
                         intent.putExtra(Constants.KEY_EVENTS_LIST, url);
                         startService(intent);
@@ -197,7 +206,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     }
 
     private void getEventsUrl(List<FilmEvents> events) {
-        urls = new ArrayList<>();
+        ArrayList<String> urls = new ArrayList<>();
         for (FilmEvents event : events) {
             if (event.type == FilmEvents.TYPE_FILM) {
                 urls.add(event.resources_url);
@@ -305,6 +314,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     protected void openPlayer() {
         isPause = false;
         waitView.setVisibility(View.GONE);
+        mHandler.removeMessages(CHANGE_WAIT_TEXT);
         startEventActivity(PlayerEventActivity.class);
     }
 
@@ -323,8 +333,14 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 if (msg.what == CHANGE_EVENT) {
                     weakObj.startSwitch();
                     sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
-//                    weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
-//                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
+                    if (BuildConfig.IS_DEBUG)
+                        weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
+                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
+                } else if (msg.what == CHANGE_WAIT_TEXT) {
+                    String wait = weakObj.getString(R.string.wait) + weakObj.waitDot[weakObj.waitIndex % 3];
+                    weakObj.tvWait.setText(wait);
+                    weakObj.waitIndex++;
+                    sendEmptyMessageDelayed(CHANGE_WAIT_TEXT, 500);
                 }
             }
         }
@@ -334,6 +350,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeMessages(CHANGE_EVENT);
+        mHandler.removeMessages(CHANGE_WAIT_TEXT);
         mHandler = null;
         mSoundPool.release();
         mSoundPool = null;

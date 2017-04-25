@@ -8,6 +8,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
@@ -18,6 +19,10 @@ public class WebEventActivity extends AbsEventActivity {
     WebView webView;
     @Bind(R.id.pb_progress)
     ProgressBar mPbProgress;
+    @Bind(R.id.tv_complete)
+    TextView tvComplete;
+    @Bind(R.id.rl_top)
+    View topView;
 
     @Override
     protected int getLayoutRes() {
@@ -27,6 +32,14 @@ public class WebEventActivity extends AbsEventActivity {
     @Override
     protected void initData() {
         setTitle("");
+        toolbarHide();
+        topView.setVisibility(View.GONE);
+        tvComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -37,6 +50,7 @@ public class WebEventActivity extends AbsEventActivity {
         }
         setView();
     }
+
 
     private void setView() {
         webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
