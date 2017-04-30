@@ -37,6 +37,8 @@ public class PlayerEventActivity extends AbsEventActivity {
 
     MyHandler myHandler;
 
+    private boolean isPause = false;
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_player_event;
@@ -76,6 +78,23 @@ public class PlayerEventActivity extends AbsEventActivity {
 //                }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoView.pause();
+        isPause = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isPause) {
+            videoView.seekTo(videoView.getCurrentPosition());
+            videoView.start();
+            isPause = false;
+        }
     }
 
     @Override

@@ -39,13 +39,13 @@
         <activity
             android:name=".activity.PlayerEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.WebEventActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.PictureEventActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleInstance" />
 
         <service android:name=".service.FloatWindowService" />
         <service

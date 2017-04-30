@@ -154,7 +154,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
 
     private void switchEvent() {
 
-        if (isPause && !AppUtils.isBackground()) return;
+        if (isPause || AppUtils.isBackground()) return;
 
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
@@ -164,10 +164,10 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     mCurrentEvent.isUserCancel = false;
                 }
                 mCurrentEvent = event;
-                if (event.type == FilmEvents.TYPE_FILM &&
-                        !VideoUtils.hasLocalURL(event.resources_url)) {
+                if (mCurrentEvent.type == FilmEvents.TYPE_FILM &&
+                        !VideoUtils.hasLocalURL(mCurrentEvent.resources_url)) {
                     ArrayList<String> url = new ArrayList<>();
-                    url.add(event.resources_url);
+                    url.add(mCurrentEvent.resources_url);
                     startDownload(url);
                 } else {
                     Class eventActivity = getEventActivity(mCurrentEvent.type);
@@ -187,7 +187,8 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         isPause = false;
-                        mCurrentEvent.isUserCancel = true;
+                        if (mCurrentEvent != null)
+                            mCurrentEvent.isUserCancel = true;
                         dialog.dismiss();
                     }
                 })
@@ -289,6 +290,7 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 mRryRecognize = 0;
                 mHandler.removeMessages(CHANGE_EVENT);
             }
+            mCurrentEvent = null;
             mCustomFile = null;
             return;
         }
@@ -335,7 +337,6 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                     sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
                     if (BuildConfig.IS_DEBUG)
                         weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
-                    LogUtils.i("RecognizeReceiver", "mOffset: " + DateUtils.formatTime(weakObj.mOffset));
                 } else if (msg.what == CHANGE_WAIT_TEXT) {
                     String wait = weakObj.getString(R.string.wait) + weakObj.waitDot[weakObj.waitIndex % 3];
                     weakObj.tvWait.setText(wait);

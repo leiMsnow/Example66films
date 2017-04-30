@@ -25,6 +25,7 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
     private MyHandler myHandler;
     protected FilmEvents mEvents;
     protected int mOffset = 0;
+    private CustomFile mCustomFile;
 
     private static class MyHandler extends Handler {
         private WeakReference<AbsEventActivity> weakReference;
@@ -51,8 +52,10 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
     }
 
     private void initIntent(Intent intent) {
-        if (intent == null)
+        if (intent == null) {
+            finish();
             return;
+        }
         mEvents = intent.getParcelableExtra(Constants.KEY_EVENT_INFO);
         mOffset = intent.getIntExtra(Constants.KEY_RECOGNIZE_OFFSET, 0);
         if (mEvents != null) {
@@ -81,8 +84,16 @@ public abstract class AbsEventActivity extends AbsRecognizeActivity {
 
     @Override
     protected void onRecognizeResult(CustomFile customFile) {
-        if (customFile == null)
+        if (customFile == null) {
+            finish();
             return;
+        }
+        if (mCustomFile == null) {
+            mCustomFile = customFile;
+        } else if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
+            finish();
+            return;
+        }
         mOffset = customFile.play_offset_ms;
         canFinish();
     }
