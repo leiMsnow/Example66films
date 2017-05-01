@@ -52,7 +52,7 @@ public class PlayerEventActivity extends AbsEventActivity {
             @Override
             public void onClick(View v) {
                 BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
-                builder.setMessage("是否退出观看？");
+                builder.setMessage("退出后将无法继续播放此视频。是否退出？");
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
