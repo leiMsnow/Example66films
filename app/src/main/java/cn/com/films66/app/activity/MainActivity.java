@@ -1,15 +1,20 @@
 package cn.com.films66.app.activity;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
@@ -29,6 +34,8 @@ import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
 
 public class MainActivity extends AbsRecognizeActivity {
+
+    private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     @Bind(R.id.ccv_main)
     ChangeColorView ccvMain;
@@ -57,11 +64,33 @@ public class MainActivity extends AbsRecognizeActivity {
         initBottomMenu();
         initDefaultFragment();
 
-        ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},
+                    MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
 
+        } else {
+            startRecognize();
+        }
+    }
+
+    private void startRecognize() {
+        ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
         Intent intent = new Intent(mContext, RecognizeService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_RECORD_AUDIO) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startRecognize();
+            } else {
+                Toast.makeText(MainActivity.this, "获取录音权限失败！", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @OnClick(R.id.iv_recognize)

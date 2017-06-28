@@ -132,12 +132,14 @@ public class DataCleanUtils {
         long size = 0;
         try {
             File[] fileList = file.listFiles();
-            for (int i = 0; i < fileList.length; i++) {
-                // 如果下面还有文件  
-                if (fileList[i].isDirectory()) {
-                    size = size + getFolderSize(fileList[i]);
+            if (fileList == null)
+                return size;
+            for (File aFileList : fileList) {
+                // 如果下面还有文件
+                if (aFileList.isDirectory()) {
+                    size = size + getFolderSize(aFileList);
                 } else {
-                    size = size + fileList[i].length();
+                    size = size + aFileList.length();
                 }
             }
         } catch (Exception e) {
