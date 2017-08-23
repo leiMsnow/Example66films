@@ -31,10 +31,11 @@ dependencies {
 
     compile rootProject.ext.dependencies["retrofit2"]
     compile rootProject.ext.dependencies["retrofit2-gson"]
-    compile rootProject.ext.dependencies["retrofit2-rxjava"]
+    compile rootProject.ext.dependencies["retrofit2-rxjava2"]
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-    compile 'io.reactivex:rxjava:1.1.0'
-    compile 'io.reactivex:rxandroid:1.1.0'
+//    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     compile 'org.byteam.superadapter:superadapter:3.6.5'
 

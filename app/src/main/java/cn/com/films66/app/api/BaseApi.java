@@ -7,13 +7,14 @@ import com.shuyu.core.uils.SPUtils;
 import com.shuyu.core.uils.ToastUtils;
 
 import cn.com.films66.app.base.MyApplication;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Azure on 2016/9/5.
@@ -32,7 +33,7 @@ public class BaseApi {
                 .addConverterFactory(NobodyConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(MyApplication.getApplication().genericClient())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         return retrofit.create(service);
     }
@@ -49,11 +50,7 @@ public class BaseApi {
         }
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<T>() {
-                               @Override
-                               public void onCompleted() {
-
-                               }
+                .subscribe(new Observer<T>() {
 
                                @Override
                                public void onError(Throwable e) {
@@ -62,6 +59,16 @@ public class BaseApi {
                                    if (listener != null) {
                                        listener.onFail();
                                    }
+                               }
+
+                               @Override
+                               public void onComplete() {
+
+                               }
+
+                               @Override
+                               public void onSubscribe(Disposable disposable) {
+
                                }
 
                                @Override

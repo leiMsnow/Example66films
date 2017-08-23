@@ -60,7 +60,7 @@ public class MyApplication extends CoreApplication {
 //                .addQueryParamsMap(commonParams)
 //                .build();
 
-        File cacheFile = new File(CoreApplication.getApplication().getCacheDir(), "retrofit_cache");
+        File cacheFile = new File(getApplication().getCacheDir(), "retrofit_cache");
         Cache cache = new Cache(cacheFile, 1024 * 1024 * 10);
 
         return mOkHttpClient = new OkHttpClient.Builder()
