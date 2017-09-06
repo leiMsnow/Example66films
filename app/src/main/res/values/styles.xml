@@ -5,4 +5,7 @@
         <item name="android:minHeight">4dp</item>
     </style>
 
+    <style name="ProgressCircle">
+        <item name="android:indeterminateDrawable">@drawable/shape_progress</item>
+    </style>
 </resources>

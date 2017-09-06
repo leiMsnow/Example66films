@@ -37,19 +37,6 @@ public class MainActivity extends AbsRecognizeActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
-    @Bind(R.id.ccv_main)
-    ChangeColorView ccvMain;
-    @Bind(R.id.ccv_me)
-    ChangeColorView ccvMe;
-    @Bind(R.id.iv_recognize)
-    ImageView ivRecognize;
-    @Bind(R.id.iv_rec_loading)
-    ImageView ivRecLoading;
-
-    private List<Fragment> mFragments = null;
-    private List<ChangeColorView> mChangeColorViews = null;
-    private int[] mTitles = {R.string.nav_main, R.string.nav_me};
-
     protected RecognizeService mRecognizeService;
     private boolean mRecognizeState = false;
 
@@ -61,23 +48,18 @@ public class MainActivity extends AbsRecognizeActivity {
     @Override
     protected void initData() {
         toolbarHide();
-        initBottomMenu();
-        initDefaultFragment();
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},
                     MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
-
         } else {
             startRecognize();
         }
     }
 
     private void startRecognize() {
-        ImageShowUtils.showImage(mContext, R.drawable.eye_rotation, ivRecLoading);
-        Intent intent = new Intent(mContext, RecognizeService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        //Intent intent = new Intent(mContext, RecognizeService.class);
+        //bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -93,7 +75,7 @@ public class MainActivity extends AbsRecognizeActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    @OnClick(R.id.iv_recognize)
+//    @OnClick(R.id.iv_recognize)
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
             mRecognizeState = !mRecognizeState;
@@ -103,10 +85,8 @@ public class MainActivity extends AbsRecognizeActivity {
 
     private void setRecognizeState() {
         if (mRecognizeState) {
-            ivRecLoading.setVisibility(View.VISIBLE);
             mRecognizeService.startRecognize();
         } else {
-            ivRecLoading.setVisibility(View.GONE);
             mRecognizeService.cancelRecognize();
         }
     }
@@ -117,62 +97,6 @@ public class MainActivity extends AbsRecognizeActivity {
             mRecognizeService.setLoop(false);
         }
         super.onResume();
-    }
-
-    private void initDefaultFragment() {
-        mFragments = new ArrayList<>();
-        mFragments.add(MainFragment.newInstance());
-        mFragments.add(UserCenterFragment.newInstance());
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        for (int i = 0; i < mFragments.size(); i++) {
-            ft.add(R.id.fl_container, mFragments.get(i));
-            if (i > 0) ft.hide(mFragments.get(i));
-        }
-        ft.commit();
-    }
-
-    private void initBottomMenu() {
-        mChangeColorViews = new ArrayList<>();
-        mChangeColorViews.add(ccvMain);
-        mChangeColorViews.add(ccvMe);
-        for (int i = 0; i < mChangeColorViews.size(); i++) {
-            mChangeColorViews.get(i).setOnClickListener(new OnButtonMenuClickListener(i));
-        }
-        mChangeColorViews.get(0).setIconAlpha(1.0f);
-    }
-
-    private class OnButtonMenuClickListener implements View.OnClickListener {
-        int position;
-
-        OnButtonMenuClickListener(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            setBottomMenu(position);
-        }
-    }
-
-    private void setBottomMenu(int position) {
-        if (mChangeColorViews != null) {
-            for (int i = 0; i < mChangeColorViews.size(); i++) {
-                mChangeColorViews.get(i).setIconAlpha(0);
-            }
-            setTitle(mTitles[position]);
-            mChangeColorViews.get(position).setIconAlpha(1.0f);
-            switchContent(position);
-        }
-    }
-
-    public void switchContent(int position) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        for (int i = 0; i < mFragments.size(); i++) {
-            ft.hide(mFragments.get(i));
-        }
-        ft.show(mFragments.get(position));
-        ft.commit();
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {

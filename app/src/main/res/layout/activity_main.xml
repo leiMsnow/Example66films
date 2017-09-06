@@ -1,77 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg_background"
+    android:paddingTop="16dp">
 
     <ImageView
-        android:id="@+id/iv_logo_title"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/toolbar_main_color"
-        android:scaleType="centerInside"
-        android:src="@mipmap/ic_logo_title" />
+        android:id="@+id/iv_user"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginLeft="16dp"
+        android:src="@mipmap/ic_user" />
 
-    <FrameLayout
-        android:id="@+id/fl_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/ll_bottom_menu"
-        android:layout_below="@+id/iv_logo_title" />
-
-    <LinearLayout
-        android:id="@+id/ll_bottom_menu"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/color_nav_bg"
-        android:orientation="horizontal">
-
-        <com.shuyu.core.widget.ChangeColorView
-            android:id="@+id/ccv_main"
-            style="@style/MainMenuStyle"
-            app:changeColor="@color/color_nav_item_pressed"
-            app:changeIcon="@mipmap/ic_nav_main"
-            app:changeText="首页"
-            app:changeTextSize="10sp"
-            app:defaultColor="@color/normal_light_grey" />
-
-        <com.shuyu.core.widget.ChangeColorView
-            android:id="@+id/ccv_me"
-            style="@style/MainMenuStyle"
-            app:changeColor="@color/color_nav_item_pressed"
-            app:changeIcon="@mipmap/ic_nav_me"
-            app:changeText="我的"
-            app:changeTextSize="10sp"
-            app:defaultColor="@color/normal_light_grey" />
-
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/iv_recommend"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:src="@mipmap/ic_recommend" />
 
     <RelativeLayout
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/shape_circle">
+        android:layout_marginTop="48dp"
+        android:background="@mipmap/bg_halo">
 
-        <com.shuyu.core.widget.RoundImageView
-            android:id="@+id/iv_recognize"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_margin="8dp"
-            android:src="@mipmap/ic_eye" />
+        <ProgressBar
+            android:id="@+id/pb_progress"
+            style="@style/ProgressCircle"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_centerInParent="true" />
 
         <ImageView
-            android:id="@+id/iv_rec_loading"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:layout_centerInParent="true"
-            android:layout_margin="8dp"
-            android:src="@mipmap/ic_eye"
-            android:visibility="invisible" />
-
+            android:src="@mipmap/ic_play" />
     </RelativeLayout>
 
 </RelativeLayout>
