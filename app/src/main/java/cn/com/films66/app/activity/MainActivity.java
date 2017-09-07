@@ -10,24 +10,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
-import com.shuyu.core.widget.ChangeColorView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.com.films66.app.R;
-import cn.com.films66.app.fragment.MainFragment;
-import cn.com.films66.app.fragment.UserCenterFragment;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
@@ -38,6 +31,14 @@ public class MainActivity extends AbsRecognizeActivity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     protected RecognizeService mRecognizeService;
+    @Bind(R.id.iv_user)
+    ImageView ivUser;
+    @Bind(R.id.iv_recommend)
+    ImageView ivRecommend;
+    @Bind(R.id.iv_progress)
+    ImageView ivProgress;
+    @Bind(R.id.iv_play)
+    ImageView ivPlay;
     private boolean mRecognizeState = false;
 
     @Override
@@ -58,8 +59,8 @@ public class MainActivity extends AbsRecognizeActivity {
     }
 
     private void startRecognize() {
-        //Intent intent = new Intent(mContext, RecognizeService.class);
-        //bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        Intent intent = new Intent(mContext, RecognizeService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class MainActivity extends AbsRecognizeActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-//    @OnClick(R.id.iv_recognize)
+    @OnClick(R.id.iv_play)
     public void onRecClick(View view) {
         if (mRecognizeService != null) {
             mRecognizeState = !mRecognizeState;
@@ -86,8 +87,12 @@ public class MainActivity extends AbsRecognizeActivity {
     private void setRecognizeState() {
         if (mRecognizeState) {
             mRecognizeService.startRecognize();
+            ivProgress.setVisibility(View.GONE);
+            ivPlay.setImageResource(R.mipmap.ic_pause);
         } else {
             mRecognizeService.cancelRecognize();
+            ivProgress.setVisibility(View.VISIBLE);
+            ivPlay.setImageResource(R.mipmap.ic_play);
         }
     }
 
