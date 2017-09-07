@@ -31,6 +31,10 @@
         <!--<item name="android:popupBackground">@drawable/abc_popup_background_mtrl_mult</item>-->
     </style>
 
+    <style name="ThemeOverlay.AppCompat.ActionBar.Transparent" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/transparent</item>
+    </style>
+
     <!-- search_view-->
     <style name="SearchView.Light" parent="Base.Widget.AppCompat.SearchView">
         <item name="queryBackground">@drawable/selector_textfield_search_material</item>

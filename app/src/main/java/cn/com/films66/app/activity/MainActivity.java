@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.shuyu.core.uils.LogUtils;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.com.films66.app.R;
 import cn.com.films66.app.model.CustomFile;
@@ -31,10 +30,6 @@ public class MainActivity extends AbsRecognizeActivity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     protected RecognizeService mRecognizeService;
-    @Bind(R.id.iv_user)
-    ImageView ivUser;
-    @Bind(R.id.iv_recommend)
-    ImageView ivRecommend;
     @Bind(R.id.iv_progress)
     ImageView ivProgress;
     @Bind(R.id.iv_play)
@@ -82,6 +77,18 @@ public class MainActivity extends AbsRecognizeActivity {
             mRecognizeState = !mRecognizeState;
             setRecognizeState();
         }
+    }
+
+    @OnClick(R.id.iv_user)
+    public void openUserInfo(View view) {
+        Intent intent = new Intent(mContext, UserInfoActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.iv_recommend)
+    public void openRecommend(View view) {
+        Intent intent = new Intent(mContext, RecommendActivity.class);
+        startActivity(intent);
     }
 
     private void setRecognizeState() {

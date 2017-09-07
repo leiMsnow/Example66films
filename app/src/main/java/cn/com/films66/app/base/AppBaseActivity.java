@@ -16,11 +16,4 @@ public abstract class AppBaseActivity extends BaseActivity {
         return true;
     }
 
-    @Override
-    protected void initToolbar() {
-        super.initToolbar();
-        if (mToolbar != null) {
-            mToolbar.setBackgroundResource(R.color.toolbar_main_color);
-        }
-    }
 }
