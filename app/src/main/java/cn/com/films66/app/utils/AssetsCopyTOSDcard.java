@@ -9,10 +9,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class AssetsCopyToSDCard {
+public class AssetsCopyTOSDcard {
     Context mContext;
 
-    public AssetsCopyToSDCard(Context context) {
+    public AssetsCopyTOSDcard(Context context) {
         super();
         this.mContext = context;
     }
