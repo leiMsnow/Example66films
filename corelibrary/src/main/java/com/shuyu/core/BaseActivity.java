@@ -69,8 +69,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initToolbar() {
         if (!includeToolbar()) return;
 
-//        View toolbarView = View.inflate(mContext, R.layout.include_toolbar, null);
-        mToolbar = (Toolbar) findViewById(R.id.tb_toolbar);
+        View toolbarView = View.inflate(mContext, R.layout.include_toolbar, null);
+        mToolbar = (Toolbar) toolbarView.findViewById(R.id.tb_toolbar);
         if (mToolbar == null) return;
 
         mToolbar.setBackgroundResource(R.color.transparent);
@@ -79,10 +79,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             setOverflowShowingAlways();
         }
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-//                ViewGroup.LayoutParams.MATCH_PARENT, getToolbarHeight());
-//        addContentView(toolbarView, layoutParams);
-//        setToolbarMarginTop();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, getToolbarHeight());
+        addContentView(toolbarView, layoutParams);
+        setToolbarMarginTop();
     }
 
     private void setToolbarMarginTop() {

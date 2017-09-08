@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:layout_marginTop="1dp"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingLeft="16dp">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="1dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="16dp">
 
     <ImageView
         android:id="@+id/iv_setting_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginLeft="8dp"
+        tools:src="@mipmap/ic_about"/>
 
     <TextView
         android:id="@+id/tv_setting_title"
@@ -24,8 +25,9 @@
         android:layout_toLeftOf="@+id/iv_arrow"
         android:layout_toRightOf="@+id/iv_setting_icon"
         android:gravity="center_vertical"
+        android:textColor="#1e1e1e"
         android:textSize="16sp"
-        tools:text="title" />
+        tools:text="title"/>
 
     <ImageView
         android:id="@+id/iv_arrow"
@@ -33,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@mipmap/ic_arrow" />
+        android:layout_marginRight="16dp"
+        android:src="@mipmap/ic_arrow"/>
 
 </RelativeLayout>

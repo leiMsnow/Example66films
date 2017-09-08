@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.com.films66.app">
+          package="cn.com.films66.app">
 
     <application
         android:name=".base.MyApplication"
@@ -11,65 +11,68 @@
         android:theme="@style/AppTheme.Main.Dark.APP">
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:launchMode="singleTask" />
-        <activity android:name=".activity.FilmDetailActivity" />
+            android:launchMode="singleTask"/>
+        <activity android:name=".activity.FilmDetailActivity"/>
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/about">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
 
                 <data
                     android:host="about"
-                    android:scheme="films" />
+                    android:scheme="films"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.FeedbackActivity"
-            android:label="@string/feedback" />
+            android:label="@string/feedback"/>
         <activity
             android:name=".activity.HelpInfoActivity"
-            android:label="@string/help" />
+            android:label="@string/help"/>
         <activity
             android:name=".activity.WebViewActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.DialogActivity"
-            android:theme="@style/AppTheme.Main.Dialog" />
-        <activity android:name=".activity.RecognizeResultActivity" />
+            android:theme="@style/AppTheme.Main.Dialog"/>
+        <activity android:name=".activity.RecognizeResultActivity"/>
         <activity
             android:name=".activity.PlayerEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.WebEventActivity"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.PictureEventActivity"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"/>
 
-        <service android:name=".service.FloatWindowService" />
+        <service android:name=".service.FloatWindowService"/>
         <service
             android:name=".service.RecognizeService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
         <service
             android:name=".service.DownloadService"
             android:enabled="true"
             android:exported="true"
-            android:process=":download" />
+            android:process=":download"/>
 
-        <activity android:name=".activity.UserInfoActivity" />
-        <activity android:name=".activity.RecommendActivity"/>
+        <activity
+            android:name=".activity.UserInfoActivity"
+            android:label="我的"/>
+        <activity android:name=".activity.RecommendActivity"
+            android:label="剧集推荐"/>
     </application>
 
 </manifest>
