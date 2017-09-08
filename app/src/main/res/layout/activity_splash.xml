@@ -7,11 +7,11 @@
 
     <ImageView
         android:id="@+id/iv_launcher_url"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@mipmap/bg_splash"/>
-
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher"/>
 
     <TextView
         android:id="@+id/tv_countdown"

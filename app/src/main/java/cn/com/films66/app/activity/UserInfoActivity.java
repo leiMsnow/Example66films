@@ -19,7 +19,6 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.adapter.SettingAdapter;
 import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.SettingInfo;
-import cn.com.films66.app.utils.Constants;
 import cn.com.films66.app.utils.VideoUtils;
 
 public class UserInfoActivity extends AppBaseActivity {
@@ -43,21 +42,11 @@ public class UserInfoActivity extends AppBaseActivity {
             public void onItemClick(View itemView, int viewType, int position) {
                 Intent intent;
                 switch (mSettingAdapter.getItem(position).getSetId()) {
-                    case SettingInfo.RECOMMEND:
-                        break;
                     case SettingInfo.CLEAR:
                         cleanCache();
                         break;
                     case SettingInfo.FEEDBACK:
                         intent = new Intent(mContext, FeedbackActivity.class);
-                        startActivity(intent);
-                        break;
-                    case SettingInfo.UPDATE:
-                        ToastUtils.getInstance().showToast("已经是最新版本");
-                        break;
-                    case SettingInfo.DISCLAIMER:
-                        intent = new Intent(mContext, WebViewActivity.class);
-                        intent.putExtra(Constants.KEY_WEB_VIEW_TYPE, 1);
                         startActivity(intent);
                         break;
                     case SettingInfo.SERVICE:
