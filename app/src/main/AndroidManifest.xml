@@ -68,8 +68,8 @@
         <activity
             android:name=".activity.RecommendActivity"
             android:label="剧集推荐"/>
-        <activity android:name=".wxapi.WXEntryActivity">
-        </activity>
+        <activity android:name=".wxapi.WXEntryActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

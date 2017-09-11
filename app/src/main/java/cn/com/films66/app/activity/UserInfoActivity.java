@@ -12,6 +12,9 @@ import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.SPUtils;
 import com.shuyu.core.uils.ToastUtils;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -60,15 +63,23 @@ public class UserInfoActivity extends AppBaseActivity {
             ImageShowUtils.showImage(mContext,
                     SPUtils.getNoClear(mContext, Constants.USER_IMAGE, "").toString(), mImageVie);
         } else {
-            final IWXAPI api = WXAPIFactory.createWXAPI(mContext, null);
+            final IWXAPI api = WXAPIFactory.createWXAPI(this, Constants.WECHAT_KEY, true);
             api.registerApp(Constants.WECHAT_KEY);
             mTextView.setText("微信登录");
             mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SendAuth.Req req = new SendAuth.Req();
-                    req.scope = "snsapi_userinfo";
-                    req.state = "wechat_filmes_login";
+//                    SendAuth.Req req = new SendAuth.Req();
+//                    req.scope = "snsapi_userinfo";
+                    String text = "wechat_films_login";
+                    WXTextObject textObject = new WXTextObject();
+                    textObject.text = text;
+                    WXMediaMessage msg = new WXMediaMessage();
+                    msg.mediaObject = textObject;
+                    msg.description = text;
+                    SendMessageToWX.Req req = new SendMessageToWX.Req();
+                    req.transaction = String.valueOf(System.currentTimeMillis());
+                    req.message = msg;
                     api.sendReq(req);
                 }
             });

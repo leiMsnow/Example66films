@@ -212,3 +212,12 @@ public static java.lang.String TABLENAME;
 -dontwarn org.greenrobot.greendao.database.**
 #// If you do not use Rx:
 -dontwarn org.greenrobot.greendao.rx.**
+-keep class com.tencent.mm.opensdk.** {
+   *;
+}
+-keep class com.tencent.wxop.** {
+   *;
+}
+-keep class com.tencent.mm.sdk.** {
+   *;
+}
