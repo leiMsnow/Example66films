@@ -27,7 +27,7 @@
             android:layout_below="@+id/iv_user"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:text="@string/app_name"
+            android:text="微信登录"
             android:textSize="16sp"/>
     </RelativeLayout>
 

@@ -26,8 +26,8 @@ public class SPUtils {
      * Append methods of putting Double values by chen.
      *
      * @param context context
-     * @param key 键
-     * @param object 值
+     * @param key     键
+     * @param object  值
      */
     public static void put(Context context, String key, Object object) {
         put(context, FILE_NAME, key, object);
@@ -52,7 +52,7 @@ public class SPUtils {
             editor.putLong(key, (Long) object);
         } else if (object instanceof Double) {
             editor.putLong(key, Double.doubleToRawLongBits((Double) object));
-        }else if (object instanceof HashSet) {
+        } else if (object instanceof HashSet) {
             editor.putStringSet(key, (HashSet<String>) object);
         } else {
             editor.putString(key, object.toString());
@@ -65,13 +65,17 @@ public class SPUtils {
      * 得到保存数据的方法，我们根据默认值得到保存的数据的具体类型，然后调用相对于的方法获取值
      * Append methods of getting Double values by chen.
      *
-     * @param context context
-     * @param key 键
+     * @param context       context
+     * @param key           键
      * @param defaultObject 默认值
      * @return 返回值
      */
     public static Object get(Context context, String key, Object defaultObject) {
         return get(context, FILE_NAME, key, defaultObject);
+    }
+
+    public static Object getNoClear(Context context, String key, Object defaultObject) {
+        return get(context, NO_CLEAR_FILE, key, defaultObject);
     }
 
     public static Object get(Context context, String fileName, String key, Object defaultObject) {
@@ -91,8 +95,8 @@ public class SPUtils {
         } else if (defaultObject instanceof Double) {
             return Double.longBitsToDouble(sp.getLong(key,
                     Double.doubleToRawLongBits((Double) defaultObject)));
-        } else if (defaultObject instanceof HashSet){
-            return   sp.getStringSet(key, (Set<String>) defaultObject);
+        } else if (defaultObject instanceof HashSet) {
+            return sp.getStringSet(key, (Set<String>) defaultObject);
         }
         return null;
     }
@@ -102,7 +106,7 @@ public class SPUtils {
      * 移除某个key值已经对应的值
      *
      * @param context context
-     * @param key 键
+     * @param key     键
      */
     public static void remove(Context context, String key) {
         remove(context, FILE_NAME, key);
@@ -137,7 +141,7 @@ public class SPUtils {
      * 查询某个key是否已经存在
      *
      * @param context context
-     * @param key 键
+     * @param key     键
      * @return true存在 ; false不存在
      */
     public static boolean contains(Context context, String key) {
@@ -151,8 +155,6 @@ public class SPUtils {
     }
 
 
-
-
     /**
      * 返回所有的键值对
      *
@@ -160,20 +162,21 @@ public class SPUtils {
      * @return
      */
     public static Map<String, ?> getAll(Context context) {
-        return getAll(context,FILE_NAME);
+        return getAll(context, FILE_NAME);
     }
 
-    public static Map<String, ?> getAll(Context context,String fileName) {
+    public static Map<String, ?> getAll(Context context, String fileName) {
         SharedPreferences sp = context.getSharedPreferences(fileName,
                 Context.MODE_PRIVATE);
         return sp.getAll();
     }
-        /**
-         * 创建一个SharedPreferencesCompat解决apply方法的一个兼容类
-         *
-         * @author zhy
-         */
-        private static class SharedPreferencesCompat {
+
+    /**
+     * 创建一个SharedPreferencesCompat解决apply方法的一个兼容类
+     *
+     * @author zhy
+     */
+    private static class SharedPreferencesCompat {
         private static final Method sApplyMethod = findApplyMethod();
 
         /**

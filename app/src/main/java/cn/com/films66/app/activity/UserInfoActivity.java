@@ -5,9 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.shuyu.core.uils.DataCleanUtils;
+import com.shuyu.core.uils.ImageShowUtils;
+import com.shuyu.core.uils.SPUtils;
 import com.shuyu.core.uils.ToastUtils;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.byteam.superadapter.OnItemClickListener;
 
@@ -19,11 +25,21 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.adapter.SettingAdapter;
 import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.SettingInfo;
+import cn.com.films66.app.utils.Constants;
 import cn.com.films66.app.utils.VideoUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserInfoActivity extends AppBaseActivity {
+
     @Bind(R.id.rv_container)
     RecyclerView mRvContainer;
+
+    @Bind(R.id.tv_user_name)
+    TextView mTextView;
+
+    @Bind(R.id.iv_user)
+    CircleImageView mImageVie;
+
     private SettingAdapter mSettingAdapter;
 
     @Override
@@ -33,6 +49,33 @@ public class UserInfoActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        setUserInfo();
+        initAdapter();
+    }
+
+    private void setUserInfo() {
+
+        if ((Boolean) SPUtils.getNoClear(mContext, Constants.IS_LOGIN, false)) {
+            mTextView.setText(SPUtils.getNoClear(mContext, Constants.USER_NAME, "微信登录").toString());
+            ImageShowUtils.showImage(mContext,
+                    SPUtils.getNoClear(mContext, Constants.USER_IMAGE, "").toString(), mImageVie);
+        } else {
+            final IWXAPI api = WXAPIFactory.createWXAPI(mContext, null);
+            api.registerApp(Constants.WECHAT_KEY);
+            mTextView.setText("微信登录");
+            mTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SendAuth.Req req = new SendAuth.Req();
+                    req.scope = "snsapi_userinfo";
+                    req.state = "wechat_filmes_login";
+                    api.sendReq(req);
+                }
+            });
+        }
+    }
+
+    private void initAdapter() {
         mSettingAdapter = new SettingAdapter(mContext, initSettingData(), R.layout.item_setting);
         mRvContainer.setLayoutManager(new LinearLayoutManager(mContext));
         mRvContainer.setAdapter(mSettingAdapter);

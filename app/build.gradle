@@ -122,4 +122,6 @@ dependencies {
     compile project(':corelibrary')
     compile project(':videoview')
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }

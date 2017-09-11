@@ -32,4 +32,9 @@ public interface Constants {
     String KEY_VIDEO_URL = "KEY_VIDEO_URL";
 
     String KEY_DOWNLOAD_URL = "KEY_DOWNLOAD_URL";
+
+    String WECHAT_KEY = "wx1e7314e739bc0728";
+    String IS_LOGIN = "IS_LOGIN";
+    String USER_NAME = "USER_NAME";
+    String USER_IMAGE = "USER_IMAGE";
 }

@@ -65,8 +65,11 @@
         <activity
             android:name=".activity.UserInfoActivity"
             android:label="我的"/>
-        <activity android:name=".activity.RecommendActivity"
+        <activity
+            android:name=".activity.RecommendActivity"
             android:label="剧集推荐"/>
+        <activity android:name=".wxapi.WXEntryActivity">
+        </activity>
     </application>
 
 </manifest>
