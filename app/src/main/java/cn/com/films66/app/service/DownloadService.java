@@ -51,7 +51,7 @@ public class DownloadService extends Service {
         }
         queueSet.disableCallbackProgressTimes();
         queueSet.setAutoRetryTimes(1);
-        queueSet.downloadTogether(tasks);
+        queueSet.downloadSequentially(tasks);
         queueSet.start();
     }
 

@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.shuyu.core.decoration.DividerItemDecoration;
+
 import org.byteam.superadapter.OnItemClickListener;
 
 import java.util.List;
@@ -47,6 +49,7 @@ public class RecommendActivity extends AppBaseActivity {
 
         filmsAdapter = new FilmsAdapter(mContext, null, R.layout.item_main);
         rvContainer.setLayoutManager(new LinearLayoutManager(mContext));
+        rvContainer.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
         rvContainer.setAdapter(filmsAdapter);
         filmsAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override

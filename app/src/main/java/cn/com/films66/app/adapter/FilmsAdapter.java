@@ -25,8 +25,8 @@ public class FilmsAdapter extends SuperAdapter<Film> {
 
     @Override
     public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, Film item) {
-        holder.setText(R.id.tv_video_title, item.name)
-                .setText(R.id.tv_video_time, item.getRuntime());
+        holder.setText(R.id.tv_video_title, item.type + "  "+item.name )
+                .setText(R.id.tv_video_time, item.releaseDate);
 
         ImageShowUtils.showImage(mContext, item.cover_url,
                 (ImageView) holder.findViewById(R.id.iv_video_bg));

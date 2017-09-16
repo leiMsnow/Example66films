@@ -12,15 +12,13 @@ public class Film {
     public String name;
     public String introduction;
     public String runtime;
-    public String created_at;
-    public String updated_at;
+    public String type;
+    public String releaseDate;
     public String cover_url;
-    public String background_image_url;
     public List<FilmEvents> events;
     public List<LocationCards> location_cards;
 
     public String getRuntime() {
-//        return DateUtils.formatTime(runtime * 60 * 1000);
         return runtime;
     }
 }
