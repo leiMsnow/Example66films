@@ -20,7 +20,6 @@
         android:layout_height="match_parent"
         app:uvv_scalable="true" />
 
-
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
@@ -47,6 +46,11 @@
 
     </RelativeLayout>
 
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/view_danmaku"
+        android:layout_below="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
 

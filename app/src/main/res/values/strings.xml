@@ -1,5 +1,5 @@
 <resources>
-    <string name="wait">在wifi情况下需要大约1-2分钟，请耐心等待</string>
+    <string name="wait">在wifi情况下需要大约1-2分钟，\n 请耐心等待</string>
 
     <string name="errcode_success">发送成功</string>
     <string name="errcode_cancel">发送取消</string>

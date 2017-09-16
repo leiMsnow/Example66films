@@ -124,4 +124,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.github.ctiao:DanmakuFlameMaster:0.9.12'
+    compile 'com.github.ctiao:ndkbitmap-armv7a:0.9.12'
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

@@ -3,18 +3,20 @@
     <item android:id="@android:id/background">
         <shape>
             <gradient
-                android:centerColor="@color/theme_grey_500"
-                android:endColor="@color/theme_grey_500"
-                android:startColor="@color/theme_grey_500"/>
+                android:centerColor="@color/translucent_white_a50"
+                android:endColor="@color/translucent_white_a50"
+                android:startColor="@color/translucent_white_a50"/>
+            <corners android:radius="8dp"/>
         </shape>
     </item>
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
                 <gradient
-                    android:centerColor="@color/app_main_color_pressed"
-                    android:endColor="@color/app_main_color_pressed"
-                    android:startColor="@color/app_main_color_pressed"/>
+                    android:centerColor="#ffde31"
+                    android:endColor="#ffde31"
+                    android:startColor="#ff4abc"/>
+                <corners android:radius="8dp"/>
             </shape>
         </clip>
     </item>
@@ -22,9 +24,10 @@
     <clip>
         <shape>
             <gradient
-                android:centerColor="@color/app_main_color"
-                android:endColor="@color/app_main_color"
-                android:startColor="@color/app_main_color"/>
+                android:centerColor="#ffde31"
+                android:endColor="#ffde31"
+                android:startColor="#ff4abc"/>
+            <corners android:radius="8dp"/>
         </shape>
     </clip>
 </item>

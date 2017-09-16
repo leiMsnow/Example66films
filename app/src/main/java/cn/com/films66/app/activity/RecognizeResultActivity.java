@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.shuyu.core.uils.AppUtils;
@@ -17,6 +18,10 @@ import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.BaseDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -28,6 +33,7 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.model.CustomFile;
+import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.model.Film;
 import cn.com.films66.app.model.FilmEvents;
 import cn.com.films66.app.model.LocationCards;
@@ -47,6 +53,8 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
     View waitView;
     @Bind(R.id.tv_wait)
     TextView tvWait;
+    @Bind(R.id.pb_progress)
+    ProgressBar pbProgress;
 
     private static final int CHANGE_EVENT = 0;
     private static final int CHANGE_WAIT_TEXT = 1;
@@ -210,14 +218,13 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
         ArrayList<String> urls = new ArrayList<>();
         for (FilmEvents event : events) {
             if (event.type == FilmEvents.TYPE_FILM) {
-                urls.add(event.resources_url);
+                if (!VideoUtils.hasLocalURL(event.resources_url)) {
+                    urls.add(event.resources_url);
+                }
             }
         }
-        for (String url : urls) {
-            if (!VideoUtils.hasLocalURL(url)) {
-                startDownload(urls);
-                break;
-            }
+        if (!urls.isEmpty()) {
+            startDownload(urls);
         }
     }
 
@@ -345,6 +352,14 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
                 }
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EventBusModel.DownloadProgress progress) {
+        LogUtils.d("DownloadProgress", "soFarBytes: " + progress.soFarBytes);
+        LogUtils.d("DownloadProgress", "totalBytes: " + progress.totalBytes);
+        pbProgress.setProgress(progress.soFarBytes);
+        pbProgress.setMax(progress.totalBytes);
     }
 
     @Override

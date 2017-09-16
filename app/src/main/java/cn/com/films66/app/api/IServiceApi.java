@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.com.films66.app.model.Film;
 import cn.com.films66.app.model.HelpInfo;
+import cn.com.films66.app.model.MyDanmaku;
 import cn.com.films66.app.model.NoBodyEntity;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -39,5 +40,11 @@ public interface IServiceApi {
     @POST("feedback")
     Observable<NoBodyEntity> sendFeedback(@Query("content") String context,
                                           @Query("platform") int platform);
+
+    /**
+     * 获取弹幕
+     */
+    @GET("events/{id}/barrage")
+    Observable<List<MyDanmaku>> getFilmDanmaku(@Path("id") int id);
 
 }

@@ -1,6 +1,11 @@
 <resources>
 
     <style name="Widget.ProgressBar.Horizontal.Main" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_main</item>
+        <item name="android:minHeight">4dp</item>
+    </style>
+
+    <style name="Widget.ProgressBar.Horizontal.Down" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_down</item>
         <item name="android:minHeight">4dp</item>
     </style>

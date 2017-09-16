@@ -5,6 +5,8 @@ import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.shuyu.core.uils.LogUtils;
 
+import cn.com.films66.app.service.DownloadService;
+
 /**
  * Created by Azure on 2017/3/18.
  */
@@ -23,7 +25,8 @@ public class SimpleFileDownloadListener extends FileDownloadListener {
 
     @Override
     protected void completed(BaseDownloadTask task) {
-        LogUtils.d(SimpleFileDownloadListener.class.getName(), "completed");
+        LogUtils.d(DownloadService.class.getName(), "completed-tag: " + task.getTag());
+        LogUtils.d(DownloadService.class.getName(), "completed-url: " + task.getUrl());
     }
 
     @Override
