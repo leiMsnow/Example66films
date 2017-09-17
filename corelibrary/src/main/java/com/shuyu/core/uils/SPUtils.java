@@ -33,6 +33,10 @@ public class SPUtils {
         put(context, FILE_NAME, key, object);
     }
 
+    public static void putNoClear(Context context, String key, Object object) {
+        put(context, NO_CLEAR_FILE, key, object);
+    }
+
     public static void put(Context context, String fileName, String key, Object object) {
         if (object == null)
             return;

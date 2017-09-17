@@ -163,9 +163,11 @@ public class PlayerEventActivity extends AbsEventActivity {
 
     private static class MyHandler extends Handler {
         private WeakReference<PlayerEventActivity> weakReference;
+
         MyHandler(PlayerEventActivity weakObj) {
             weakReference = new WeakReference<>(weakObj);
         }
+
         @Override
         public void handleMessage(Message msg) {
             PlayerEventActivity weakObj = weakReference.get();
@@ -181,7 +183,6 @@ public class PlayerEventActivity extends AbsEventActivity {
             LogUtils.d(PlayerEventActivity.class.getName(), "没有视频资源");
             return;
         }
-
         String url = VideoUtils.getLocalURL(mEvents.resources_url);
         videoView.setVideoPath(url);
         LogUtils.d(PlayerEventActivity.class.getName(), "视频网络地址： " + mEvents.resources_url);
@@ -220,11 +221,12 @@ public class PlayerEventActivity extends AbsEventActivity {
         });
     }
 
-    private void initDanmaku(){
+    private void initDanmaku() {
+        LogUtils.d(this.getClass().getName(), "initDanmaku");
         mDanmakuContext = DanmakuContext.create();
         // 设置最大行数,从右向左滚动(有其它方向可选)
-        maxLinesPair= new HashMap<>();
-        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL,3);
+        maxLinesPair = new HashMap<>();
+        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3);
         // 设置是否禁止重叠
         overlappingEnablePair = new HashMap<>();
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
@@ -240,32 +242,35 @@ public class PlayerEventActivity extends AbsEventActivity {
                 .setMaximumLines(maxLinesPair) //设置最大显示行数
                 .preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
 
-            mDanmakuView.setCallback(new master.flame.danmaku.controller.DrawHandler.Callback() {
-                @Override
-                public void updateTimer(DanmakuTimer timer) {
-                }
+        mDanmakuView.setCallback(new master.flame.danmaku.controller.DrawHandler.Callback() {
+            @Override
+            public void updateTimer(DanmakuTimer timer) {
+                LogUtils.d(this.getClass().getName(), "mDanmakuView - updateTimer");
+            }
 
-                @Override
-                public void drawingFinished() {
+            @Override
+            public void drawingFinished() {
+                LogUtils.d(this.getClass().getName(), "mDanmakuView - drawingFinished");
+            }
 
-                }
+            @Override
+            public void danmakuShown(BaseDanmaku danmaku) {
+                LogUtils.d(this.getClass().getName(), "mDanmakuView - danmakuShown");
+            }
 
-                @Override
-                public void danmakuShown(BaseDanmaku danmaku) {
-
-                }
-
-                @Override
-                public void prepared() {
-                    mDanmakuView.start();
-                }
-            });
-            mDanmakuView.showFPS(false); //是否显示FPS
-            mDanmakuView.enableDanmakuDrawingCache(true);
+            @Override
+            public void prepared() {
+                LogUtils.d(this.getClass().getName(), "mDanmakuView - prepared");
+                mDanmakuView.start();
+            }
+        });
+        mDanmakuView.showFPS(false); //是否显示FPS
+        mDanmakuView.enableDanmakuDrawingCache(true);
         getDanmakuInfo();
     }
 
-    private void getDanmakuInfo(){
+    private void getDanmakuInfo() {
+        LogUtils.d(this.getClass().getName(), "getDanmakuInfo");
         BaseApi.request(BaseApi.createApi(IServiceApi.class).getFilmDanmaku(mEvents.id),
                 new BaseApi.IResponseListener<List<MyDanmaku>>() {
                     @Override
@@ -284,6 +289,7 @@ public class PlayerEventActivity extends AbsEventActivity {
      * 添加文本弹幕
      */
     private void addDanmaku(List<MyDanmaku> data) {
+        LogUtils.d(this.getClass().getName(), "addDanmaku");
         for (MyDanmaku myDanmaku : data) {
             BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
             if (danmaku == null) {
@@ -299,6 +305,7 @@ public class PlayerEventActivity extends AbsEventActivity {
             danmaku.textShadowColor = Color.WHITE; //阴影/描边颜色
             danmaku.borderColor = Color.GREEN; //边框颜色，0表示无边框
             mDanmakuView.addDanmaku(danmaku);
+            LogUtils.d(this.getClass().getName(), "addDanmaku：" + myDanmaku.content);
         }
     }
 

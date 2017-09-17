@@ -37,4 +37,5 @@ public interface Constants {
     String IS_LOGIN = "IS_LOGIN";
     String USER_NAME = "USER_NAME";
     String USER_IMAGE = "USER_IMAGE";
+    String USER_ID = "USER_ID";
 }

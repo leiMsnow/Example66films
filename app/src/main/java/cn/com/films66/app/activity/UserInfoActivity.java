@@ -12,9 +12,6 @@ import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.SPUtils;
 import com.shuyu.core.uils.ToastUtils;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -44,7 +41,7 @@ public class UserInfoActivity extends AppBaseActivity {
     CircleImageView mImageVie;
 
     private SettingAdapter mSettingAdapter;
-
+    private IWXAPI mApi;
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_user_info;
@@ -52,8 +49,15 @@ public class UserInfoActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        setUserInfo();
+        mApi = WXAPIFactory.createWXAPI(this, Constants.WECHAT_KEY, true);
+        mApi.registerApp(Constants.WECHAT_KEY);
         initAdapter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUserInfo();
     }
 
     private void setUserInfo() {
@@ -63,24 +67,13 @@ public class UserInfoActivity extends AppBaseActivity {
             ImageShowUtils.showImage(mContext,
                     SPUtils.getNoClear(mContext, Constants.USER_IMAGE, "").toString(), mImageVie);
         } else {
-            final IWXAPI api = WXAPIFactory.createWXAPI(this, Constants.WECHAT_KEY, true);
-            api.registerApp(Constants.WECHAT_KEY);
             mTextView.setText("微信登录");
             mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    SendAuth.Req req = new SendAuth.Req();
-//                    req.scope = "snsapi_userinfo";
-                    String text = "wechat_films_login";
-                    WXTextObject textObject = new WXTextObject();
-                    textObject.text = text;
-                    WXMediaMessage msg = new WXMediaMessage();
-                    msg.mediaObject = textObject;
-                    msg.description = text;
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = String.valueOf(System.currentTimeMillis());
-                    req.message = msg;
-                    api.sendReq(req);
+                    SendAuth.Req req = new SendAuth.Req();
+                    req.scope = "snsapi_userinfo";
+                    mApi.sendReq(req);
                 }
             });
         }

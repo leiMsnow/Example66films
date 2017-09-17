@@ -2,13 +2,18 @@ package cn.com.films66.app.api;
 
 
 import java.util.List;
+import java.util.Map;
 
 import cn.com.films66.app.model.Film;
 import cn.com.films66.app.model.HelpInfo;
 import cn.com.films66.app.model.MyDanmaku;
 import cn.com.films66.app.model.NoBodyEntity;
+import cn.com.films66.app.model.WeChatInfo;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.HeaderMap;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -30,6 +35,13 @@ public interface IServiceApi {
      */
     @GET("films/{id}")
     Observable<Film> getFilmDetail(@Path("id") int id);
+
+    /**
+     * 获取微信用户信息
+     */
+    @Headers("Authorization: Bearer ACCESS_TOKEN")
+    @GET("weixin_login")
+    Observable<WeChatInfo> getWeChatUserInfo(@Query("code") String code);
 
     /**
      * 获取帮助信息
