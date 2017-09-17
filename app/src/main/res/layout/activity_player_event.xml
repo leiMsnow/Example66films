@@ -46,11 +46,17 @@
 
     </RelativeLayout>
 
-    <master.flame.danmaku.ui.widget.DanmakuView
+    <com.opendanmaku.DanmakuView
         android:id="@+id/view_danmaku"
-        android:layout_below="@+id/rl_top"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        app:end_Y_offset="0.8"
+        app:max_row="4"
+        app:max_running_per_row="2"
+        app:pick_interval="1000"
+        app:show_debug="false"
+        app:start_Y_offset="0.2" />
 
 </RelativeLayout>
 
