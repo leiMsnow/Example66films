@@ -26,6 +26,7 @@ import cn.com.films66.app.adapter.SettingAdapter;
 import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.SettingInfo;
 import cn.com.films66.app.utils.Constants;
+import cn.com.films66.app.utils.UserInfoManager;
 import cn.com.films66.app.utils.VideoUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,12 +37,15 @@ public class UserInfoActivity extends AppBaseActivity {
 
     @Bind(R.id.tv_user_name)
     TextView mTextView;
+    @Bind(R.id.tv_logout)
+    TextView mLogout;
 
     @Bind(R.id.iv_user)
     CircleImageView mImageVie;
 
     private SettingAdapter mSettingAdapter;
     private IWXAPI mApi;
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_user_info;
@@ -63,11 +67,20 @@ public class UserInfoActivity extends AppBaseActivity {
     private void setUserInfo() {
 
         if ((Boolean) SPUtils.getNoClear(mContext, Constants.IS_LOGIN, false)) {
-            mTextView.setText(SPUtils.getNoClear(mContext, Constants.USER_NAME, "微信登录").toString());
+            mLogout.setVisibility(View.VISIBLE);
+            mTextView.setText(SPUtils.getNoClear(mContext, Constants.USER_NAME, "登录").toString());
             ImageShowUtils.showImage(mContext,
                     SPUtils.getNoClear(mContext, Constants.USER_IMAGE, "").toString(), mImageVie);
+            mLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserInfoManager.clearUserInfo(mContext);
+                    setUserInfo();
+                }
+            });
         } else {
-            mTextView.setText("微信登录");
+            mLogout.setVisibility(View.GONE);
+            mTextView.setText("登录");
             mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -77,6 +90,8 @@ public class UserInfoActivity extends AppBaseActivity {
                 }
             });
         }
+
+
     }
 
     private void initAdapter() {

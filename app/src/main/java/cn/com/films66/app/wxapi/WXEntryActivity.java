@@ -21,6 +21,7 @@ import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.model.WeChatInfo;
 import cn.com.films66.app.utils.Constants;
+import cn.com.films66.app.utils.UserInfoManager;
 
 public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
 
@@ -75,20 +76,14 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                     @Override
                     public void onSuccess(WeChatInfo data) {
                         ToastUtils.getInstance().showToast("授权成功");
-                        SPUtils.putNoClear(mContext, Constants.IS_LOGIN, true);
-                        SPUtils.putNoClear(mContext, Constants.USER_ID, data.user_id);
-                        SPUtils.putNoClear(mContext, Constants.USER_NAME, data.name);
-                        SPUtils.putNoClear(mContext, Constants.USER_IMAGE, data.head_img_url);
+                        UserInfoManager.setUserInfo(mContext, data);
                         finish();
                     }
 
                     @Override
                     public void onFail() {
                         ToastUtils.getInstance().showToast("授权用户信息失败");
-                        SPUtils.putNoClear(mContext, Constants.IS_LOGIN, false);
-                        SPUtils.putNoClear(mContext, Constants.USER_ID, 0);
-                        SPUtils.putNoClear(mContext, Constants.USER_NAME, "");
-                        SPUtils.putNoClear(mContext, Constants.USER_IMAGE, "");
+                       UserInfoManager.clearUserInfo(mContext);
                         finish();
                     }
                 });

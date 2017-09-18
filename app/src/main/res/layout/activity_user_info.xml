@@ -16,7 +16,7 @@
             android:layout_height="64dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/ic_user"
             app:civ_border_color="@color/white"
             app:civ_border_width="2dp" />
 
@@ -26,10 +26,22 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_user"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:padding="8dp"
-            android:text="微信登录"
+            android:text="登录"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_user_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="退出登录"
+            android:textSize="16sp"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
