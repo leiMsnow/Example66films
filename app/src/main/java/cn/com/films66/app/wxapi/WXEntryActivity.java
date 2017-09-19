@@ -41,6 +41,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
     @Override
     public void onReq(BaseReq baseReq) {
         LogUtils.d(this.getClass().getName(), "onReq: " + baseReq.getType());
+        finish();
     }
 
     @Override
@@ -65,6 +66,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                     break;
             }
             ToastUtils.getInstance().showToast(result);
+            finish();
         }
         LogUtils.d(this.getClass().getName(), "onResp.openId: " + resp.openId);
     }
@@ -83,7 +85,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                     @Override
                     public void onFail() {
                         ToastUtils.getInstance().showToast("授权用户信息失败");
-                       UserInfoManager.clearUserInfo(mContext);
+                        UserInfoManager.clearUserInfo(mContext);
                         finish();
                     }
                 });
