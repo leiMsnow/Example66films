@@ -7,4 +7,12 @@ package cn.com.films66.app.model;
 public class MyDanmaku {
     public int time;
     public String content;
+
+    @Override
+    public String toString() {
+        return "MyDanmaku{" +
+                "time=" + time +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

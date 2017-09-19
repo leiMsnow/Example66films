@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.opendanmaku.DanmakuItem;
@@ -22,11 +25,11 @@ import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
+import cn.com.films66.app.adapter.DanmakuAdapter;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.model.MyDanmaku;
@@ -44,14 +47,18 @@ public class PlayerEventActivity extends AbsEventActivity {
     ImageView ivScale;
     @Bind(R.id.rl_top)
     View topView;
-    @Bind(R.id.view_danmaku)
-    DanmakuView mDanmakuView;
+    @Bind(R.id.rv_danmaku)
+    ListView mDanmakuView;
 
-    MyHandler myHandler;
+    private MyHandler myHandler;
+
+    private DanmakuAdapter danmakuAdapter;
+
     private boolean isPause = false;
 
-    private HashMap<Integer, Integer> maxLinesPair;// 弹幕最大行数
-    private HashMap<Integer, Boolean> overlappingEnablePair;// 设置是否重叠
+    private static final int GET_CURRENT_DANMAKU = 1000;
+
+    private List<MyDanmaku> myDanmakuList;
 
     @Override
     protected int getLayoutRes() {
@@ -61,6 +68,8 @@ public class PlayerEventActivity extends AbsEventActivity {
     @Override
     protected void initData() {
         toolbarHide();
+        danmakuAdapter = DanmakuAdapter.createAdapter(mContext);
+        mDanmakuView.setAdapter(danmakuAdapter);
         topView.setVisibility(View.GONE);
         tvComplete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,10 +103,7 @@ public class PlayerEventActivity extends AbsEventActivity {
         super.onPause();
         videoView.pause();
         isPause = true;
-        if (mDanmakuView != null && (!mDanmakuView.isPaused())) {
-            //hide and pause playing:
-            mDanmakuView.hide();
-        }
+        myHandler.removeMessages(GET_CURRENT_DANMAKU);
     }
 
     @Override
@@ -107,20 +113,7 @@ public class PlayerEventActivity extends AbsEventActivity {
             videoView.seekTo(videoView.getCurrentPosition());
             videoView.start();
             isPause = false;
-        }
-        if (mDanmakuView != null && (mDanmakuView.isPaused())) {
-            //hide and pause playing:
-            mDanmakuView.show();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mDanmakuView != null && (!mDanmakuView.isPaused())) {
-            //hide and pause playing:
-            mDanmakuView.hide();
-            mDanmakuView.clear();
+            myHandler.sendEmptyMessageDelayed(GET_CURRENT_DANMAKU, 1000);
         }
     }
 
@@ -143,12 +136,15 @@ public class PlayerEventActivity extends AbsEventActivity {
         public void handleMessage(Message msg) {
             PlayerEventActivity weakObj = weakReference.get();
             if (weakObj != null) {
-                weakObj.topView.setVisibility(View.GONE);
+                if (msg.what == 100) {
+                    weakObj.topView.setVisibility(View.GONE);
+                } else if (msg.what == GET_CURRENT_DANMAKU) {
+                    weakObj.addDanmaku();
+                }
             }
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void setPlayUrl() {
         if (mEvents == null) {
             LogUtils.d(PlayerEventActivity.class.getName(), "没有视频资源");
@@ -193,12 +189,12 @@ public class PlayerEventActivity extends AbsEventActivity {
     }
 
     private void getDanmakuInfo() {
-        LogUtils.d(this.getClass().getName(), "getDanmakuInfo");
         BaseApi.request(BaseApi.createApi(IServiceApi.class).getFilmDanmaku(mEvents.id),
                 new BaseApi.IResponseListener<List<MyDanmaku>>() {
                     @Override
                     public void onSuccess(List<MyDanmaku> data) {
-                        addDanmaku(data);
+                        myDanmakuList = data;
+                        addDanmaku();
                     }
 
                     @Override
@@ -208,12 +204,20 @@ public class PlayerEventActivity extends AbsEventActivity {
                 });
     }
 
-    private void addDanmaku(List<MyDanmaku> data) {
-        for (MyDanmaku myDanmaku : data) {
-            mDanmakuView.addItem(new DanmakuItem(this, myDanmaku.content,
-                    mDanmakuView.getWidth()));
-            //show danmaku and play animation:
-            mDanmakuView.show();
+    private void addDanmaku() {
+        MyDanmaku myDanmaku = null;
+        for (int i = 0; i < myDanmakuList.size(); i++) {
+            myDanmaku = myDanmakuList.get(i);
+            LogUtils.d(this.getClass().getName(), "Math.abs: " +
+                    Math.abs(myDanmaku.time - mediaController.getCurrentTime()));
+            if (Math.abs(myDanmaku.time - mediaController.getCurrentTime()) <= 1) {
+                danmakuAdapter.add(myDanmaku);
+                break;
+            }
         }
+        if (myDanmaku != null) {
+            myDanmakuList.remove(myDanmaku);
+        }
+        myHandler.sendEmptyMessageDelayed(GET_CURRENT_DANMAKU, 1000);
     }
 }

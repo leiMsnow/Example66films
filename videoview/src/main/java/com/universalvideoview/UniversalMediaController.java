@@ -640,6 +640,13 @@ public class UniversalMediaController extends FrameLayout {
         }
     };
 
+    public int getCurrentTime() {
+        if (mPlayer == null) {
+            return 0;
+        }
+        return mPlayer.getCurrentPosition() / 1000;
+    }
+
     @Override
     public void setEnabled(boolean enabled) {
         if (mTurnButton != null) {

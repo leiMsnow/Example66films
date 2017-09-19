@@ -306,12 +306,12 @@ public class RecognizeResultActivity extends AbsRecognizeActivity {
             mHandler.sendEmptyMessage(CHANGE_EVENT);
         }
         mRryRecognize = 0;
-        // 视频切换剧集
+        // 视频切换剧集 暂时屏蔽这个功能
         if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
-            mCurrentEvent = null;
-            mHandler.removeMessages(CHANGE_EVENT);
-            mCustomFile = customFile;
-            getFilmDetail();
+//            mCurrentEvent = null;
+//            mHandler.removeMessages(CHANGE_EVENT);
+//            mCustomFile = customFile;
+//            getFilmDetail();
         } else {
             mCustomFile = customFile;
             getOffsetTime();

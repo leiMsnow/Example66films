@@ -13,7 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.shuyu.core.R;
+import cn.com.films66.app.R;
 
 /**
  * 统一样式dialog

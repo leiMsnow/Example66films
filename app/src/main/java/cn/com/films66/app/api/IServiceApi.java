@@ -56,7 +56,7 @@ public interface IServiceApi {
     /**
      * 获取弹幕
      */
-    @GET("events/{id}/barrage")
+    @GET("events/{id}/barrages")
     Observable<List<MyDanmaku>> getFilmDanmaku(@Path("id") int id);
 
 }
