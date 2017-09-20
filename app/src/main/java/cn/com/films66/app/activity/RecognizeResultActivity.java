@@ -19,7 +19,6 @@ import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.BaseDialog;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -32,6 +31,8 @@ import cn.com.films66.app.BuildConfig;
 import cn.com.films66.app.R;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
+import cn.com.films66.app.base.AbsEventActivity;
+import cn.com.films66.app.base.AbsRecognizeListenActivity;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.model.Film;
@@ -45,7 +46,7 @@ import cn.com.films66.app.utils.VideoUtils;
 /**
  * 识别中界面
  */
-public class RecognizeResultActivity extends AbsRecognizeActivity {
+public class RecognizeResultActivity extends AbsRecognizeListenActivity {
 
     @Bind(R.id.iv_location_card)
     ImageView ivLocationCard;

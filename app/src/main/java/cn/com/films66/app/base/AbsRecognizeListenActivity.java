@@ -1,4 +1,4 @@
-package cn.com.films66.app.activity;
+package cn.com.films66.app.base;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,7 +13,7 @@ import cn.com.films66.app.utils.Constants;
  * Created by Azure on 2017/2/26.
  */
 
-public abstract class AbsRecognizeActivity extends AppBaseActivity {
+public abstract class AbsRecognizeListenActivity extends AppBaseActivity {
 
     private RecognizeReceiver mRecognizeReceiver;
 

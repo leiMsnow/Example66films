@@ -1,24 +1,17 @@
 package cn.com.films66.app.activity;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.opendanmaku.DanmakuItem;
-import com.opendanmaku.DanmakuView;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.widget.BaseDialog;
 import com.universalvideoview.UniversalMediaController;
@@ -32,6 +25,7 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.adapter.DanmakuAdapter;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
+import cn.com.films66.app.base.AbsEventActivity;
 import cn.com.films66.app.model.MyDanmaku;
 import cn.com.films66.app.utils.VideoUtils;
 

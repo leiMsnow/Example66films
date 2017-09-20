@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.shuyu.core.uils.LogUtils;
@@ -20,12 +19,13 @@ import com.shuyu.core.uils.LogUtils;
 import butterknife.Bind;
 import butterknife.OnClick;
 import cn.com.films66.app.R;
+import cn.com.films66.app.base.AbsRecognizeListenActivity;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
 
-public class MainActivity extends AbsRecognizeActivity {
+public class MainActivity extends AbsRecognizeListenActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
@@ -82,6 +82,7 @@ public class MainActivity extends AbsRecognizeActivity {
     @OnClick(R.id.iv_user)
     public void openUserInfo(View view) {
         Intent intent = new Intent(mContext, UserInfoActivity.class);
+        intent.putExtra("isRecognize", mRecognizeState);
         startActivity(intent);
     }
 

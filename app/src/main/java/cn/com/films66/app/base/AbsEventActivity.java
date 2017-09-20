@@ -1,4 +1,4 @@
-package cn.com.films66.app.activity;
+package cn.com.films66.app.base;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +20,7 @@ import cn.com.films66.app.utils.Constants;
  * Created by Azure on 2017/2/26.
  */
 
-public abstract class AbsEventActivity extends AbsRecognizeActivity {
+public abstract class AbsEventActivity extends AbsRecognizeListenActivity {
 
     private MyHandler myHandler;
     protected FilmEvents mEvents;

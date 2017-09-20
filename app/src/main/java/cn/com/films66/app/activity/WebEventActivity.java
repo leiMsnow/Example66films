@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import cn.com.films66.app.R;
+import cn.com.films66.app.base.AbsEventActivity;
 
 public class WebEventActivity extends AbsEventActivity {
 

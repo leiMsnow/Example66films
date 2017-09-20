@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -45,6 +47,9 @@ public class UserInfoActivity extends AppBaseActivity {
 
     private SettingAdapter mSettingAdapter;
     private IWXAPI mApi;
+    private boolean isRecognize;
+
+
 
     @Override
     protected int getLayoutRes() {
@@ -53,6 +58,7 @@ public class UserInfoActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        isRecognize = getIntent().getExtras().getBoolean("isRecognize",false);
         mApi = WXAPIFactory.createWXAPI(this, Constants.WECHAT_KEY, true);
         mApi.registerApp(Constants.WECHAT_KEY);
         initAdapter();
@@ -62,6 +68,22 @@ public class UserInfoActivity extends AppBaseActivity {
     protected void onResume() {
         super.onResume();
         setUserInfo();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_user_info,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==R.id.menu_recognize){
+            if (isRecognize){
+
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setUserInfo() {
