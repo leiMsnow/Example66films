@@ -17,4 +17,28 @@ public class EventBusModel {
         }
 
     }
+
+    public static class ControlRecognize{
+       public boolean isRecognize = false;
+        public ControlRecognize(boolean isRecognize) {
+            this.isRecognize = isRecognize;
+        }
+    }
+
+    public static class ControlRecognizeLoop{
+       public boolean isLoop = false;
+        public ControlRecognizeLoop(boolean isLoop) {
+            this.isLoop = isLoop;
+        }
+    }
+
+    public static class RecognizeState{
+       public boolean recognizeState = false;
+        public RecognizeState(boolean recognizeState) {
+            this.recognizeState = recognizeState;
+        }
+    }
+
+    public static class DownLoad {
+    }
 }

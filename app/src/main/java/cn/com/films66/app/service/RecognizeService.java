@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.annotation.MainThread;
 
 import com.acrcloud.rec.sdk.ACRCloudClient;
 import com.acrcloud.rec.sdk.ACRCloudConfig;
@@ -14,9 +15,14 @@ import com.google.gson.reflect.TypeToken;
 import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.uils.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 
 import cn.com.films66.app.model.CustomFile;
+import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.model.RecognizeResult;
 import cn.com.films66.app.utils.Constants;
 
@@ -33,6 +39,7 @@ public class RecognizeService extends Service {
     public void onCreate() {
         super.onCreate();
         initACRCloud();
+        EventBus.getDefault().register(this);
     }
 
     private void initACRCloud() {
@@ -59,6 +66,7 @@ public class RecognizeService extends Service {
         if (initState) {
             //start prerecord, you can call "mClient.stopPreRecord()" to stop prerecord.
             mClient.startPreRecord(3000);
+            startRecognize();
         }
     }
 
@@ -95,7 +103,7 @@ public class RecognizeService extends Service {
         }
     }
 
-    public void setLoop(boolean loop) {
+    private void setLoop(boolean loop) {
         isLoop = loop;
         if (!isLoop) {
             LogUtils.d(RecognizeService.class.getName(), "cancelRecognize");
@@ -112,7 +120,7 @@ public class RecognizeService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startRecognize() {
+    private void startRecognize() {
         if (!initState) {
             ToastUtils.getInstance().showToast("暂时无法识别,请稍后重试");
             initACRCloud();
@@ -133,7 +141,7 @@ public class RecognizeService extends Service {
         }
     }
 
-    public void cancelRecognize() {
+    private void cancelRecognize() {
         if (mProcessing && mClient != null) {
             mProcessing = false;
             mClient.cancel();
@@ -143,10 +151,12 @@ public class RecognizeService extends Service {
 
     // 发送识别状态
     private void sendRecognizeState() {
-        Intent intent = new Intent();
-        intent.setAction(Constants.RECOGNIZE_STATE_ACTION);
-        intent.putExtra(Constants.KEY_RECOGNIZE_STATE, mProcessing);
-        sendBroadcast(intent);
+        LogUtils.d(this.getClass().getName(), mProcessing ? "开始识别" : "取消识别");
+//        Intent intent = new Intent();
+//        intent.setAction(Constants.RECOGNIZE_STATE_ACTION);
+//        intent.putExtra(Constants.KEY_RECOGNIZE_STATE, mProcessing);
+//        sendBroadcast(intent);
+        EventBus.getDefault().post(new EventBusModel.RecognizeState(mProcessing));
     }
 
     // 发送识别结果
@@ -155,11 +165,12 @@ public class RecognizeService extends Service {
             mRecognizeCount++;
         } else {
             mRecognizeCount = 0;
+            EventBus.getDefault().post(customFile);
         }
-        Intent intent = new Intent();
-        intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
-        intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);
-        sendBroadcast(intent);
+//        Intent intent = new Intent();
+//        intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
+//        intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);
+//        sendBroadcast(intent);
     }
 
     @Override
@@ -173,9 +184,24 @@ public class RecognizeService extends Service {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void MessageEvent(EventBusModel.ControlRecognize controlRecognize) {
+        if (controlRecognize.isRecognize) {
+            startRecognize();
+        } else {
+            cancelRecognize();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void RecognizeLoop(EventBusModel.ControlRecognizeLoop isLoop) {
+        setLoop(isLoop.isLoop);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (mClient != null) {
             LogUtils.d(RecognizeService.class.getName(), "cancelRecognize");
             cancelRecognize();

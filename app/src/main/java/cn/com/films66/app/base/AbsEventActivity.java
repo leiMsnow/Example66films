@@ -10,6 +10,9 @@ import android.view.WindowManager;
 
 import com.shuyu.core.uils.LogUtils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.ref.WeakReference;
 
 import cn.com.films66.app.model.CustomFile;
@@ -20,7 +23,7 @@ import cn.com.films66.app.utils.Constants;
  * Created by Azure on 2017/2/26.
  */
 
-public abstract class AbsEventActivity extends AbsRecognizeListenActivity {
+public abstract class AbsEventActivity extends AppBaseActivity {
 
     private MyHandler myHandler;
     protected FilmEvents mEvents;
@@ -72,18 +75,8 @@ public abstract class AbsEventActivity extends AbsRecognizeListenActivity {
         initIntent(intent);
     }
 
-    @Override
-    protected void onRecognizeState(boolean state) {
-
-    }
-
-    @Override
-    protected void openPlayer() {
-
-    }
-
-    @Override
-    protected void onRecognizeResult(CustomFile customFile) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRecognizeResult(CustomFile customFile) {
         if (customFile == null) {
             finish();
             return;

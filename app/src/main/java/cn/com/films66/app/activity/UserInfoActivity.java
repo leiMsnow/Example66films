@@ -18,6 +18,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.byteam.superadapter.OnItemClickListener;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import butterknife.Bind;
 import cn.com.films66.app.R;
 import cn.com.films66.app.adapter.SettingAdapter;
 import cn.com.films66.app.base.AppBaseActivity;
+import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.model.SettingInfo;
 import cn.com.films66.app.utils.Constants;
 import cn.com.films66.app.utils.UserInfoManager;
@@ -73,15 +75,17 @@ public class UserInfoActivity extends AppBaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user_info,menu);
+        MenuItem menuItem = menu.findItem(R.id.menu_recognize);
+        menuItem.setTitle(isRecognize?"停止识别":"开始识别");
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.menu_recognize){
-            if (isRecognize){
-
-            }
+            isRecognize = !isRecognize;
+            EventBus.getDefault().post(new EventBusModel.ControlRecognize(isRecognize));
+           item.setTitle(isRecognize?"停止识别":"开始识别");
         }
         return super.onOptionsItemSelected(item);
     }

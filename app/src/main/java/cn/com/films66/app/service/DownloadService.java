@@ -54,9 +54,10 @@ public class DownloadService extends Service {
                     @Override
                     protected void completed(BaseDownloadTask task) {
                         super.completed(task);
-                        Intent intent = new Intent();
-                        intent.setAction(Constants.DOWNLOAD_STATE_ACTION);
-                        sendBroadcast(intent);
+//                        Intent intent = new Intent();
+//                        intent.setAction(Constants.DOWNLOAD_STATE_ACTION);
+//                        sendBroadcast(intent);
+                        EventBus.getDefault().post(new EventBusModel.DownLoad());
                     }
                 }).start();
     }

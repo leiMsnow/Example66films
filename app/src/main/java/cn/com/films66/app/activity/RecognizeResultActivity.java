@@ -32,7 +32,7 @@ import cn.com.films66.app.R;
 import cn.com.films66.app.api.BaseApi;
 import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.base.AbsEventActivity;
-import cn.com.films66.app.base.AbsRecognizeListenActivity;
+import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.CustomFile;
 import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.model.Film;
@@ -46,7 +46,7 @@ import cn.com.films66.app.utils.VideoUtils;
 /**
  * 识别中界面
  */
-public class RecognizeResultActivity extends AbsRecognizeListenActivity {
+public class RecognizeResultActivity extends AppBaseActivity {
 
     @Bind(R.id.iv_location_card)
     ImageView ivLocationCard;
@@ -284,13 +284,8 @@ public class RecognizeResultActivity extends AbsRecognizeListenActivity {
         return null;
     }
 
-    @Override
-    protected void onRecognizeState(boolean state) {
-
-    }
-
-    @Override
-    protected void onRecognizeResult(CustomFile customFile) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRecognizeResult(CustomFile customFile) {
         if (customFile == null) {
             mRryRecognize++;
             LogUtils.d(RecognizeResultActivity.class.getName(), "未识别到次数：" + mRryRecognize);
@@ -320,8 +315,8 @@ public class RecognizeResultActivity extends AbsRecognizeListenActivity {
         }
     }
 
-    @Override
-    protected void openPlayer() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void openPlayer(EventBusModel.DownLoad downLoad) {
         isPause = false;
         waitView.setVisibility(View.GONE);
         mHandler.removeMessages(CHANGE_WAIT_TEXT);

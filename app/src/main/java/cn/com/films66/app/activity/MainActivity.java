@@ -16,20 +16,25 @@ import android.widget.Toast;
 
 import com.shuyu.core.uils.LogUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import cn.com.films66.app.R;
-import cn.com.films66.app.base.AbsRecognizeListenActivity;
+import cn.com.films66.app.base.AppBaseActivity;
 import cn.com.films66.app.model.CustomFile;
+import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
 
-public class MainActivity extends AbsRecognizeListenActivity {
+public class MainActivity extends AppBaseActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
-    protected RecognizeService mRecognizeService;
+    //    protected RecognizeService mRecognizeService;
     @Bind(R.id.iv_progress)
     ImageView ivProgress;
     @Bind(R.id.iv_play)
@@ -55,7 +60,10 @@ public class MainActivity extends AbsRecognizeListenActivity {
 
     private void startRecognize() {
         Intent intent = new Intent(mContext, RecognizeService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        startService(intent);
+        mRecognizeState = !mRecognizeState;
+        setRecognizeState();
+//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -73,10 +81,10 @@ public class MainActivity extends AbsRecognizeListenActivity {
 
     @OnClick(R.id.iv_play)
     public void onRecClick(View view) {
-        if (mRecognizeService != null) {
-            mRecognizeState = !mRecognizeState;
-            setRecognizeState();
-        }
+//        if (mRecognizeService != null) {
+        mRecognizeState = !mRecognizeState;
+        setRecognizeState();
+//        }
     }
 
     @OnClick(R.id.iv_user)
@@ -93,12 +101,13 @@ public class MainActivity extends AbsRecognizeListenActivity {
     }
 
     private void setRecognizeState() {
+        EventBus.getDefault().post(new EventBusModel.ControlRecognize(mRecognizeState));
         if (mRecognizeState) {
-            mRecognizeService.startRecognize();
+//            mRecognizeService.startRecognize();
             ivProgress.setVisibility(View.GONE);
             ivPlay.setImageResource(R.mipmap.ic_pause);
         } else {
-            mRecognizeService.cancelRecognize();
+//            mRecognizeService.cancelRecognize();
             ivProgress.setVisibility(View.VISIBLE);
             ivPlay.setImageResource(R.mipmap.ic_play);
         }
@@ -106,44 +115,53 @@ public class MainActivity extends AbsRecognizeListenActivity {
 
     @Override
     protected void onResume() {
-        if (mRecognizeService != null && !mRecognizeState) {
-            mRecognizeService.setLoop(false);
-        }
+//        if (mRecognizeService != null && !mRecognizeState) {
+//            mRecognizeService.setLoop(false);
+//        }
         super.onResume();
+        EventBus.getDefault().post(new EventBusModel.ControlRecognizeLoop(false));
     }
-
-    ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
-            mRecognizeState = true;
-            setRecognizeState();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            LogUtils.d(MainActivity.class.getName(), "cancelRecognize");
-            mRecognizeService.cancelRecognize();
-            mRecognizeService = null;
-        }
-    };
 
     @Override
     protected void onPause() {
         super.onPause();
-        unRegisterReceiver();
+        EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    protected void onRecognizeState(boolean state) {
-        mRecognizeState = state;
+    //    ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
+//            mRecognizeState = true;
+//            setRecognizeState();
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            LogUtils.d(MainActivity.class.getName(), "cancelRecognize");
+//            mRecognizeService.cancelRecognize();
+//            mRecognizeService = null;
+//        }
+//    };
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unRegisterReceiver();
+//    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRecognizeState(EventBusModel.RecognizeState state) {
+        LogUtils.d(this.getClass().getName(), "收到识别状态：" + state.recognizeState);
+        mRecognizeState = state.recognizeState;
         setRecognizeState();
     }
 
-    @Override
-    protected void onRecognizeResult(CustomFile customFile) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRecognizeResult(CustomFile customFile) {
         if (customFile == null) {
-            onRecognizeState(false);
+            mRecognizeState = false;
+            setRecognizeState();
             return;
         }
         Intent intent = new Intent(mContext, RecognizeResultActivity.class);
@@ -154,15 +172,10 @@ public class MainActivity extends AbsRecognizeListenActivity {
     }
 
     @Override
-    protected void openPlayer() {
-
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mRecognizeService != null)
-            unbindService(serviceConnection);
+//        if (mRecognizeService != null)
+//            unbindService(serviceConnection);
 
         // 关闭浮窗
         Intent intent = new Intent(mContext, FloatWindowService.class);

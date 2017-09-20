@@ -9,10 +9,10 @@ public interface Constants {
 
     String DOWNLOAD_PATH = "video/";
 
-    String DOWNLOAD_STATE_ACTION = "cn.com.films66.action.DOWNLOAD_STATE";
+//    String DOWNLOAD_STATE_ACTION = "cn.com.films66.action.DOWNLOAD_STATE";
 
-    String RECOGNIZE_STATE_ACTION = "cn.com.films66.action.RECOGNIZE_STATE";
-    String RECOGNIZE_RESULT_ACTION = "cn.com.films66.action.RECOGNIZE_RESULT";
+//    String RECOGNIZE_STATE_ACTION = "cn.com.films66.action.RECOGNIZE_STATE";
+//    String RECOGNIZE_RESULT_ACTION = "cn.com.films66.action.RECOGNIZE_RESULT";
 
     String KEY_WEB_VIEW_TYPE = "KEY_WEB_VIEW_TYPE";
     String KEY_PAY_URL = "KEY_PAY_URL";

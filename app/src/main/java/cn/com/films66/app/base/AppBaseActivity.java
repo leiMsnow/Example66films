@@ -9,8 +9,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import cn.com.films66.app.R;
-import cn.com.films66.app.activity.PlayerEventActivity;
 import cn.com.films66.app.model.NoBodyEntity;
 
 /**
@@ -25,8 +23,8 @@ public abstract class AppBaseActivity extends BaseActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
             LogUtils.d(this.getClass().getName(), "register");
