@@ -10,6 +10,7 @@ import com.shuyu.core.uils.SPUtils;
 import com.shuyu.core.uils.ToastUtils;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -49,7 +50,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
         int result;
         if (resp.errCode == BaseResp.ErrCode.ERR_OK) {
             result = R.string.errcode_success;
-            getWeChatUserInfo(resp);
+            getWeChatUserInfo((SendAuth.Resp) resp);
         } else {
             switch (resp.errCode) {
                 case BaseResp.ErrCode.ERR_USER_CANCEL:
@@ -71,9 +72,9 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
         LogUtils.d(this.getClass().getName(), "onResp.openId: " + resp.openId);
     }
 
-    private void getWeChatUserInfo(BaseResp resp) {
+    private void getWeChatUserInfo(SendAuth.Resp resp) {
         BaseApi.request(BaseApi.createApi(IServiceApi.class).
-                        getWeChatUserInfo(resp.openId),
+                        getWeChatUserInfo(resp.code),
                 new BaseApi.IResponseListener<WeChatInfo>() {
                     @Override
                     public void onSuccess(WeChatInfo data) {
