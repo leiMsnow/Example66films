@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.shuyu.core.uils.LogUtils;
-import com.shuyu.core.widget.BaseDialog;
 import com.universalvideoview.UniversalMediaController;
 import com.universalvideoview.UniversalVideoView;
 
@@ -28,6 +27,7 @@ import cn.com.films66.app.api.IServiceApi;
 import cn.com.films66.app.base.AbsEventActivity;
 import cn.com.films66.app.model.MyDanmaku;
 import cn.com.films66.app.utils.VideoUtils;
+import cn.com.films66.app.widget.MyDialog;
 
 public class PlayerEventActivity extends AbsEventActivity {
 
@@ -68,8 +68,9 @@ public class PlayerEventActivity extends AbsEventActivity {
         tvComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
-                builder.setMessage("退出后将无法继续播放此视频。是否退出？");
+                MyDialog.Builder builder = new MyDialog.Builder(mContext);
+                builder.setMessage("退出后将无法继续播放此视频。是否退出？")
+                        .setTitleResId(R.mipmap.bg_dialog_back);
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -148,12 +149,12 @@ public class PlayerEventActivity extends AbsEventActivity {
         videoView.setVideoPath(url);
         LogUtils.d(PlayerEventActivity.class.getName(), "视频网络地址： " + mEvents.resources_url);
         LogUtils.d(PlayerEventActivity.class.getName(), "视频本地地址： " + url);
-        int seek = mOffset - mEvents.getStartTime();
+        long seek = mOffset - mEvents.getStartTime();
         LogUtils.d(PlayerEventActivity.class.getName(), "当前识别时间： " + mOffset);
         LogUtils.d(PlayerEventActivity.class.getName(), "播放开始时间： " + mEvents.getStartTime());
         if (seek > 0) {
             LogUtils.d(PlayerEventActivity.class.getName(), "调整时间： " + seek);
-            videoView.seekTo(seek);
+            videoView.seekTo((int) seek);
         }
         videoView.start();
         getDanmakuInfo();

@@ -44,11 +44,11 @@ public class FilmEvents implements Parcelable {
         }
     };
 
-    public int getStartTime() {
+    public long getStartTime() {
         return TimeUtils.stringToTime(start_time);
     }
 
-    public int getEndTime() {
+    public long getEndTime() {
         return TimeUtils.stringToTime(end_time);
     }
 

@@ -163,10 +163,11 @@ public class RecognizeService extends Service {
     private void sendRecognizeResult(CustomFile customFile) {
         if (customFile == null) {
             mRecognizeCount++;
+            customFile = new CustomFile();
         } else {
             mRecognizeCount = 0;
-            EventBus.getDefault().post(customFile);
         }
+        EventBus.getDefault().post(customFile);
 //        Intent intent = new Intent();
 //        intent.setAction(Constants.RECOGNIZE_RESULT_ACTION);
 //        intent.putExtra(Constants.KEY_RECOGNIZE_RESULT, customFile);

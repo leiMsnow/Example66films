@@ -21,6 +21,9 @@ public class CustomFile implements Parcelable{
         audio_id = in.readString();
     }
 
+    public CustomFile() {
+    }
+
     public static final Creator<CustomFile> CREATOR = new Creator<CustomFile>() {
         @Override
         public CustomFile createFromParcel(Parcel in) {

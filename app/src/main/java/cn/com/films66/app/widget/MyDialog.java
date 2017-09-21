@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import cn.com.films66.app.R;
@@ -31,7 +32,7 @@ public class MyDialog extends Dialog {
     }
 
     protected MyDialog(Context context) {
-        this(context,0);
+        this(context, 0);
     }
 
     // 先调用构造方法在调用onCreate方法
@@ -50,7 +51,7 @@ public class MyDialog extends Dialog {
 
     public static class Builder {
         private Context mContext;
-        private String mTitle;
+        private int mTitleResId;
         private String mMessage;
 
         private String mPositiveButtonText;
@@ -78,16 +79,16 @@ public class MyDialog extends Dialog {
             dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
             // 设置title
-            TextView dialogTitle = (TextView) layout.findViewById(R.id.dialog_title);
-            if (TextUtils.isEmpty(mTitle)) {
+            ImageView dialogTitle = (ImageView) layout.findViewById(R.id.iv_down);
+            if (mTitleResId <= 0) {
                 dialogTitle.setVisibility(View.GONE);
             } else {
-                dialogTitle.setText(mTitle);
+                dialogTitle.setImageResource(mTitleResId);
                 dialogTitle.setVisibility(View.VISIBLE);
             }
 
             // 设置message
-            TextView dialogMessage = (TextView) layout.findViewById(R.id.dialog_message);
+            TextView dialogMessage = (TextView) layout.findViewById(R.id.tv_content);
             if (!TextUtils.isEmpty(mMessage)) {
                 dialogMessage.setText(mMessage);
                 dialogMessage.setVisibility(View.VISIBLE);
@@ -96,7 +97,7 @@ public class MyDialog extends Dialog {
             }
 
             // 设置右按钮
-            TextView mPositiveBT = (TextView) layout.findViewById(R.id.right_bt);
+            TextView mPositiveBT = (TextView) layout.findViewById(R.id.tv_right);
             if (mPositiveButtonText != null) {
                 mPositiveBT.setText(mPositiveButtonText);
 
@@ -115,7 +116,7 @@ public class MyDialog extends Dialog {
             }
 
             // 设置左按钮
-            TextView mNegativeBT = (TextView) layout.findViewById(R.id.left_bt);
+            TextView mNegativeBT = (TextView) layout.findViewById(R.id.tv_left);
             if (mNegativeButtonText != null) {
                 mNegativeBT.setText(mNegativeButtonText);
                 if (mNegativeButtonClickListener != null) {
@@ -166,13 +167,8 @@ public class MyDialog extends Dialog {
             return this;
         }
 
-        public Builder setTitle(int title) {
-            this.mTitle = (String) mContext.getText(title);
-            return this;
-        }
-
-        public Builder setTitle(String title) {
-            this.mTitle = title;
+        public Builder setTitleResId(int title) {
+            this.mTitleResId = (title);
             return this;
         }
 

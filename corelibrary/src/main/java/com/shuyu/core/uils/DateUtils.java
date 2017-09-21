@@ -194,11 +194,23 @@ public class DateUtils {
      * @param time
      * @return
      */
-    public static String formatTime(int time) {
+    public static String formatTime(long time) {
         time = time / 1000;
-        int sec = time % 60;
+        long sec = time % 60;
         return time / 60 + ":" + (sec > 9 ? sec + "" : "0" + sec);
     }
+
+    public static long formatTime(String time) {
+        String[] times = time.split(":");
+        if (times.length == 3) {
+            int hour = Integer.parseInt(times[0]) * 60 * 60 * 1000;
+            int mins = Integer.parseInt(times[1]) * 60 * 1000;
+            int sec = Integer.parseInt(times[2]) * 1000;
+            return hour + mins + sec;
+        }
+        return 0;
+    }
+
 
     /**
      * 计算时间差

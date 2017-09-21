@@ -24,9 +24,9 @@ public class MyApplication extends CoreApplication {
 
     @Override
     public void onCreate() {
-//        if (BuildConfig.IS_DEBUG) {
-//            MCrashHandler.getInstance().init();
-//        }
+        if (BuildConfig.IS_DEBUG) {
+            MCrashHandler.getInstance().init();
+        }
         super.onCreate();
         mApplication = this;
         if (BuildConfig.IS_DEBUG) {

@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,7 +18,6 @@ import com.shuyu.core.uils.AppUtils;
 import com.shuyu.core.uils.DateUtils;
 import com.shuyu.core.uils.ImageShowUtils;
 import com.shuyu.core.uils.LogUtils;
-import com.shuyu.core.widget.BaseDialog;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -42,6 +42,7 @@ import cn.com.films66.app.service.DownloadService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
 import cn.com.films66.app.utils.VideoUtils;
+import cn.com.films66.app.widget.MyDialog;
 
 /**
  * 识别中界面
@@ -63,7 +64,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
     private CustomFile mCustomFile;
     private Film mFilmDetail;
     private MyHandler mHandler;
-    private int mOffset = 0;
+    private long mOffset = 0;
 
     private FilmEvents mCurrentEvent;
     private int mRryRecognize = 0;
@@ -168,11 +169,13 @@ public class RecognizeResultActivity extends AppBaseActivity {
         for (int i = 0, count = mFilmDetail.events.size(); i < count; i++) {
             FilmEvents event = mFilmDetail.events.get(i);
             if (matchEvent(event)) {
-                mSoundPool.play(sampleId, 1, 1, 1, 1, 1);
                 if (mCurrentEvent != null) {
                     mCurrentEvent.isUserCancel = false;
                 }
                 mCurrentEvent = event;
+                if (mCurrentEvent.type == FilmEvents.TYPE_FILM) {
+                    mSoundPool.play(sampleId, 1, 1, 1, 1, 1);
+                }
                 if (mCurrentEvent.type == FilmEvents.TYPE_FILM &&
                         !VideoUtils.hasLocalURL(mCurrentEvent.resources_url)) {
                     ArrayList<String> url = new ArrayList<>();
@@ -189,8 +192,9 @@ public class RecognizeResultActivity extends AppBaseActivity {
 
     private void startDownload(final ArrayList<String> url) {
         isPause = true;
-        BaseDialog.Builder builder = new BaseDialog.Builder(mContext);
+        MyDialog.Builder builder = new MyDialog.Builder(mContext);
         builder.setCancelable(false)
+                .setTitleResId(R.mipmap.bg_dialog_down)
                 .setMessage("识别到精彩剧集啦，下载观看吗？")
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
@@ -250,11 +254,10 @@ public class RecognizeResultActivity extends AppBaseActivity {
         }
     }
 
-    private int getOffsetTime() {
+    private void getOffsetTime() {
         if (mOffset == 0 || Math.abs(mCustomFile.play_offset_ms - mOffset) >= 250) {
             mOffset = mCustomFile.play_offset_ms;
         }
-        return mOffset;
     }
 
     private boolean matchCart(LocationCards cards) {
@@ -286,7 +289,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeResult(CustomFile customFile) {
-        if (customFile == null) {
+        if (TextUtils.isEmpty(customFile.audio_id)) {
             mRryRecognize++;
             LogUtils.d(RecognizeResultActivity.class.getName(), "未识别到次数：" + mRryRecognize);
             if (mRryRecognize >= 1) {
@@ -340,6 +343,18 @@ public class RecognizeResultActivity extends AppBaseActivity {
                     sendEmptyMessageDelayed(CHANGE_EVENT, 1000);
                     if (BuildConfig.IS_DEBUG)
                         weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
+
+                    LogUtils.d(weakObj.getClass().getName(), "播放总长度" +
+                            DateUtils.formatTime(weakObj.mFilmDetail.getRuntime()));
+                    LogUtils.d(weakObj.getClass().getName(), "播放当前长度" + weakObj.mOffset);
+
+                    if (Math.abs(weakObj.mOffset -
+                            DateUtils.formatTime(weakObj.mFilmDetail.getRuntime())) <= 500) {
+                        LogUtils.d(weakObj.getClass().getName(), "播放完成跳转剧集页面");
+                        Intent intent = new Intent(weakObj.mContext, RecommendActivity.class);
+                        weakObj.startActivity(intent);
+                        weakObj.finish();
+                    }
                 } else if (msg.what == CHANGE_WAIT_TEXT) {
                     String wait = weakObj.getString(R.string.wait) + weakObj.waitDot[weakObj.waitIndex % 3];
                     weakObj.tvWait.setText(wait);

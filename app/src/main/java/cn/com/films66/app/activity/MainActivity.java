@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -159,7 +160,7 @@ public class MainActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeResult(CustomFile customFile) {
-        if (customFile == null) {
+        if (TextUtils.isEmpty(customFile.audio_id)) {
             mRecognizeState = false;
             setRecognizeState();
             return;

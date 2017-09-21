@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.shuyu.core.uils.DataCleanUtils;
 import com.shuyu.core.uils.ImageShowUtils;
+import com.shuyu.core.uils.LogUtils;
 import com.shuyu.core.uils.SPUtils;
 import com.shuyu.core.uils.ToastUtils;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -19,6 +20,8 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.byteam.superadapter.OnItemClickListener;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +54,7 @@ public class UserInfoActivity extends AppBaseActivity {
     private IWXAPI mApi;
     private boolean isRecognize;
 
-
+    private MenuItem menuItem;
 
     @Override
     protected int getLayoutRes() {
@@ -60,7 +63,7 @@ public class UserInfoActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        isRecognize = getIntent().getExtras().getBoolean("isRecognize",false);
+        isRecognize = getIntent().getExtras().getBoolean("isRecognize", false);
         mApi = WXAPIFactory.createWXAPI(this, Constants.WECHAT_KEY, true);
         mApi.registerApp(Constants.WECHAT_KEY);
         initAdapter();
@@ -74,18 +77,25 @@ public class UserInfoActivity extends AppBaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_user_info,menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_recognize);
-        menuItem.setTitle(isRecognize?"停止识别":"开始识别");
+        getMenuInflater().inflate(R.menu.menu_user_info, menu);
+        menuItem = menu.findItem(R.id.menu_recognize);
+        menuItem.setTitle(isRecognize ? "停止识别" : "开始识别");
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRecognizeState(EventBusModel.RecognizeState state) {
+        LogUtils.d(this.getClass().getName(), "收到识别状态：" + state.recognizeState);
+        if (menuItem != null)
+            menuItem.setTitle(state.recognizeState ? "停止识别" : "开始识别");
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.menu_recognize){
+        if (item.getItemId() == R.id.menu_recognize) {
             isRecognize = !isRecognize;
             EventBus.getDefault().post(new EventBusModel.ControlRecognize(isRecognize));
-           item.setTitle(isRecognize?"停止识别":"开始识别");
+            item.setTitle(isRecognize ? "停止识别" : "开始识别");
         }
         return super.onOptionsItemSelected(item);
     }

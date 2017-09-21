@@ -12,7 +12,7 @@ public class LocationCards {
     public String start_time;
     public String card_url;
 
-    public int getStartTime() {
+    public long getStartTime() {
         return TimeUtils.stringToTime(start_time);
     }
 }

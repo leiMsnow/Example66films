@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
@@ -27,7 +28,7 @@ public abstract class AbsEventActivity extends AppBaseActivity {
 
     private MyHandler myHandler;
     protected FilmEvents mEvents;
-    protected int mOffset = 0;
+    protected long mOffset = 0;
     private CustomFile mCustomFile;
 
     private static class MyHandler extends Handler {
@@ -60,7 +61,7 @@ public abstract class AbsEventActivity extends AppBaseActivity {
             return;
         }
         mEvents = intent.getParcelableExtra(Constants.KEY_EVENT_INFO);
-        mOffset = intent.getIntExtra(Constants.KEY_RECOGNIZE_OFFSET, 0);
+        mOffset = intent.getLongExtra(Constants.KEY_RECOGNIZE_OFFSET, 0L);
         if (mEvents != null) {
             if (myHandler == null) {
                 myHandler = new MyHandler(this);
@@ -77,7 +78,7 @@ public abstract class AbsEventActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeResult(CustomFile customFile) {
-        if (customFile == null) {
+        if (TextUtils.isEmpty(customFile.audio_id)) {
             finish();
             return;
         }

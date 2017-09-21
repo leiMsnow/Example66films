@@ -6,7 +6,7 @@ package cn.com.films66.app.utils;
 
 public class TimeUtils {
 
-    public static int stringToTime(String str) {
+    public static long stringToTime(String str) {
         String[] strTime = str.split(":");
         if (strTime.length == 3) {
             int hour = Integer.parseInt(strTime[0]);
