@@ -95,8 +95,8 @@ android {
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
                         def fileName = "${variant.productFlavors[0].name}_v" +
-                                "${variant.productFlavors[0].versionName}" +
-//                                "_${releaseTime()}" +
+                                "${defaultConfig.versionName}" +
+                                "_${releaseTime()}" +
                                 ".apk"
                         output.outputFile = new File(outputFile.parent, fileName)
                     }
@@ -112,7 +112,7 @@ android {
 }
 
 def releaseTime() {
-    return new Date().format("yyyyMMddHH")
+    return new Date().format("yyyyMMdd")
 }
 
 dependencies {
