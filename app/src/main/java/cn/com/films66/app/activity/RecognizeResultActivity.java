@@ -345,7 +345,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
                         weakObj.setTitle(DateUtils.formatTime(weakObj.mOffset));
 
                     LogUtils.d(weakObj.getClass().getName(), "播放总长度" +
-                            DateUtils.formatTime(weakObj.mFilmDetail.getRuntime()));
+                            weakObj.mCustomFile.duration_ms);
                     LogUtils.d(weakObj.getClass().getName(), "播放当前长度" + weakObj.mOffset);
 
                     if (Math.abs(weakObj.mOffset -

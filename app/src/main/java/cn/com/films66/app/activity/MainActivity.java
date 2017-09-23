@@ -1,13 +1,9 @@
 package cn.com.films66.app.activity;
 
 import android.Manifest;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -160,6 +156,7 @@ public class MainActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeResult(CustomFile customFile) {
+        LogUtils.d(this.getClass().getName(), "onRecognizeResult：");
         if (TextUtils.isEmpty(customFile.audio_id)) {
             mRecognizeState = false;
             setRecognizeState();

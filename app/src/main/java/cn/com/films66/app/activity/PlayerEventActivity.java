@@ -104,6 +104,13 @@ public class PlayerEventActivity extends AbsEventActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        myHandler.removeMessages(GET_CURRENT_DANMAKU);
+        myHandler.removeMessages(REMOVE_CURRENT_DANMAKU);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (isPause) {
@@ -212,7 +219,7 @@ public class PlayerEventActivity extends AbsEventActivity {
                     Math.abs(myDanmaku.time - mediaController.getCurrentTime()));
             if (Math.abs(myDanmaku.time - mediaController.getCurrentTime()) <= 1) {
                 danmakuAdapter.add(myDanmaku);
-                myHandler.sendEmptyMessageDelayed(GET_CURRENT_DANMAKU, 3000);
+                myHandler.sendEmptyMessageDelayed(REMOVE_CURRENT_DANMAKU, 3000);
                 break;
             }
         }

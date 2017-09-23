@@ -20,6 +20,7 @@ public class CustomFile implements Parcelable{
         title = in.readString();
         acrid = in.readString();
         audio_id = in.readString();
+        duration_ms = in.readString();
     }
 
     public CustomFile() {
@@ -48,6 +49,7 @@ public class CustomFile implements Parcelable{
         dest.writeString(title);
         dest.writeString(acrid);
         dest.writeString(audio_id);
+        dest.writeString(duration_ms);
     }
 
     @Override
@@ -57,6 +59,7 @@ public class CustomFile implements Parcelable{
                 ", title='" + title + '\'' +
                 ", acrid='" + acrid + '\'' +
                 ", audio_id='" + audio_id + '\'' +
+                ", duration_ms='" + duration_ms + '\'' +
                 '}';
     }
 }
