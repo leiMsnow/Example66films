@@ -51,6 +51,7 @@ public class PlayerEventActivity extends AbsEventActivity {
     private boolean isPause = false;
 
     private static final int GET_CURRENT_DANMAKU = 1000;
+    private static final int REMOVE_CURRENT_DANMAKU = 3000;
 
     private List<MyDanmaku> myDanmakuList;
 
@@ -99,6 +100,7 @@ public class PlayerEventActivity extends AbsEventActivity {
         videoView.pause();
         isPause = true;
         myHandler.removeMessages(GET_CURRENT_DANMAKU);
+        myHandler.removeMessages(REMOVE_CURRENT_DANMAKU);
     }
 
     @Override
@@ -109,6 +111,7 @@ public class PlayerEventActivity extends AbsEventActivity {
             videoView.start();
             isPause = false;
             myHandler.sendEmptyMessageDelayed(GET_CURRENT_DANMAKU, 1000);
+            myHandler.sendEmptyMessageDelayed(REMOVE_CURRENT_DANMAKU, 3000);
         }
     }
 
@@ -135,6 +138,8 @@ public class PlayerEventActivity extends AbsEventActivity {
                     weakObj.topView.setVisibility(View.GONE);
                 } else if (msg.what == GET_CURRENT_DANMAKU) {
                     weakObj.addDanmaku();
+                } else if (msg.what == REMOVE_CURRENT_DANMAKU) {
+                    weakObj.removeDanmaku();
                 }
             }
         }
@@ -207,6 +212,7 @@ public class PlayerEventActivity extends AbsEventActivity {
                     Math.abs(myDanmaku.time - mediaController.getCurrentTime()));
             if (Math.abs(myDanmaku.time - mediaController.getCurrentTime()) <= 1) {
                 danmakuAdapter.add(myDanmaku);
+                myHandler.sendEmptyMessageDelayed(GET_CURRENT_DANMAKU, 3000);
                 break;
             }
         }
@@ -214,5 +220,10 @@ public class PlayerEventActivity extends AbsEventActivity {
             myDanmakuList.remove(myDanmaku);
         }
         myHandler.sendEmptyMessageDelayed(GET_CURRENT_DANMAKU, 1000);
+    }
+
+    private void removeDanmaku() {
+        if (!danmakuAdapter.isEmpty())
+            danmakuAdapter.remove(0);
     }
 }

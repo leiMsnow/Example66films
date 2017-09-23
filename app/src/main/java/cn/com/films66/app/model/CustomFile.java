@@ -13,6 +13,7 @@ public class CustomFile implements Parcelable{
     public String title;
     public String acrid;
     public String audio_id;
+    public String duration_ms;
 
     protected CustomFile(Parcel in) {
         play_offset_ms = in.readInt();

@@ -349,7 +349,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
                     LogUtils.d(weakObj.getClass().getName(), "播放当前长度" + weakObj.mOffset);
 
                     if (Math.abs(weakObj.mOffset -
-                            DateUtils.formatTime(weakObj.mFilmDetail.getRuntime())) <= 500) {
+                            Integer.parseInt(weakObj.mCustomFile.duration_ms)) == 500) {
                         LogUtils.d(weakObj.getClass().getName(), "播放完成跳转剧集页面");
                         Intent intent = new Intent(weakObj.mContext, RecommendActivity.class);
                         weakObj.startActivity(intent);
