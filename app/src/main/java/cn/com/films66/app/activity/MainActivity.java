@@ -1,13 +1,9 @@
 package cn.com.films66.app.activity;
 
 import android.Manifest;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -16,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.shuyu.core.uils.LogUtils;
+import com.shuyu.core.uils.SPUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,17 +27,22 @@ import cn.com.films66.app.model.EventBusModel;
 import cn.com.films66.app.service.FloatWindowService;
 import cn.com.films66.app.service.RecognizeService;
 import cn.com.films66.app.utils.Constants;
+import zhy.com.highlight.HighLight;
+import zhy.com.highlight.interfaces.HighLightInterface;
+import zhy.com.highlight.position.OnBottomPosCallback;
+import zhy.com.highlight.position.OnRightPosCallback;
+import zhy.com.highlight.shape.CircleLightShape;
 
 public class MainActivity extends AppBaseActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
-    //    protected RecognizeService mRecognizeService;
     @Bind(R.id.iv_progress)
     ImageView ivProgress;
     @Bind(R.id.iv_play)
     ImageView ivPlay;
     private boolean mRecognizeState = false;
+    HighLight mHightLight;
 
     @Override
     protected int getLayoutRes() {
@@ -64,7 +66,6 @@ public class MainActivity extends AppBaseActivity {
         startService(intent);
         mRecognizeState = !mRecognizeState;
         setRecognizeState();
-//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -82,10 +83,8 @@ public class MainActivity extends AppBaseActivity {
 
     @OnClick(R.id.iv_play)
     public void onRecClick(View view) {
-//        if (mRecognizeService != null) {
         mRecognizeState = !mRecognizeState;
         setRecognizeState();
-//        }
     }
 
     @OnClick(R.id.iv_user)
@@ -104,11 +103,9 @@ public class MainActivity extends AppBaseActivity {
     private void setRecognizeState() {
         EventBus.getDefault().post(new EventBusModel.ControlRecognize(mRecognizeState));
         if (mRecognizeState) {
-//            mRecognizeService.startRecognize();
             ivProgress.setVisibility(View.GONE);
             ivPlay.setImageResource(R.mipmap.ic_pause);
         } else {
-//            mRecognizeService.cancelRecognize();
             ivProgress.setVisibility(View.VISIBLE);
             ivPlay.setImageResource(R.mipmap.ic_play);
         }
@@ -116,10 +113,8 @@ public class MainActivity extends AppBaseActivity {
 
     @Override
     protected void onResume() {
-//        if (mRecognizeService != null && !mRecognizeState) {
-//            mRecognizeService.setLoop(false);
-//        }
         super.onResume();
+        showNextTipViewOnCreated();
         EventBus.getDefault().post(new EventBusModel.ControlRecognizeLoop(false));
     }
 
@@ -128,28 +123,6 @@ public class MainActivity extends AppBaseActivity {
         super.onPause();
         EventBus.getDefault().unregister(this);
     }
-
-    //    ServiceConnection serviceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            mRecognizeService = ((RecognizeService.RecognizeBinder) service).getService();
-//            mRecognizeState = true;
-//            setRecognizeState();
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            LogUtils.d(MainActivity.class.getName(), "cancelRecognize");
-//            mRecognizeService.cancelRecognize();
-//            mRecognizeService = null;
-//        }
-//    };
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        unRegisterReceiver();
-//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeState(EventBusModel.RecognizeState state) {
@@ -175,12 +148,40 @@ public class MainActivity extends AppBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if (mRecognizeService != null)
-//            unbindService(serviceConnection);
-
         // 关闭浮窗
         Intent intent = new Intent(mContext, FloatWindowService.class);
         intent.putExtra(Constants.KEY_FLOAT_WINDOW, true);
         startService(intent);
+    }
+
+    public  void showNextTipViewOnCreated(){
+        if((boolean)SPUtils.get(mContext,"HighLight",true)) {
+            SPUtils.put(mContext,"HighLight",false);
+            mHightLight = new HighLight(MainActivity.this)//
+                    .autoRemove(false)
+                    .enableNext()
+                    .setOnLayoutCallback(new HighLightInterface.OnLayoutCallback() {
+                        @Override
+                        public void onLayouted() {
+                            //界面布局完成添加tipview
+                            mHightLight.addHighLight(R.id.iv_progress, R.layout.info_high_light_1,
+                                    new OnBottomPosCallback(), new CircleLightShape())
+
+                                    .addHighLight(R.id.iv_user, R.layout.info_high_light_2,
+                                            new OnRightPosCallback(), new CircleLightShape())
+
+                                    .addHighLight(R.id.iv_recommend, R.layout.info_high_light_3,
+                                            new OnBottomPosCallback(), new CircleLightShape());
+                            //然后显示高亮布局
+                            mHightLight.show();
+                        }
+                    })
+                    .setClickCallback(new HighLight.OnClickCallback() {
+                        @Override
+                        public void onClick() {
+                            mHightLight.next();
+                        }
+                    });
+        }
     }
 }

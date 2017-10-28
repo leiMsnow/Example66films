@@ -1,16 +1,24 @@
 package cn.com.films66.app.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import com.shuyu.core.uils.SPUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import cn.com.films66.app.R;
+import cn.com.films66.app.adapter.TourGuideAdapter;
 import cn.com.films66.app.base.AppBaseActivity;
 
 public class SplashActivity extends AppBaseActivity {
@@ -19,11 +27,14 @@ public class SplashActivity extends AppBaseActivity {
     private static final int MESSAGE_COUNTDOWN = 0;
 
     TextView tvCountdown;
+    @Bind(R.id.vp_container)
+    ViewPager vpContainer;
 
     private MyHandler mMyHandler;
     private Timer mTimer;
-    private int mSecond = 2;
+    private int mSecond = 1;
 
+    private boolean gotoMain = false;
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_splash;
@@ -33,8 +44,36 @@ public class SplashActivity extends AppBaseActivity {
     protected void initData() {
         toolbarHide();
         mMyHandler = new MyHandler(this);
-        tvCountdown = (TextView) findViewById(R.id.tv_countdown);
-        startCountdown();
+        if ((boolean) SPUtils.get(mContext, "TourGuide", true)) {
+            SPUtils.put(mContext,"TourGuide",false);
+            vpContainer.setVisibility(View.VISIBLE);
+            vpContainer.setAdapter(new TourGuideAdapter());
+            vpContainer.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    if (gotoMain){
+                        Message message = new Message();
+                        message.what = MESSAGE_GOTO_MAIN;
+                        mMyHandler.sendMessage(message);
+                    }
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    if (position == vpContainer.getAdapter().getCount()-1){
+                        gotoMain = true;
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        } else {
+            tvCountdown = (TextView) findViewById(R.id.tv_countdown);
+            startCountdown();
+        }
     }
 
     private void startCountdown() {
@@ -56,7 +95,6 @@ public class SplashActivity extends AppBaseActivity {
             }
         }, 1000, 1000);
     }
-
 
     private static class MyHandler extends Handler {
 

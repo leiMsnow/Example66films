@@ -125,4 +125,6 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
 
     compile 'com.linsea:opendanmaku:1.0.0@aar'
+
+    compile 'com.isanwenyu.highlight:highlight:1.8.0'
 }
