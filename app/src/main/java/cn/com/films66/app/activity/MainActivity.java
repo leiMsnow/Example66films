@@ -133,6 +133,7 @@ public class MainActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeResult(CustomFile customFile) {
+        LogUtils.d(this.getClass().getName(), "onRecognizeResult：");
         if (TextUtils.isEmpty(customFile.audio_id)) {
             mRecognizeState = false;
             setRecognizeState();
