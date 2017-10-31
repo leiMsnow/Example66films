@@ -44,8 +44,8 @@ public class SplashActivity extends AppBaseActivity {
     protected void initData() {
         toolbarHide();
         mMyHandler = new MyHandler(this);
-        if ((boolean) SPUtils.get(mContext, "TourGuide", true)) {
-            SPUtils.put(mContext,"TourGuide",false);
+        if ((boolean) SPUtils.getNoClear(mContext, "TourGuide", true)) {
+            SPUtils.putNoClear(mContext,"TourGuide",false);
             vpContainer.setVisibility(View.VISIBLE);
             vpContainer.setAdapter(new TourGuideAdapter());
             vpContainer.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import zhy.com.highlight.HighLight;
 import zhy.com.highlight.interfaces.HighLightInterface;
 import zhy.com.highlight.position.OnBottomPosCallback;
 import zhy.com.highlight.position.OnRightPosCallback;
+import zhy.com.highlight.position.OnTopPosCallback;
 import zhy.com.highlight.shape.CircleLightShape;
 
 public class MainActivity extends AppBaseActivity {
@@ -42,7 +44,8 @@ public class MainActivity extends AppBaseActivity {
     @Bind(R.id.iv_play)
     ImageView ivPlay;
     private boolean mRecognizeState = false;
-    HighLight mHightLight;
+    private HighLight mHighLight;
+    private int tipsCount = 0;
 
     @Override
     protected int getLayoutRes() {
@@ -57,11 +60,14 @@ public class MainActivity extends AppBaseActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},
                     MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
         } else {
-            startRecognize();
+            if (!showNextTipViewOnCreated()) {
+                startRecognize();
+            }
         }
     }
 
     private void startRecognize() {
+        Log.d("startRecognize", "startRecognize");
         Intent intent = new Intent(mContext, RecognizeService.class);
         startService(intent);
         mRecognizeState = !mRecognizeState;
@@ -114,7 +120,6 @@ public class MainActivity extends AppBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        showNextTipViewOnCreated();
         EventBus.getDefault().post(new EventBusModel.ControlRecognizeLoop(false));
     }
 
@@ -155,34 +160,44 @@ public class MainActivity extends AppBaseActivity {
         startService(intent);
     }
 
-    public  void showNextTipViewOnCreated(){
-        if((boolean)SPUtils.get(mContext,"HighLight",true)) {
-            SPUtils.put(mContext,"HighLight",false);
-            mHightLight = new HighLight(MainActivity.this)//
+    public boolean showNextTipViewOnCreated() {
+        boolean shoNextTip = (boolean) SPUtils.getNoClear(mContext, "HighLight", true);
+        if (shoNextTip) {
+            SPUtils.putNoClear(mContext, "HighLight", false);
+            mHighLight = new HighLight(MainActivity.this)//
                     .autoRemove(false)
                     .enableNext()
                     .setOnLayoutCallback(new HighLightInterface.OnLayoutCallback() {
                         @Override
                         public void onLayouted() {
-                            //界面布局完成添加tipview
-                            mHightLight.addHighLight(R.id.iv_progress, R.layout.info_high_light_1,
-                                    new OnBottomPosCallback(), new CircleLightShape())
+                            //界面布局完成添加tipView
+                            mHighLight
+                                    .addHighLight(R.id.iv_progress, R.layout.info_high_light_1,
+                                            new OnBottomPosCallback(), new CircleLightShape())
 
                                     .addHighLight(R.id.iv_user, R.layout.info_high_light_2,
                                             new OnRightPosCallback(), new CircleLightShape())
 
                                     .addHighLight(R.id.iv_recommend, R.layout.info_high_light_3,
-                                            new OnBottomPosCallback(), new CircleLightShape());
+                                            new OnBottomPosCallback(), new CircleLightShape())
+
+                                    .addHighLight(R.id.tv_awesome, R.layout.info_high_light_finish,
+                                            new OnRightPosCallback(10), new CircleLightShape());
                             //然后显示高亮布局
-                            mHightLight.show();
+                            mHighLight.show();
                         }
                     })
                     .setClickCallback(new HighLight.OnClickCallback() {
                         @Override
                         public void onClick() {
-                            mHightLight.next();
+                            tipsCount += 1;
+                            mHighLight.next();
+                            if (tipsCount == 4) {
+                                startRecognize();
+                            }
                         }
                     });
         }
+        return shoNextTip;
     }
 }
