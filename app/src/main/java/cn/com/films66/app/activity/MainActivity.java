@@ -136,6 +136,11 @@ public class MainActivity extends AppBaseActivity {
         setRecognizeState();
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecognizeResult(CustomFile customFile) {
         LogUtils.d(this.getClass().getName(), "onRecognizeResult：");
