@@ -75,6 +75,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
 
     private String[] waitDot = {".", "..", "..."};
     private int waitIndex = 0;
+    private int changeCount = 0;
 
     @Override
     protected int getLayoutRes() {
@@ -307,10 +308,14 @@ public class RecognizeResultActivity extends AppBaseActivity {
         mRryRecognize = 0;
         // 视频切换剧集 暂时屏蔽这个功能
         if (!mCustomFile.audio_id.equals(customFile.audio_id)) {
-//            mCurrentEvent = null;
-//            mHandler.removeMessages(CHANGE_EVENT);
-//            mCustomFile = customFile;
-//            getFilmDetail();
+            if (changeCount == 4) {
+                changeCount = 0;
+                mCurrentEvent = null;
+                mHandler.removeMessages(CHANGE_EVENT);
+                mCustomFile = customFile;
+                getFilmDetail();
+            }
+            changeCount++;
         } else {
             mCustomFile = customFile;
             getOffsetTime();
