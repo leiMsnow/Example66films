@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class BaseApi {
 
     public static final String KEY_BASE_URL = "KEY_BASE_URL";
-    private static final String LOCAL_SERVER_URL = "http://film.timepill.net";
+    private static final String LOCAL_SERVER_URL = "http://www.duodongyule.com";
     public static final String BASE_URL = LOCAL_SERVER_URL + "/api/";
 
     public static <T> T createApi(Class<T> service) {
