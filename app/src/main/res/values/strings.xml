@@ -2,7 +2,6 @@
     <string name="wait">在wifi情况下需要大约1-2分钟，\n 请耐心等待</string>
 
     <string name="errcode_success">授权成功</string>
-    <string name="errcode_failed">授权失败</string>
     <string name="errcode_cancel">授权取消</string>
     <string name="errcode_deny">授权被拒绝</string>
     <string name="errcode_unsupported">不支持错误</string>
