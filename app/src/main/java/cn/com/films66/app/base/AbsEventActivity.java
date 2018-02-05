@@ -113,6 +113,7 @@ public abstract class AbsEventActivity extends AppBaseActivity {
 
     @Override
     public void onBackPressed() {
+        LogUtils.d("mCurrentEvent", "onBackPressed");
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.KEY_EVENT_CANCEL, true);

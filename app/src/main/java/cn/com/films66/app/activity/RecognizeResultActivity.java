@@ -250,6 +250,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
             if (data != null && data.getExtras() != null) {
                 if (mCurrentEvent != null) {
                     mCurrentEvent.isUserCancel = data.getBooleanExtra(Constants.KEY_EVENT_CANCEL, false);
+                    LogUtils.d("mCurrentEvent", "onActivityResult-isUserCancel:" + mCurrentEvent.isUserCancel);
                 }
             }
         }
@@ -266,6 +267,9 @@ public class RecognizeResultActivity extends AppBaseActivity {
     }
 
     private boolean matchEvent(FilmEvents events) {
+        if (mCurrentEvent != null)
+            LogUtils.d("mCurrentEvent", "matchEvent-mCurrentEvent:" + mCurrentEvent);
+            LogUtils.d("mCurrentEvent", "events.id :" + events.id );
         if (events.getStartTime() != -1 && events.getEndTime() != -1) {
             if (mCurrentEvent != null && mCurrentEvent.id == events.id && mCurrentEvent.isUserCancel) {
                 return false;
