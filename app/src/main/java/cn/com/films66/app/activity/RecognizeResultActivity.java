@@ -327,14 +327,6 @@ public class RecognizeResultActivity extends AppBaseActivity {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void openPlayer(EventBusModel.DownLoad downLoad) {
-        isPause = false;
-        waitView.setVisibility(View.GONE);
-        mHandler.removeMessages(CHANGE_WAIT_TEXT);
-        startEventActivity(PlayerEventActivity.class);
-    }
-
     private static class MyHandler extends Handler {
 
         private WeakReference<RecognizeResultActivity> weakReference;
@@ -380,6 +372,14 @@ public class RecognizeResultActivity extends AppBaseActivity {
         LogUtils.d("DownloadProgress", "totalBytes: " + progress.totalBytes);
         pbProgress.setProgress(progress.soFarBytes);
         pbProgress.setMax(progress.totalBytes);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void openPlayer(EventBusModel.DownLoad downLoad) {
+        isPause = false;
+        waitView.setVisibility(View.GONE);
+        mHandler.removeMessages(CHANGE_WAIT_TEXT);
+        startEventActivity(PlayerEventActivity.class);
     }
 
     @Override
