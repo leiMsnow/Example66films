@@ -85,7 +85,7 @@ public class RecognizeResultActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         setTitle("");
-
+        toolbarHide();
         mSoundPool = new SoundPool(1, AudioManager.STREAM_SYSTEM, 0);
         sampleId = mSoundPool.load(this, R.raw.tips, 1);
 
